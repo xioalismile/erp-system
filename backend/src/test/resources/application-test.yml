@@ -1,0 +1,46 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: smart-erp-test
+  datasource:
+    url: jdbc:postgresql://localhost:5432/erp_db
+    username: erp_user
+    password: Erp@2026
+    driver-class-name: org.postgresql.Driver
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+erp:
+  jwt:
+    secret: SmartErpSecretKey2026ForJwtTokenGenerationAndValidation
+    expiration: 86400000
+    header: Authorization
+    prefix: "Bearer "
+  upload:
+    path: D:/erp-files-test
+  ai:
+    gateway:
+      enabled: false
+
+logging:
+  level:
+    com.erp: debug

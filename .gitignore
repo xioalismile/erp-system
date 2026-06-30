@@ -1,0 +1,69 @@
+# === Java / Maven ===
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+.mvn/
+mvnw
+mvnw.cmd
+
+# === IDE ===
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.swp
+*.swo
+*~
+
+# === Node.js / Frontend ===
+node_modules/
+dist/
+dist-ssr/
+*.local
+.npm
+.cache/
+.parcel-cache/
+
+# === Environment & Config ===
+.env
+.env.local
+.env.*.local
+application-local.yml
+application-prod.yml
+
+# === Database ===
+*.db
+*.sqlite
+*.sqlite3
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# === Large installers (exclude from repo) ===
+*.msi
+*.exe
+*.zip
+*.tar.gz
+*.rar
+
+# === Logs ===
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# === Testing ===
+coverage/
+*.lcov
+
+# === Redis / other data ===
+dump.rdb

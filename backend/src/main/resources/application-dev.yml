@@ -1,0 +1,49 @@
+# 开发模式配置 - 使用H2内存数据库, 不需要安装PostgreSQL和Redis
+# 用法: java -jar smart-erp.jar --spring.profiles.active=dev
+
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:erpdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema-h2.sql
+      data-locations: classpath:db/data-h2.sql
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+erp:
+  jwt:
+    secret: SmartErpSecretKey2026ForJwtTokenGenerationAndValidation
+    expiration: 86400000
+  upload:
+    path: ./erp-files
+  ai:
+    gateway:
+      enabled: true
+      default-channel: QWEN
+      write-confirm-required: true
+    qwen:
+      enabled: true
+      api-key: ${QWEN_API_KEY:}
+      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      model: qwen-plus
+    rate-limit:
+      user-per-minute: 5
+      user-per-day: 200

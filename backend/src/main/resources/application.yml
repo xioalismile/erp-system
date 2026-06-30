@@ -1,0 +1,89 @@
+server:
+  port: 8080
+  tomcat:
+    max-threads: 200
+    accept-count: 50
+
+spring:
+  application:
+    name: smart-erp
+  datasource:
+    url: jdbc:postgresql://localhost:5432/erp_db
+    username: erp_user
+    password: Erp@2026
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    timeout: 5000
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# ERP自定义配置
+erp:
+  # JWT配置
+  jwt:
+    secret: SmartErpSecretKey2026ForJwtTokenGenerationAndValidation
+    expiration: 86400000  # 24小时(毫秒)
+    header: Authorization
+    prefix: "Bearer "
+  # 文件上传存储(本地存储, 不用OSS节省成本)
+  upload:
+    path: D:/erp-files
+  # AI网关配置
+  ai:
+    gateway:
+      enabled: true
+      default-channel: QWEN
+      # 写操作必须人工确认
+      write-confirm-required: true
+    # 通义千问(阿里云百炼, 有免费额度)
+    qwen:
+      enabled: true
+      api-key: ${QWEN_API_KEY:}
+      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      model: qwen-plus
+    # DeepSeek(价格极低, 约0.001元/千token)
+    deepseek:
+      enabled: false
+      api-key: ${DEEPSEEK_API_KEY:}
+      base-url: https://api.deepseek.com
+      model: deepseek-chat
+    # 限流
+    rate-limit:
+      user-per-minute: 5
+      user-per-day: 200
+  # 限流配置
+  rate-limit:
+    enabled: true
+
+logging:
+  level:
+    com.erp: debug
+    org.springframework: info
+  file:
+    name: D:/erp-logs/erp.log
+    max-size: 10MB
+    max-history: 7
