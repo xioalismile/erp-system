@@ -8,13 +8,15 @@ import java.util.List;
 import java.util.Map;
 
 public interface InventoryBatchService extends IService<InventoryBatch> {
-    List<InventoryBatch> getByMaterialAndWarehouse(String materialCode, String warehouseCode);
+    List<InventoryBatch> getByMaterial(Long materialId);
     InventoryBatch getByBatchNo(String batchNo);
-    List<InventoryBatch> getByWarehouse(String warehouseCode);
     List<InventoryBatch> getExpiredBatches();
     List<InventoryBatch> getExpiringBatches(Integer days);
-    String generateBatchNo(String materialCode);
-    Map<String, Object> allocateByFifo(String materialCode, String warehouseCode, BigDecimal quantity);
+    String generateBatchNo(Long materialId);
+    /** FIFO 分配批次 */
+    Map<String, Object> allocateByFifo(Long materialId, BigDecimal quantity);
+    /** 扣减批次库存 */
     void deductBatch(Long batchId, BigDecimal quantity);
+    /** 新增批次 */
     void addBatch(InventoryBatch batch);
 }

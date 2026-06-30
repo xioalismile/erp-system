@@ -1,0 +1,65 @@
+// ====================================================================
+// 智能ERP系统 - 全局设计规范
+// 参考金蝶/用友经典ERP风格，基于Element Plus主题
+// ====================================================================
+
+// ---------- 品牌色 ----------
+$color-primary: #409EFF;        // 主色-蓝色
+$color-success: #67C23A;        // 成功-绿色
+$color-warning: #E6A23C;        // 警告-黄色
+$color-danger:  #F56C6C;        // 危险-红色
+$color-info:    #909399;        // 信息-灰色
+
+// ---------- 文字色 ----------
+$text-primary:   #303133;       // 主要文字
+$text-regular:   #606266;       // 常规文字
+$text-secondary: #909399;       // 次要文字
+$text-placeholder: #C0C4CC;     // 占位文字
+
+// ---------- 边框/背景 ----------
+$border-base:     #DCDFE6;
+$border-light:    #E4E7ED;
+$border-lighter:  #EBEEF5;
+$bg-page:         #F5F7FA;      // 页面背景
+$bg-table-header: #F5F7FA;      // 表头背景
+$bg-card:         #FFFFFF;
+
+// ---------- 间距 ----------
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
+
+// ---------- 表格 ----------
+$table-row-height: 48px;
+$table-header-height: 48px;
+$table-cell-padding: 8px 12px;
+
+// ---------- 圆角 ----------
+$radius-sm: 2px;
+$radius-md: 4px;
+$radius-lg: 8px;
+
+// ---------- 阴影 ----------
+$shadow-light: 0 2px 4px rgba(0, 0, 0, 0.06);
+$shadow-base:  0 2px 12px 0 rgba(0, 0, 0, 0.1);
+
+// ---------- 状态色(单据) ----------
+$bill-draft:    #909399;   // 草稿
+$bill-pending:  #E6A23C;   // 待审核
+$bill-approved: #409EFF;   // 已审核
+$bill-done:     #67C23A;   // 已完成
+$bill-closed:   #909399;   // 已关闭
+$bill-cancel:   #F56C6C;   // 已取消
+
+// 导出为CSS变量供JS使用
+:root {
+  --erp-primary: #{$color-primary};
+  --erp-success: #{$color-success};
+  --erp-warning: #{$color-warning};
+  --erp-danger: #{$color-danger};
+  --erp-bg-page: #{$bg-page};
+  --erp-text-primary: #{$text-primary};
+  --erp-row-height: #{$table-row-height};
+}

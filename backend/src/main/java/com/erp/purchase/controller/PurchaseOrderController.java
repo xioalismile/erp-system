@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,10 +26,9 @@ public class PurchaseOrderController {
     public Result<PageResult<PurchaseOrder>> page(
             @RequestParam(defaultValue = "1") int current,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String supplierName,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) String orderNo) {
-        return Result.success(purchaseOrderService.pageQuery(current, size, supplierName, status, orderNo));
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String status) {
+        return Result.success(purchaseOrderService.pageQuery(current, size, keyword, status));
     }
 
     @GetMapping("/orders/{id}")
@@ -44,69 +44,29 @@ public class PurchaseOrderController {
 
     @PutMapping("/orders/{id}")
     public Result<Void> update(@PathVariable Long id, @RequestBody PurchaseOrder order) {
-        order.setId(id);
+        order.setOrderId(id);
         purchaseOrderService.saveOrderWithItems(order, order.getItems());
         return Result.success();
     }
 
-    /** 提交审核 */
-    @PostMapping("/orders/{id}/submit")
-    public Result<Void> submit(@PathVariable Long id, HttpServletRequest req) {
-        purchaseOrderService.submitAudit(id, (String) req.getAttribute("currentUsername"));
+    /** 审核: 草稿 → 已审核 */
+    @PostMapping("/orders/{id}/approve")
+    public Result<Void> approve(@PathVariable Long id, HttpServletRequest req) {
+        purchaseOrderService.approve(id, (String) req.getAttribute("currentUsername"));
         return Result.success();
     }
 
-    /** 取消 */
+    /** 关闭: 已审核 → 已关闭 */
+    @PostMapping("/orders/{id}/close")
+    public Result<Void> close(@PathVariable Long id, @RequestBody Map<String, String> body, HttpServletRequest req) {
+        purchaseOrderService.close(id, (String) req.getAttribute("currentUsername"), body.get("reason"));
+        return Result.success();
+    }
+
+    /** 取消: 草稿 → 已取消 */
     @PostMapping("/orders/{id}/cancel")
     public Result<Void> cancel(@PathVariable Long id, @RequestBody Map<String, String> body) {
-        purchaseOrderService.cancelOrder(id, body.get("reason"));
-        return Result.success();
-    }
-
-    /**
-     * 从销售订单转采购订单
-     * POST /api/purchase/orders/convert-from-sale/{saleOrderId}
-     * body: { items: [{saleOrderItemId: 1, quantity: 100}], buyer: "张三" }
-     * items为空则全部转
-     */
-    @PostMapping("/orders/convert-from-sale/{saleOrderId}")
-    public Result<List<PurchaseOrder>> convertFromSale(
-            @PathVariable Long saleOrderId,
-            @RequestBody(required = false) Map<String, Object> body,
-            HttpServletRequest req) {
-
-        @SuppressWarnings("unchecked")
-        List<Map<String, Object>> itemSelection = body != null ? (List<Map<String, Object>>) body.get("items") : null;
-        String buyer = body != null ? (String) body.get("buyer") : (String) req.getAttribute("currentUsername");
-
-        List<PurchaseOrder> orders = purchaseOrderService.convertFromSaleOrder(saleOrderId, itemSelection, buyer);
-        return Result.success(orders);
-    }
-
-    /**
-     * 从MRP采购建议生成采购订单
-     * POST /api/purchase/orders/generate-from-mrp
-     * body: { suggestions: [...], buyer: "张三" }
-     */
-    @PostMapping("/orders/generate-from-mrp")
-    public Result<List<PurchaseOrder>> generateFromMrp(
-            @RequestBody Map<String, Object> body,
-            HttpServletRequest req) {
-
-        @SuppressWarnings("unchecked")
-        List<Map<String, Object>> suggestions = (List<Map<String, Object>>) body.get("suggestions");
-        String buyer = body != null ? (String) body.get("buyer") : (String) req.getAttribute("currentUsername");
-
-        List<PurchaseOrder> orders = purchaseOrderService.generateFromMrp(suggestions, buyer);
-        return Result.success(orders);
-    }
-
-    /** 采购入库 */
-    @PostMapping("/orders/{id}/inbound")
-    public Result<Void> inbound(@PathVariable Long id, @RequestBody Map<String, String> body, HttpServletRequest req) {
-        String warehouse = body.get("warehouse");
-        String operator = (String) req.getAttribute("currentUsername");
-        purchaseOrderService.inbound(id, warehouse, operator);
+        purchaseOrderService.cancel(id, body.get("reason"));
         return Result.success();
     }
 
@@ -119,5 +79,27 @@ public class PurchaseOrderController {
         }
         wrapper.last("LIMIT 50");
         return Result.success(supplierService.list(wrapper));
+    }
+
+    /** 仪表盘统计 */
+    @GetMapping("/dashboard")
+    public Result<Map<String, Object>> dashboard() {
+        long totalOrders = purchaseOrderService.count();
+        long draftOrders = purchaseOrderService.count(
+                new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<PurchaseOrder>().eq("status", "草稿"));
+        long approvedOrders = purchaseOrderService.count(
+                new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<PurchaseOrder>().eq("status", "已审核"));
+        long closedOrders = purchaseOrderService.count(
+                new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<PurchaseOrder>().eq("status", "已关闭"));
+        long cancelledOrders = purchaseOrderService.count(
+                new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<PurchaseOrder>().eq("status", "已取消"));
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("totalOrders", totalOrders);
+        data.put("draftOrders", draftOrders);
+        data.put("approvedOrders", approvedOrders);
+        data.put("closedOrders", closedOrders);
+        data.put("cancelledOrders", cancelledOrders);
+        return Result.success(data);
     }
 }

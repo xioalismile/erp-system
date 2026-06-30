@@ -1,0 +1,57 @@
+@import './variables.scss';
+
+// ---------- 全局重置 ----------
+* { box-sizing: border-box; }
+html, body, #app { height: 100%; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 14px;
+  color: $text-primary;
+  background: $bg-page;
+  -webkit-font-smoothing: antialiased;
+}
+
+// ---------- 通用工具类 ----------
+.erp-page { padding: $spacing-lg; }
+.erp-card { background: $bg-card; border-radius: $radius-md; box-shadow: $shadow-light; padding: $spacing-lg; margin-bottom: $spacing-lg; }
+
+.erp-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: $spacing-md; flex-wrap: wrap; gap: $spacing-sm; }
+.erp-toolbar-left { display: flex; align-items: center; gap: $spacing-sm; flex-wrap: wrap; }
+.erp-toolbar-right { display: flex; align-items: center; gap: $spacing-sm; }
+
+.erp-search-bar { display: flex; align-items: center; gap: $spacing-sm; margin-bottom: $spacing-md; flex-wrap: wrap; }
+.erp-search-item { display: flex; align-items: center; gap: $spacing-xs; }
+.erp-search-item .label { color: $text-regular; white-space: nowrap; font-size: 13px; }
+
+.erp-table-header { background: $bg-table-header !important; font-weight: 600; color: $text-primary; }
+
+.erp-form-dialog { .el-form-item { margin-bottom: 18px; } }
+.erp-form-row { display: flex; gap: $spacing-lg; }
+.erp-form-row > .el-form-item { flex: 1; }
+
+// ---------- 单据状态标签 ----------
+.erp-status-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 18px;
+  &.draft    { background: rgba(144,147,153,0.1); color: $bill-draft; }
+  &.pending  { background: rgba(230,162,60,0.1);  color: $bill-pending; }
+  &.approved { background: rgba(64,158,255,0.1);  color: $bill-approved; }
+  &.done     { background: rgba(103,194,58,0.1);  color: $bill-done; }
+  &.closed   { background: rgba(144,147,153,0.1); color: $bill-closed; }
+  &.cancel   { background: rgba(245,108,108,0.1); color: $bill-cancel; }
+}
+
+// ---------- 表格行高增强 ----------
+.el-table { --el-table-row-height: 48px; }
+.el-table th.el-table__cell { background: $bg-table-header !important; font-weight: 600; }
+
+// ---------- 分页居右 ----------
+.erp-pagination { display: flex; justify-content: flex-end; margin-top: $spacing-md; }
+
+// ---------- 滚动条美化 ----------
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #C0C4CC; border-radius: 4px; }
+::-webkit-scrollbar-track { background: transparent; }

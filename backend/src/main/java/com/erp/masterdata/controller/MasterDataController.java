@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.erp.common.Result;
 import com.erp.masterdata.entity.Customer;
 import com.erp.masterdata.entity.Material;
-import com.erp.masterdata.entity.Bom;
 import com.erp.masterdata.service.CustomerService;
 import com.erp.masterdata.service.MaterialService;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +41,7 @@ public class MasterDataController {
 
     @PutMapping("/customers/{id}")
     public Result<Void> updateCustomer(@PathVariable Long id, @RequestBody Customer customer) {
-        customer.setId(id);
+        customer.setCustomerId(id);
         customerService.updateById(customer);
         return Result.success();
     }
@@ -64,7 +63,7 @@ public class MasterDataController {
         if (keyword != null && !keyword.isBlank()) {
             wrapper.like("material_name", keyword).or().like("material_code", keyword);
         }
-        if (category != null) wrapper.eq("category", category);
+        if (category != null) wrapper.eq("category_id", category);
         wrapper.last("LIMIT " + limit);
         return Result.success(materialService.list(wrapper));
     }
@@ -77,7 +76,7 @@ public class MasterDataController {
 
     @PutMapping("/materials/{id}")
     public Result<Void> updateMaterial(@PathVariable Long id, @RequestBody Material material) {
-        material.setId(id);
+        material.setMaterialId(id);
         materialService.updateById(material);
         return Result.success();
     }

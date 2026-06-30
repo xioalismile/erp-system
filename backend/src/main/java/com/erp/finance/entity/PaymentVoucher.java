@@ -2,74 +2,102 @@ package com.erp.finance.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
- * 付款记录 - 采购付款
+ * 付款单 - 对齐 PG cash_payment 表
  */
 @Data
-@TableName("payment_voucher")
+@TableName("cash_payment")
 public class PaymentVoucher {
-    @TableId(type = IdType.AUTO)
-    private Long id;
 
-    /** 付款单号: PAY+年月日+4位流水 */
-    private String voucherNo;
+    @TableId(value = "payment_id", type = IdType.AUTO)
+    private Long paymentId;
 
-    /** 付款日期 */
+    @TableField("payment_no")
+    private String paymentNo;
+
+    @TableField("payment_date")
     private LocalDate paymentDate;
 
-    /** 关联应付单ID */
-    private Long apId;
-    private String apNo;
-
-    /** 供应商ID */
+    @TableField("supplier_id")
     private Long supplierId;
-    private String supplierCode;
+
+    @TableField("supplier_name")
     private String supplierName;
 
-    /** 采购订单ID */
-    private Long purchaseOrderId;
-    private String purchaseOrderNo;
+    @TableField("settle_mode_id")
+    private Long settleModeId;
 
-    /** 付款金额 */
-    private BigDecimal amount;
-
-    /** 付款方式: 银行转账/现金/支票/汇票 */
-    private String paymentMethod;
-
-    /** 银行账号 */
+    @TableField("bank_account")
     private String bankAccount;
 
-    /** 交易流水号 */
-    private String transactionNo;
+    @TableField("currency_id")
+    private Long currencyId;
 
-    /** 付款人 */
-    private String paidBy;
+    @TableField("exchange_rate")
+    private BigDecimal exchangeRate;
 
-    /** 确认人 */
-    private String confirmedBy;
+    @TableField("total_amount")
+    private BigDecimal totalAmount;
 
-    /** 确认日期 */
-    private LocalDate confirmedDate;
+    @TableField("amount")
+    private BigDecimal amount;
 
-    /** 状态: 待确认/已确认/已作废 */
-    private String status;
+    @TableField("discount_amount")
+    private BigDecimal discountAmount;
 
-    /** 备注 */
+    @TableField("paid_amount")
+    private BigDecimal paidAmount;
+
+    @TableField("document_no")
+    private String documentNo;
+
+    @TableField("cashier_id")
+    private Long cashierId;
+
+    @TableField("department_id")
+    private Long departmentId;
+
+    @TableField("source_bill_type")
+    private String sourceBillType;
+
+    @TableField("source_bill_no")
+    private String sourceBillNo;
+
+    @TableField("remark")
     private String remark;
 
-    @TableField(fill = FieldFill.INSERT)
-    private String createdBy;
-    @TableField(fill = FieldFill.INSERT)
-    private Date createdAt;
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private String updatedBy;
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Date updatedAt;
+    @TableField("attachment_urls")
+    private String attachmentUrls;
 
-    @TableLogic
-    private Integer deleted;
+    @TableField("status")
+    private String status;
+
+    @TableField("approval_status")
+    private String approvalStatus;
+
+    @TableField("approved_by")
+    private String approvedBy;
+
+    @TableField("approved_at")
+    private LocalDateTime approvedAt;
+
+    @TableField(value = "created_at", fill = FieldFill.INSERT)
+    private LocalDateTime createdAt;
+
+    @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updatedAt;
+
+    @TableField("created_by")
+    private String createdBy;
+
+    @TableField("updated_by")
+    private String updatedBy;
+
+    @TableField("org_code")
+    private String orgCode;
 }

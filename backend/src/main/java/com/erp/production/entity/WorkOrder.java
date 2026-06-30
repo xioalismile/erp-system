@@ -2,74 +2,126 @@ package com.erp.production.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 生产工单 - 对齐 PG production_order 表
+ */
 @Data
-@TableName("work_order")
+@TableName("production_order")
 public class WorkOrder {
-    @TableId(type = IdType.AUTO)
-    private Long id;
 
-    /** 工单编号: WO+年月日+4位流水 */
-    private String workOrderNo;
+    @TableId(value = "order_id", type = IdType.AUTO)
+    private Long orderId;
 
+    @TableField("order_no")
+    private String orderNo;
+
+    @TableField("order_date")
     private LocalDate orderDate;
 
-    /** 产品物料编码 */
-    private String productCode;
-    private String productName;
-    private String specification;
-    private String unit;
+    @TableField("bom_id")
+    private Long bomId;
 
-    /** 计划生产数量 */
-    private BigDecimal plannedQuantity;
+    @TableField("material_id")
+    private Long materialId;
 
-    /** 已完工数量 */
+    @TableField("material_code")
+    private String materialCode;
+
+    @TableField("material_name")
+    private String materialName;
+
+    @TableField("unit_id")
+    private Long unitId;
+
+    @TableField("quantity")
+    private BigDecimal quantity;
+
+    @TableField("completed_quantity")
     private BigDecimal completedQuantity;
 
-    /** 报废数量 */
-    private BigDecimal scrapQuantity;
+    @TableField("rejected_quantity")
+    private BigDecimal rejectedQuantity;
 
-    /** 计划开始日期 */
-    private LocalDate plannedStartDate;
+    @TableField("warehouse_id")
+    private Long warehouseId;
 
-    /** 计划完工日期 */
-    private LocalDate plannedFinishDate;
+    @TableField("department_id")
+    private Long departmentId;
 
-    /** 实际开始日期 */
+    @TableField("manager_id")
+    private Long managerId;
+
+    @TableField("routing_id")
+    private Long routingId;
+
+    @TableField("priority")
+    private String priority;
+
+    @TableField("plan_start_date")
+    private LocalDate planStartDate;
+
+    @TableField("plan_end_date")
+    private LocalDate planEndDate;
+
+    @TableField("actual_start_date")
     private LocalDate actualStartDate;
 
-    /** 实际完工日期 */
-    private LocalDate actualFinishDate;
+    @TableField("actual_end_date")
+    private LocalDate actualEndDate;
 
-    /** 来源: MANUAL手动 / SALE_ORDER销售驱动 / MRP MRP生成 */
+    @TableField("lead_time_days")
+    private Integer leadTimeDays;
+
+    @TableField("is_urgent")
+    private Short isUrgent;
+
+    @TableField("source_type")
     private String sourceType;
 
-    /** 来源销售订单号 */
-    private String sourceOrderNo;
+    @TableField("source_no")
+    private String sourceNo;
 
-    /** 车间/产线 */
-    private String workshop;
+    @TableField("sales_order_no")
+    private String salesOrderNo;
 
-    /** 状态: 待开工/已开工/已完工/已关闭/已取消 */
-    private String status;
-
+    @TableField("remark")
     private String remark;
 
-    @TableField(fill = FieldFill.INSERT)
-    private String createdBy;
-    @TableField(fill = FieldFill.INSERT)
-    private Date createdAt;
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private String updatedBy;
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Date updatedAt;
+    @TableField("attachment_urls")
+    private String attachmentUrls;
 
-    @TableLogic
-    private Integer deleted;
+    @TableField("status")
+    private String status;
+
+    @TableField("approval_status")
+    private String approvalStatus;
+
+    @TableField("approved_by")
+    private String approvedBy;
+
+    @TableField("approved_at")
+    private LocalDateTime approvedAt;
+
+    @TableField(value = "created_at", fill = FieldFill.INSERT)
+    private LocalDateTime createdAt;
+
+    @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updatedAt;
+
+    @TableField("created_by")
+    private String createdBy;
+
+    @TableField("updated_by")
+    private String updatedBy;
+
+    @TableField("org_code")
+    private String orgCode;
 
     /** 工单用料明细(非数据库字段) */
     @TableField(exist = false)

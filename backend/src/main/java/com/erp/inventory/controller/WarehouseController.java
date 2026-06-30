@@ -18,14 +18,14 @@ public class WarehouseController {
 
     @GetMapping("/list")
     public Result<List<Warehouse>> list(
-            @RequestParam(required = false) String warehouseCode,
-            @RequestParam(required = false) String warehouseName,
+            @RequestParam(required = false) String stockCode,
+            @RequestParam(required = false) String stockName,
             @RequestParam(required = false) String status) {
         QueryWrapper<Warehouse> wrapper = new QueryWrapper<>();
-        if (warehouseCode != null && !warehouseCode.isBlank()) wrapper.like("warehouse_code", warehouseCode);
-        if (warehouseName != null && !warehouseName.isBlank()) wrapper.like("warehouse_name", warehouseName);
+        if (stockCode != null && !stockCode.isBlank()) wrapper.like("stock_code", stockCode);
+        if (stockName != null && !stockName.isBlank()) wrapper.like("stock_name", stockName);
         if (status != null && !status.isBlank()) wrapper.eq("status", status);
-        wrapper.orderByAsc("warehouse_code");
+        wrapper.orderByAsc("stock_code");
         return Result.success(warehouseService.list(wrapper));
     }
 
@@ -47,7 +47,7 @@ public class WarehouseController {
 
     @PutMapping("/{id}")
     public Result<Warehouse> update(@PathVariable Long id, @RequestBody Warehouse warehouse) {
-        warehouse.setId(id);
+        warehouse.setStockId(id);
         warehouseService.updateById(warehouse);
         return Result.success(warehouse);
     }

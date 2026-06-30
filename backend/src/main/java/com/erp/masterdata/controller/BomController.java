@@ -1,11 +1,9 @@
 package com.erp.masterdata.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.erp.common.PageResult;
 import com.erp.common.Result;
 import com.erp.masterdata.entity.Bom;
-import com.erp.masterdata.entity.Material;
 import com.erp.masterdata.service.BomService;
-import com.erp.masterdata.service.MaterialService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,37 +12,49 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/bom")
+@RequestMapping("/api/masterdata/bom")
 @RequiredArgsConstructor
 public class BomController {
 
     private final BomService bomService;
-    private final MaterialService materialService;
 
-    /** 查询某物料的BOM列表 */
-    @GetMapping("/list")
-    public Result<List<Bom>> list(@RequestParam String parentMaterialCode) {
-        return Result.success(bomService.list(
-                new QueryWrapper<Bom>().eq("parent_material_code", parentMaterialCode)));
+    /** 分页查询 */
+    @GetMapping("/page")
+    public Result<PageResult<Bom>> page(@RequestParam(defaultValue = "1") int current,
+                                        @RequestParam(defaultValue = "10") int size,
+                                        @RequestParam(required = false) String keyword,
+                                        @RequestParam(required = false) String status) {
+        return Result.success(bomService.pageQuery(current, size, keyword, status));
     }
 
-    /** 新增BOM项 */
+    /** 全量列表 */
+    @GetMapping("/list")
+    public Result<List<Bom>> list() {
+        return Result.success(bomService.list());
+    }
+
+    /** 详情(含明细) */
+    @GetMapping("/{id}")
+    public Result<Bom> detail(@PathVariable Long id) {
+        return Result.success(bomService.getDetail(id));
+    }
+
+    /** 新增 */
     @PostMapping
     public Result<Bom> create(@RequestBody Bom bom) {
-        if (bom.getVersion() == null) bom.setVersion("1.0");
-        bomService.save(bom);
+        bomService.saveBomWithItems(bom, bom.getItems());
         return Result.success(bom);
     }
 
-    /** 更新BOM项 */
+    /** 编辑 */
     @PutMapping("/{id}")
-    public Result<Void> update(@PathVariable Long id, @RequestBody Bom bom) {
-        bom.setId(id);
-        bomService.updateById(bom);
-        return Result.success();
+    public Result<Bom> update(@PathVariable Long id, @RequestBody Bom bom) {
+        bom.setBomId(id);
+        bomService.saveBomWithItems(bom, bom.getItems());
+        return Result.success(bom);
     }
 
-    /** 删除BOM项 */
+    /** 删除 */
     @DeleteMapping("/{id}")
     public Result<Void> delete(@PathVariable Long id) {
         bomService.removeById(id);

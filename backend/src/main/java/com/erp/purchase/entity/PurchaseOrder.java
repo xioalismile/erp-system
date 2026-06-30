@@ -2,68 +2,125 @@ package com.erp.purchase.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @TableName("purchase_order")
 public class PurchaseOrder {
-    @TableId(type = IdType.AUTO)
-    private Long id;
 
-    /** 采购订单编号: PO+年月日+4位流水 */
+    @TableId(value = "order_id", type = IdType.AUTO)
+    private Long orderId;
+
+    @TableField("order_no")
     private String orderNo;
 
+    @TableField("order_date")
     private LocalDate orderDate;
 
+    @TableField("supplier_id")
     private Long supplierId;
-    private String supplierCode;
-    private String supplierName;
+
+    @TableField("contact_person")
     private String contactPerson;
+
+    @TableField("contact_phone")
     private String contactPhone;
-    private String deliveryAddress;
 
-    private String buyer;
-    private String department;
-    private String currency;
+    @TableField("department_id")
+    private Long departmentId;
+
+    @TableField("buyer_id")
+    private Long buyerId;
+
+    @TableField("currency_id")
+    private Long currencyId;
+
+    @TableField("exchange_rate")
     private BigDecimal exchangeRate;
-    private String paymentMethod;
-    private LocalDate expectedDeliveryDate;
 
-    /** 来源类型: MANUAL手动 / SALE_ORDER销售转采购 / MRP MRP生成 / AI AI创建 */
-    private String sourceType;
-
-    /** 来源销售订单号(转单时记录) */
-    private String sourceOrderNo;
-
+    @TableField("total_amount")
     private BigDecimal totalAmount;
+
+    @TableField("tax_amount")
     private BigDecimal taxAmount;
-    private BigDecimal totalWithTax;
 
-    /** 草稿/已确认/已入库/已开票/已完成/已取消 */
-    private String status;
+    @TableField("discount_rate")
+    private BigDecimal discountRate;
 
-    /** 入库状态: 未入库/部分入库/已入库 */
-    private String inboundStatus;
+    @TableField("discount_amount")
+    private BigDecimal discountAmount;
 
-    private String auditor;
-    private LocalDate auditDate;
+    @TableField("net_amount")
+    private BigDecimal netAmount;
+
+    @TableField("prepayment_amount")
+    private BigDecimal prepaymentAmount;
+
+    @TableField("delivery_date")
+    private LocalDate deliveryDate;
+
+    @TableField("delivery_place")
+    private String deliveryPlace;
+
+    @TableField("payment_term_id")
+    private Long paymentTermId;
+
+    @TableField("source_bill_type")
+    private String sourceBillType;
+
+    @TableField("source_bill_no")
+    private String sourceBillNo;
+
+    @TableField("request_no")
+    private String requestNo;
+
+    @TableField("remark")
     private String remark;
 
-    @TableField(fill = FieldFill.INSERT)
+    @TableField("attachment_urls")
+    private String attachmentUrls;
+
+    @TableField("status")
+    private String status;
+
+    @TableField("approval_status")
+    private String approvalStatus;
+
+    @TableField("approved_by")
+    private String approvedBy;
+
+    @TableField("approved_at")
+    private LocalDateTime approvedAt;
+
+    @TableField("closed_by")
+    private String closedBy;
+
+    @TableField("closed_at")
+    private LocalDateTime closedAt;
+
+    @TableField("closed_reason")
+    private String closedReason;
+
+    @TableField(value = "created_at", fill = FieldFill.INSERT)
+    private LocalDateTime createdAt;
+
+    @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updatedAt;
+
+    @TableField("created_by")
     private String createdBy;
-    @TableField(fill = FieldFill.INSERT)
-    private Date createdAt;
-    @TableField(fill = FieldFill.INSERT_UPDATE)
+
+    @TableField("updated_by")
     private String updatedBy;
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Date updatedAt;
 
-    @TableLogic
-    private Integer deleted;
+    @TableField("org_code")
+    private String orgCode;
 
+    /** 采购订单明细列表(非数据库字段) */
     @TableField(exist = false)
     private List<PurchaseOrderItem> items;
 }

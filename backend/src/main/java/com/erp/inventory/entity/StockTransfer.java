@@ -1,0 +1,84 @@
+package com.erp.inventory.entity;
+
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+/**
+ * 库存调拨单(对应 stock_transfer 表)
+ */
+@Data
+@TableName("stock_transfer")
+public class StockTransfer {
+
+    @TableId(value = "transfer_id", type = IdType.AUTO)
+    private Long transferId;
+
+    @TableField("transfer_no")
+    private String transferNo;
+
+    @TableField("transfer_date")
+    private LocalDate transferDate;
+
+    @TableField("from_stock_id")
+    private Long fromStockId;
+
+    @TableField("to_stock_id")
+    private Long toStockId;
+
+    @TableField("handler_id")
+    private Long handlerId;
+
+    @TableField("currency_id")
+    private Long currencyId;
+
+    @TableField("exchange_rate")
+    private BigDecimal exchangeRate;
+
+    @TableField("total_amount")
+    private BigDecimal totalAmount;
+
+    @TableField("transfer_type")
+    private String transferType;
+
+    @TableField("remark")
+    private String remark;
+
+    @TableField("attachment_urls")
+    private String attachmentUrls;
+
+    @TableField("status")
+    private String status;
+
+    @TableField("approval_status")
+    private String approvalStatus;
+
+    @TableField("approved_by")
+    private String approvedBy;
+
+    @TableField("approved_at")
+    private LocalDateTime approvedAt;
+
+    @TableField(value = "created_at", fill = FieldFill.INSERT)
+    private LocalDateTime createdAt;
+
+    @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updatedAt;
+
+    @TableField("created_by")
+    private String createdBy;
+
+    @TableField("updated_by")
+    private String updatedBy;
+
+    @TableField("org_code")
+    private String orgCode;
+
+    /** 调拨明细列表(非数据库字段) */
+    @TableField(exist = false)
+    private List<StockTransferItem> items;
+}

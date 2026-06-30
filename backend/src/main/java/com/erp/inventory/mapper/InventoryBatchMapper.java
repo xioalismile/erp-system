@@ -10,18 +10,16 @@ import java.util.List;
 
 @Mapper
 public interface InventoryBatchMapper extends BaseMapper<InventoryBatch> {
-    @Select("SELECT * FROM inventory_batch WHERE material_code = #{materialCode} AND warehouse_code = #{warehouseCode} AND deleted = 0 ORDER BY production_date ASC")
-    List<InventoryBatch> selectByMaterialAndWarehouse(@Param("materialCode") String materialCode, @Param("warehouseCode") String warehouseCode);
 
-    @Select("SELECT * FROM inventory_batch WHERE batch_no = #{batchNo} AND deleted = 0")
+    @Select("SELECT * FROM batch WHERE material_id = #{materialId} AND deleted = 0 ORDER BY production_date ASC")
+    List<InventoryBatch> selectByMaterial(@Param("materialId") Long materialId);
+
+    @Select("SELECT * FROM batch WHERE batch_no = #{batchNo} AND deleted = 0")
     InventoryBatch selectByBatchNo(@Param("batchNo") String batchNo);
 
-    @Select("SELECT * FROM inventory_batch WHERE warehouse_code = #{warehouseCode} AND deleted = 0 ORDER BY material_code")
-    List<InventoryBatch> selectByWarehouse(@Param("warehouseCode") String warehouseCode);
-
-    @Select("SELECT * FROM inventory_batch WHERE expiry_date IS NOT NULL AND expiry_date < CURRENT_DATE AND deleted = 0 ORDER BY expiry_date")
+    @Select("SELECT * FROM batch WHERE expiry_date IS NOT NULL AND expiry_date < CURRENT_DATE AND deleted = 0 ORDER BY expiry_date")
     List<InventoryBatch> selectExpiredBatches();
 
-    @Select("SELECT * FROM inventory_batch WHERE expiry_date IS NOT NULL AND expiry_date BETWEEN CURRENT_DATE AND CURRENT_DATE + #{days} AND deleted = 0 ORDER BY expiry_date")
+    @Select("SELECT * FROM batch WHERE expiry_date IS NOT NULL AND expiry_date BETWEEN CURRENT_DATE AND CURRENT_DATE + #{days} AND deleted = 0 ORDER BY expiry_date")
     List<InventoryBatch> selectExpiringBatches(@Param("days") Integer days);
 }

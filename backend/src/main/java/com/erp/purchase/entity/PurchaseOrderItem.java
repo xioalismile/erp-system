@@ -2,48 +2,96 @@ package com.erp.purchase.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @TableName("purchase_order_item")
 public class PurchaseOrderItem {
-    @TableId(type = IdType.AUTO)
-    private Long id;
 
+    @TableId(value = "order_item_id", type = IdType.AUTO)
+    private Long orderItemId;
+
+    @TableField("order_id")
     private Long orderId;
+
+    @TableField("line_no")
     private Integer lineNo;
+
+    @TableField("material_id")
     private Long materialId;
+
+    @TableField("material_code")
     private String materialCode;
+
+    @TableField("material_name")
     private String materialName;
+
+    @TableField("specification")
     private String specification;
-    private String unit;
 
-    /** 入库仓库 */
-    private String warehouse;
+    @TableField("unit_id")
+    private Long unitId;
 
+    @TableField("quantity")
     private BigDecimal quantity;
 
-    /** 已入库数量 */
+    @TableField("received_quantity")
     private BigDecimal receivedQuantity;
 
+    @TableField("unit_price")
     private BigDecimal unitPrice;
-    private BigDecimal discountRate;
-    private BigDecimal discountedPrice;
-    private BigDecimal amount;
+
+    @TableField("tax_rate")
     private BigDecimal taxRate;
+
+    @TableField("discount_rate")
+    private BigDecimal discountRate;
+
+    @TableField("discount_amount")
+    private BigDecimal discountAmount;
+
+    @TableField("amount")
+    private BigDecimal amount;
+
+    @TableField("tax_amount")
     private BigDecimal taxAmount;
-    private BigDecimal totalAmount;
+
+    @TableField("net_amount")
+    private BigDecimal netAmount;
+
+    @TableField("delivery_date")
     private LocalDate deliveryDate;
 
-    /** 建议下单日期(MRP建议) */
-    private LocalDate suggestedOrderDate;
+    @TableField("delivery_place")
+    private String deliveryPlace;
 
-    /** 来源销售订单明细ID(转单时记录) */
-    private Long sourceOrderItemId;
+    @TableField("source_bill_type")
+    private String sourceBillType;
 
+    @TableField("source_bill_no")
+    private String sourceBillNo;
+
+    @TableField("source_line_no")
+    private Integer sourceLineNo;
+
+    @TableField("request_line_no")
+    private Integer requestLineNo;
+
+    @TableField("remark")
     private String remark;
 
-    @TableLogic
-    private Integer deleted;
+    @TableField(value = "created_at", fill = FieldFill.INSERT)
+    private LocalDateTime createdAt;
+
+    @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updatedAt;
+
+    @TableField("created_by")
+    private String createdBy;
+
+    @TableField("updated_by")
+    private String updatedBy;
 }

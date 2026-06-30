@@ -10,6 +10,6 @@ import java.util.List;
 
 @Mapper
 public interface LocationMapper extends BaseMapper<Location> {
-    @Select("SELECT * FROM location WHERE warehouse_code = #{warehouseCode} AND deleted = 0 ORDER BY location_code")
+    @Select("SELECT l.* FROM location l JOIN warehouse w ON l.stock_id = w.stock_id WHERE w.stock_code = #{warehouseCode} ORDER BY l.bin_code")
     List<Location> selectByWarehouse(@Param("warehouseCode") String warehouseCode);
 }

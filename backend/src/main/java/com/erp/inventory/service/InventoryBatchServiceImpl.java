@@ -19,18 +19,13 @@ import java.util.*;
 public class InventoryBatchServiceImpl extends ServiceImpl<InventoryBatchMapper, InventoryBatch> implements InventoryBatchService {
 
     @Override
-    public List<InventoryBatch> getByMaterialAndWarehouse(String materialCode, String warehouseCode) {
-        return baseMapper.selectByMaterialAndWarehouse(materialCode, warehouseCode);
+    public List<InventoryBatch> getByMaterial(Long materialId) {
+        return baseMapper.selectByMaterial(materialId);
     }
 
     @Override
     public InventoryBatch getByBatchNo(String batchNo) {
         return baseMapper.selectByBatchNo(batchNo);
-    }
-
-    @Override
-    public List<InventoryBatch> getByWarehouse(String warehouseCode) {
-        return baseMapper.selectByWarehouse(warehouseCode);
     }
 
     @Override
@@ -44,7 +39,7 @@ public class InventoryBatchServiceImpl extends ServiceImpl<InventoryBatchMapper,
     }
 
     @Override
-    public String generateBatchNo(String materialCode) {
+    public String generateBatchNo(Long materialId) {
         String prefix = "B" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         QueryWrapper<InventoryBatch> wrapper = new QueryWrapper<>();
         wrapper.likeRight("batch_no", prefix).orderByDesc("batch_no").last("LIMIT 1");
@@ -59,10 +54,10 @@ public class InventoryBatchServiceImpl extends ServiceImpl<InventoryBatchMapper,
 
     @Override
     @Transactional
-    public Map<String, Object> allocateByFifo(String materialCode, String warehouseCode, BigDecimal quantity) {
-        List<InventoryBatch> batches = getByMaterialAndWarehouse(materialCode, warehouseCode);
+    public Map<String, Object> allocateByFifo(Long materialId, BigDecimal quantity) {
+        List<InventoryBatch> batches = getByMaterial(materialId);
         if (batches == null || batches.isEmpty()) {
-            throw new BusinessException("物料 " + materialCode + " 在仓库 " + warehouseCode + " 下无批次库存");
+            throw new BusinessException("物料 [" + materialId + "] 无批次库存");
         }
 
         BigDecimal allocated = BigDecimal.ZERO;
@@ -72,14 +67,14 @@ public class InventoryBatchServiceImpl extends ServiceImpl<InventoryBatchMapper,
             if (allocated.compareTo(quantity) >= 0) break;
 
             BigDecimal available = batch.getQuantity().subtract(
-                    batch.getLockedQuantity() != null ? batch.getLockedQuantity() : BigDecimal.ZERO);
+                    batch.getFrozenQuantity() != null ? batch.getFrozenQuantity() : BigDecimal.ZERO);
 
             if (available.compareTo(BigDecimal.ZERO) <= 0) continue;
 
             BigDecimal toAllocate = available.min(quantity.subtract(allocated));
 
             Map<String, Object> allocation = new HashMap<>();
-            allocation.put("batchId", batch.getId());
+            allocation.put("batchId", batch.getBatchId());
             allocation.put("batchNo", batch.getBatchNo());
             allocation.put("quantity", toAllocate);
             allocation.put("expiryDate", batch.getExpiryDate());
@@ -89,7 +84,7 @@ public class InventoryBatchServiceImpl extends ServiceImpl<InventoryBatchMapper,
         }
 
         if (allocated.compareTo(quantity) < 0) {
-            throw new BusinessException("物料 " + materialCode + " 库存不足: 需要 " + quantity + "，可用 " + allocated);
+            throw new BusinessException("物料 [" + materialId + "] 库存不足: 需要 " + quantity + "，可用 " + allocated);
         }
 
         Map<String, Object> result = new HashMap<>();
@@ -107,13 +102,14 @@ public class InventoryBatchServiceImpl extends ServiceImpl<InventoryBatchMapper,
         }
 
         BigDecimal available = batch.getQuantity().subtract(
-                batch.getLockedQuantity() != null ? batch.getLockedQuantity() : BigDecimal.ZERO);
+                batch.getFrozenQuantity() != null ? batch.getFrozenQuantity() : BigDecimal.ZERO);
 
         if (available.compareTo(quantity) < 0) {
-            throw new BusinessException("批次 " + batch.getBatchNo() + " 库存不足");
+            throw new BusinessException("批次 [" + batch.getBatchNo() + "] 库存不足");
         }
 
         batch.setQuantity(batch.getQuantity().subtract(quantity));
+        batch.setAvailableQuantity(batch.getAvailableQuantity().subtract(quantity));
         updateById(batch);
         log.info("批次扣减: {} 扣减数量: {}", batch.getBatchNo(), quantity);
     }
@@ -122,7 +118,16 @@ public class InventoryBatchServiceImpl extends ServiceImpl<InventoryBatchMapper,
     @Transactional
     public void addBatch(InventoryBatch batch) {
         if (batch.getBatchNo() == null || batch.getBatchNo().isBlank()) {
-            batch.setBatchNo(generateBatchNo(batch.getMaterialCode()));
+            batch.setBatchNo(generateBatchNo(batch.getMaterialId()));
+        }
+        if (batch.getQuantity() != null && batch.getAvailableQuantity() == null) {
+            batch.setAvailableQuantity(batch.getQuantity());
+        }
+        if (batch.getFrozenQuantity() == null) {
+            batch.setFrozenQuantity(BigDecimal.ZERO);
+        }
+        if (batch.getStatus() == null) {
+            batch.setStatus("正常");
         }
         save(batch);
         log.info("批次新增: {} 数量: {}", batch.getBatchNo(), batch.getQuantity());

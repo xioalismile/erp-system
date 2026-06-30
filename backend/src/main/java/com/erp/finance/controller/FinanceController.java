@@ -48,10 +48,10 @@ public class FinanceController {
     @PostMapping("/ar/{id}/receive")
     public Result<Void> receivePayment(@PathVariable Long id, @RequestBody Map<String, Object> body, HttpServletRequest req) {
         BigDecimal amount = new BigDecimal(body.get("amount").toString());
-        String paymentMethod = (String) body.get("paymentMethod");
-        String transactionNo = (String) body.get("transactionNo");
+        Long settleModeId = body.get("settleModeId") != null ? Long.valueOf(body.get("settleModeId").toString()) : null;
+        String documentNo = (String) body.get("documentNo");
         String operator = (String) req.getAttribute("currentUsername");
-        financeService.receivePayment(id, amount, paymentMethod, transactionNo, operator);
+        financeService.receivePayment(id, amount, settleModeId, documentNo, operator);
         return Result.success();
     }
 
@@ -80,10 +80,10 @@ public class FinanceController {
     @PostMapping("/ap/{id}/pay")
     public Result<Void> makePayment(@PathVariable Long id, @RequestBody Map<String, Object> body, HttpServletRequest req) {
         BigDecimal amount = new BigDecimal(body.get("amount").toString());
-        String paymentMethod = (String) body.get("paymentMethod");
-        String transactionNo = (String) body.get("transactionNo");
+        Long settleModeId = body.get("settleModeId") != null ? Long.valueOf(body.get("settleModeId").toString()) : null;
+        String documentNo = (String) body.get("documentNo");
         String operator = (String) req.getAttribute("currentUsername");
-        financeService.makePayment(id, amount, paymentMethod, transactionNo, operator);
+        financeService.makePayment(id, amount, settleModeId, documentNo, operator);
         return Result.success();
     }
 

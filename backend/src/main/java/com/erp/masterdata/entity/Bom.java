@@ -90,10 +90,6 @@ public class Bom {
     @TableField("updated_by")
     private String updatedBy;
 
-    @TableLogic
-    @TableField("deleted")
-    private Integer deleted;
-
     /** BOM 明细列表(非数据库字段) */
     @TableField(exist = false)
     private List<BomItem> items;

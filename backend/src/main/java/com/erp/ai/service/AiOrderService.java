@@ -19,6 +19,7 @@ import java.util.*;
 
 /**
  * AI订单服务 - 处理AI创建/查询订单的业务逻辑
+ * 已对齐PG新实体字段(SaleOrder: customerId/orderDate/contactPerson/contactPhone/currencyId/exchangeRate/status)
  */
 @Slf4j
 @Service("aiOrderService")
@@ -45,27 +46,23 @@ public class AiOrderService {
             return Map.of("success", false, "message", "未找到客户: " + customerName);
         }
 
-        // 构建订单
+        // 构建订单(对齐PG sale_order表字段)
         SaleOrder order = new SaleOrder();
         order.setOrderDate(LocalDate.now());
-        order.setCustomerId(customer.getId());
-        order.setCustomerCode(customer.getCustomerCode());
-        order.setCustomerName(customer.getCustomerName());
+        order.setCustomerId(customer.getCustomerId());
         order.setContactPerson(customer.getContactPerson());
         order.setContactPhone(customer.getContactPhone());
-        order.setDeliveryAddress(customer.getAddress());
-        order.setCurrency("CNY");
         order.setExchangeRate(BigDecimal.ONE);
-        order.setPaymentMethod(customer.getPaymentMethod() != null ? customer.getPaymentMethod() : "月结30天");
+        order.setDiscountRate(BigDecimal.ZERO);
+        order.setDiscountAmount(BigDecimal.ZERO);
         if (deliveryDateStr != null) {
-            order.setExpectedDeliveryDate(LocalDate.parse(deliveryDateStr));
+            order.setDeliveryDate(LocalDate.parse(deliveryDateStr));
         }
         order.setStatus("草稿");
-        order.setSourceChannel("AI");
+        order.setApprovalStatus("待审核");
         order.setCreatedBy(erpUserId != null ? erpUserId.toString() : "AI");
-        order.setCreatedAt(new Date());
 
-        // 构建明细
+        // 构建明细(对齐PG sale_order_item表字段)
         List<SaleOrderItem> orderItems = new ArrayList<>();
         BigDecimal totalAmount = BigDecimal.ZERO;
         int lineNo = 10;
@@ -90,19 +87,19 @@ public class AiOrderService {
 
                 SaleOrderItem orderItem = new SaleOrderItem();
                 orderItem.setLineNo(lineNo);
-                orderItem.setMaterialId(material.getId());
+                orderItem.setMaterialId(material.getMaterialId());
                 orderItem.setMaterialCode(material.getMaterialCode());
                 orderItem.setMaterialName(material.getMaterialName());
-                orderItem.setSpecification(material.getSpecification());
-                orderItem.setUnit(material.getUnit());
+                orderItem.setSpecification(material.getModel());
+                orderItem.setUnitId(material.getBaseUnitId());
                 orderItem.setQuantity(quantity);
                 orderItem.setUnitPrice(unitPrice);
                 orderItem.setDiscountRate(BigDecimal.ZERO);
                 BigDecimal amount = unitPrice.multiply(quantity);
                 orderItem.setAmount(amount);
-                orderItem.setTaxRate(new BigDecimal("13"));
-                orderItem.setTaxAmount(amount.multiply(new BigDecimal("0.13")));
-                orderItem.setTotalAmount(amount.add(orderItem.getTaxAmount()));
+                orderItem.setTaxRate(material.getTaxRate() != null ? material.getTaxRate() : new BigDecimal("13"));
+                orderItem.setTaxAmount(amount.multiply(orderItem.getTaxRate()).divide(new BigDecimal("100")));
+                orderItem.setNetAmount(amount.add(orderItem.getTaxAmount()));
                 orderItems.add(orderItem);
                 totalAmount = totalAmount.add(amount);
                 lineNo += 10;
@@ -111,12 +108,12 @@ public class AiOrderService {
 
         order.setTotalAmount(totalAmount);
         order.setTaxAmount(totalAmount.multiply(new BigDecimal("0.13")));
-        order.setTotalWithTax(totalAmount.add(order.getTaxAmount()));
+        order.setNetAmount(totalAmount.add(order.getTaxAmount()));
 
         // 保存
         saleOrderService.saveOrderWithItems(order, orderItems);
 
-        log.info("[AI下单] 订单创建成功: {} 客户: {} 金额: {}", order.getOrderNo(), customer.getCustomerName(), totalAmount);
+        log.info("[AI下单] 订单创建成功: {} 客户ID: {} 金额: {}", order.getOrderNo(), customer.getCustomerId(), totalAmount);
 
         return Map.of(
                 "success", true,
@@ -128,30 +125,40 @@ public class AiOrderService {
     }
 
     /**
-     * AI查询订单
+     * AI查询订单(通过customer_id关联customer表获取客户名)
      */
     public Map<String, Object> queryOrders(Map<String, Object> params) {
-        String customerName = (String) params.get("customerName");
         String status = (String) params.get("status");
         String month = (String) params.get("month");
 
         QueryWrapper<SaleOrder> wrapper = new QueryWrapper<>();
         wrapper.orderByDesc("created_at");
         wrapper.last("LIMIT 20");
-        if (customerName != null) wrapper.like("customer_name", customerName);
         if (status != null) wrapper.eq("status", status);
         if (month != null) wrapper.like("order_date", month);
 
         List<SaleOrder> orders = saleOrderService.list(wrapper);
+        // 预加载客户名
+        Set<Long> customerIds = new HashSet<>();
+        for (SaleOrder o : orders) {
+            if (o.getCustomerId() != null) customerIds.add(o.getCustomerId());
+        }
+        Map<Long, String> customerNameMap = new HashMap<>();
+        if (!customerIds.isEmpty()) {
+            List<Customer> customers = customerService.listByIds(customerIds);
+            for (Customer c : customers) {
+                customerNameMap.put(c.getCustomerId(), c.getCustomerName());
+            }
+        }
+
         List<Map<String, Object>> result = new ArrayList<>();
         for (SaleOrder o : orders) {
             Map<String, Object> m = new LinkedHashMap<>();
             m.put("orderNo", o.getOrderNo());
-            m.put("customerName", o.getCustomerName());
+            m.put("customerName", customerNameMap.getOrDefault(o.getCustomerId(), "未知客户"));
             m.put("orderDate", o.getOrderDate());
             m.put("totalAmount", o.getTotalAmount());
             m.put("status", o.getStatus());
-            m.put("sourceChannel", o.getSourceChannel());
             result.add(m);
         }
         return Map.of("orders", result, "total", orders.size());

@@ -99,15 +99,25 @@ public class MrpCalculationService {
             BigDecimal inTransit = BigDecimal.ZERO;
             BigDecimal allocated = BigDecimal.ZERO;
 
-            List<Inventory> invList = inventoryService.list(new QueryWrapper<Inventory>().eq("material_code", materialCode));
-            for (Inventory inv : invList) {
-                onHand = onHand.add(inv.getQuantity() != null ? inv.getQuantity() : BigDecimal.ZERO);
-                safetyStock = inv.getSafetyStock() != null ? inv.getSafetyStock() : BigDecimal.ZERO;
+            // 通过 materialCode 查询 materialId (Inventory 实体无 materialCode 字段, 已对齐 inventory_current 表)
+            com.erp.masterdata.entity.Material material = materialService.getOne(
+                    new QueryWrapper<com.erp.masterdata.entity.Material>().eq("material_code", materialCode));
+            Long materialId = material != null ? material.getMaterialId() : null;
+            if (material != null) {
+                safetyStock = material.getMinStock() != null ? material.getMinStock() : BigDecimal.ZERO;
             }
 
-            List<InventoryBatch> batches = batchService.getByMaterialAndWarehouse(materialCode, "WH001");
-            for (InventoryBatch batch : batches) {
-                onHand = onHand.add(batch.getQuantity() != null ? batch.getQuantity() : BigDecimal.ZERO);
+            if (materialId != null) {
+                List<Inventory> invList = inventoryService.list(
+                        new QueryWrapper<Inventory>().eq("material_id", materialId));
+                for (Inventory inv : invList) {
+                    onHand = onHand.add(inv.getQuantity() != null ? inv.getQuantity() : BigDecimal.ZERO);
+                }
+
+                List<InventoryBatch> batches = batchService.getByMaterial(materialId);
+                for (InventoryBatch batch : batches) {
+                    onHand = onHand.add(batch.getQuantity() != null ? batch.getQuantity() : BigDecimal.ZERO);
+                }
             }
 
             inTransit = calculateInTransit(materialCode);
@@ -183,11 +193,12 @@ public class MrpCalculationService {
 
     private BigDecimal calculateAllocated(String materialCode) {
         BigDecimal allocated = BigDecimal.ZERO;
+        // 已下达状态的工单代表在产, 其未领料部分计入已分配
         List<WorkOrder> orders = workOrderMapper.selectList(
-                new QueryWrapper<WorkOrder>().eq("status", "已开工"));
+                new QueryWrapper<WorkOrder>().eq("status", "已下达"));
         for (WorkOrder order : orders) {
             List<WorkOrderMaterial> materials = workOrderMaterialMapper.selectList(
-                    new QueryWrapper<WorkOrderMaterial>().eq("work_order_id", order.getId())
+                    new QueryWrapper<WorkOrderMaterial>().eq("order_id", order.getOrderId())
                             .eq("material_code", materialCode));
             for (WorkOrderMaterial mat : materials) {
                 BigDecimal required = mat.getRequiredQuantity() != null ? mat.getRequiredQuantity() : BigDecimal.ZERO;

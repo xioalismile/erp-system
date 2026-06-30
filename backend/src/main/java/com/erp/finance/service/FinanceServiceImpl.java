@@ -13,6 +13,10 @@ import com.erp.finance.mapper.AccountsPayableMapper;
 import com.erp.finance.mapper.AccountsReceivableMapper;
 import com.erp.finance.mapper.PaymentReceiptMapper;
 import com.erp.finance.mapper.PaymentVoucherMapper;
+import com.erp.masterdata.entity.Customer;
+import com.erp.masterdata.entity.Supplier;
+import com.erp.masterdata.service.CustomerService;
+import com.erp.masterdata.service.SupplierService;
 import com.erp.sale.entity.SaleOrder;
 import com.erp.sale.service.SaleOrderService;
 import com.erp.purchase.entity.PurchaseOrder;
@@ -27,6 +31,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * 财务服务 - 已对齐PG新实体字段
+ * AccountsReceivable: arId/arNo/customerId/customerName/currencyId/totalAmount/paidAmount/balanceAmount/dueDate/sourceBillType/sourceBillNo/status/approvalStatus
+ * AccountsPayable: apId/apNo/supplierId/supplierName/...
+ * PaymentReceipt: receiptId/receiptNo/customerId/customerName/...
+ * PaymentVoucher: paymentId/paymentNo/supplierId/supplierName/...
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -39,6 +50,8 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
     private final PaymentVoucherMapper voucherMapper;
     private final SaleOrderService saleOrderService;
     private final PurchaseOrderService purchaseOrderService;
+    private final CustomerService customerService;
+    private final SupplierService supplierService;
 
     // ========== 应收账款 ==========
 
@@ -50,27 +63,39 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
 
         // 检查是否已生成应收
         AccountsReceivable existing = arMapper.selectOne(
-                new QueryWrapper<AccountsReceivable>().eq("source_id", saleOrderId).eq("source_type", "SALE_ORDER"));
+                new QueryWrapper<AccountsReceivable>().eq("source_bill_no", order.getOrderNo()).eq("source_bill_type", "销售订单"));
         if (existing != null) {
             throw new BusinessException("该销售订单已生成应收单");
         }
 
+        // 通过customerId查询客户名
+        String customerName = "未知客户";
+        if (order.getCustomerId() != null) {
+            Customer customer = customerService.getById(order.getCustomerId());
+            if (customer != null) customerName = customer.getCustomerName();
+        }
+
         AccountsReceivable ar = new AccountsReceivable();
         ar.setArNo(generateArNo());
-        ar.setSourceType("SALE_ORDER");
-        ar.setSourceId(saleOrderId);
-        ar.setSourceNo(order.getOrderNo());
+        ar.setArDate(LocalDate.now());
         ar.setCustomerId(order.getCustomerId());
-        ar.setCustomerCode(order.getCustomerCode());
-        ar.setCustomerName(order.getCustomerName());
-        ar.setTotalAmount(order.getTotalWithTax());
-        ar.setReceivedAmount(BigDecimal.ZERO);
-        ar.setBalanceAmount(order.getTotalWithTax());
-        ar.setCurrency(order.getCurrency());
-        ar.setPaymentMethod(order.getPaymentMethod());
-        ar.setExpectedDate(order.getExpectedDeliveryDate());
+        ar.setCustomerName(customerName);
+        ar.setCurrencyId(order.getCurrencyId());
+        ar.setExchangeRate(order.getExchangeRate() != null ? order.getExchangeRate() : BigDecimal.ONE);
+        ar.setTotalAmount(order.getTotalAmount() != null ? order.getTotalAmount() : BigDecimal.ZERO);
+        ar.setTaxAmount(order.getTaxAmount() != null ? order.getTaxAmount() : BigDecimal.ZERO);
+        ar.setNetAmount(order.getNetAmount() != null ? order.getNetAmount() : BigDecimal.ZERO);
+        ar.setPaidAmount(BigDecimal.ZERO);
+        ar.setBalanceAmount(ar.getTotalAmount());
+        ar.setDueDate(order.getDeliveryDate());
+        ar.setPaymentTermId(order.getPaymentTermId());
+        ar.setSourceBillType("销售订单");
+        ar.setSourceBillNo(order.getOrderNo());
+        ar.setSalerId(order.getSalerId());
+        ar.setIsAutoGen((short) 1);
+        ar.setIsClosed((short) 0);
         ar.setStatus("待收款");
-        ar.setWriteOffStatus("未核销");
+        ar.setApprovalStatus("已审核");
 
         arMapper.insert(ar);
         log.info("应收账款生成: {} 来源: {} 金额: {}", ar.getArNo(), order.getOrderNo(), ar.getTotalAmount());
@@ -79,21 +104,19 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
 
     @Override
     @Transactional
-    public void receivePayment(Long arId, BigDecimal amount, String paymentMethod, String transactionNo, String operator) {
+    public void receivePayment(Long arId, BigDecimal amount, Long settleModeId, String documentNo, String operator) {
         AccountsReceivable ar = arMapper.selectById(arId);
         if (ar == null) throw new BusinessException("应收单不存在");
 
-        BigDecimal newReceived = ar.getReceivedAmount().add(amount);
-        ar.setReceivedAmount(newReceived);
+        BigDecimal newReceived = ar.getPaidAmount().add(amount);
+        ar.setPaidAmount(newReceived);
         ar.setBalanceAmount(ar.getTotalAmount().subtract(newReceived));
 
         if (newReceived.compareTo(ar.getTotalAmount()) >= 0) {
             ar.setStatus("已结清");
-            ar.setWriteOffStatus("已核销");
-            ar.setSettledDate(LocalDate.now());
+            ar.setIsClosed((short) 1);
         } else if (newReceived.compareTo(BigDecimal.ZERO) > 0) {
             ar.setStatus("部分收款");
-            ar.setWriteOffStatus("部分核销");
         }
 
         arMapper.updateById(ar);
@@ -102,20 +125,20 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
         PaymentReceipt receipt = new PaymentReceipt();
         receipt.setReceiptNo(generateReceiptNo());
         receipt.setReceiptDate(LocalDate.now());
-        receipt.setArId(arId);
-        receipt.setArNo(ar.getArNo());
         receipt.setCustomerId(ar.getCustomerId());
-        receipt.setCustomerCode(ar.getCustomerCode());
         receipt.setCustomerName(ar.getCustomerName());
-        receipt.setSaleOrderId(ar.getSourceId());
-        receipt.setSaleOrderNo(ar.getSourceNo());
+        receipt.setSettleModeId(settleModeId);
+        receipt.setCurrencyId(ar.getCurrencyId());
+        receipt.setExchangeRate(ar.getExchangeRate());
+        receipt.setTotalAmount(ar.getTotalAmount());
         receipt.setAmount(amount);
-        receipt.setPaymentMethod(paymentMethod);
-        receipt.setTransactionNo(transactionNo);
-        receipt.setReceivedBy(operator);
+        receipt.setDiscountAmount(BigDecimal.ZERO);
+        receipt.setReceivedAmount(newReceived);
+        receipt.setDocumentNo(documentNo);
+        receipt.setSourceBillType("应收单");
+        receipt.setSourceBillNo(ar.getArNo());
         receipt.setStatus("已确认");
-        receipt.setConfirmedBy(operator);
-        receipt.setConfirmedDate(LocalDate.now());
+        receipt.setApprovalStatus("已审核");
         receiptMapper.insert(receipt);
 
         log.info("收款登记: {} 金额: {} 累计: {}", ar.getArNo(), amount, newReceived);
@@ -148,27 +171,39 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
 
         // 检查是否已生成应付
         AccountsPayable existing = apMapper.selectOne(
-                new QueryWrapper<AccountsPayable>().eq("source_id", purchaseOrderId).eq("source_type", "PURCHASE_ORDER"));
+                new QueryWrapper<AccountsPayable>().eq("source_bill_no", order.getOrderNo()).eq("source_bill_type", "采购订单"));
         if (existing != null) {
             throw new BusinessException("该采购订单已生成应付单");
         }
 
+        // 通过supplierId查询供应商名
+        String supplierName = "未知供应商";
+        if (order.getSupplierId() != null) {
+            Supplier supplier = supplierService.getById(order.getSupplierId());
+            if (supplier != null) supplierName = supplier.getSupplierName();
+        }
+
         AccountsPayable ap = new AccountsPayable();
         ap.setApNo(generateApNo());
-        ap.setSourceType("PURCHASE_ORDER");
-        ap.setSourceId(purchaseOrderId);
-        ap.setSourceNo(order.getOrderNo());
+        ap.setApDate(LocalDate.now());
         ap.setSupplierId(order.getSupplierId());
-        ap.setSupplierCode(order.getSupplierCode());
-        ap.setSupplierName(order.getSupplierName());
-        ap.setTotalAmount(order.getTotalWithTax());
+        ap.setSupplierName(supplierName);
+        ap.setCurrencyId(order.getCurrencyId());
+        ap.setExchangeRate(order.getExchangeRate() != null ? order.getExchangeRate() : BigDecimal.ONE);
+        ap.setTotalAmount(order.getTotalAmount() != null ? order.getTotalAmount() : BigDecimal.ZERO);
+        ap.setTaxAmount(order.getTaxAmount() != null ? order.getTaxAmount() : BigDecimal.ZERO);
+        ap.setNetAmount(order.getNetAmount() != null ? order.getNetAmount() : BigDecimal.ZERO);
         ap.setPaidAmount(BigDecimal.ZERO);
-        ap.setBalanceAmount(order.getTotalWithTax());
-        ap.setCurrency(order.getCurrency());
-        ap.setPaymentMethod(order.getPaymentMethod());
-        ap.setExpectedDate(order.getExpectedDeliveryDate());
+        ap.setBalanceAmount(ap.getTotalAmount());
+        ap.setDueDate(order.getDeliveryDate());
+        ap.setPaymentTermId(order.getPaymentTermId());
+        ap.setSourceBillType("采购订单");
+        ap.setSourceBillNo(order.getOrderNo());
+        ap.setBuyerId(order.getBuyerId());
+        ap.setIsAutoGen((short) 1);
+        ap.setIsClosed((short) 0);
         ap.setStatus("待付款");
-        ap.setWriteOffStatus("未核销");
+        ap.setApprovalStatus("已审核");
 
         apMapper.insert(ap);
         log.info("应付账款生成: {} 来源: {} 金额: {}", ap.getApNo(), order.getOrderNo(), ap.getTotalAmount());
@@ -177,7 +212,7 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
 
     @Override
     @Transactional
-    public void makePayment(Long apId, BigDecimal amount, String paymentMethod, String transactionNo, String operator) {
+    public void makePayment(Long apId, BigDecimal amount, Long settleModeId, String documentNo, String operator) {
         AccountsPayable ap = apMapper.selectById(apId);
         if (ap == null) throw new BusinessException("应付单不存在");
 
@@ -187,33 +222,31 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
 
         if (newPaid.compareTo(ap.getTotalAmount()) >= 0) {
             ap.setStatus("已结清");
-            ap.setWriteOffStatus("已核销");
-            ap.setSettledDate(LocalDate.now());
+            ap.setIsClosed((short) 1);
         } else if (newPaid.compareTo(BigDecimal.ZERO) > 0) {
             ap.setStatus("部分付款");
-            ap.setWriteOffStatus("部分核销");
         }
 
         apMapper.updateById(ap);
 
         // 生成付款记录
         PaymentVoucher voucher = new PaymentVoucher();
-        voucher.setVoucherNo(generateVoucherNo());
+        voucher.setPaymentNo(generateVoucherNo());
         voucher.setPaymentDate(LocalDate.now());
-        voucher.setApId(apId);
-        voucher.setApNo(ap.getApNo());
         voucher.setSupplierId(ap.getSupplierId());
-        voucher.setSupplierCode(ap.getSupplierCode());
         voucher.setSupplierName(ap.getSupplierName());
-        voucher.setPurchaseOrderId(ap.getSourceId());
-        voucher.setPurchaseOrderNo(ap.getSourceNo());
+        voucher.setSettleModeId(settleModeId);
+        voucher.setCurrencyId(ap.getCurrencyId());
+        voucher.setExchangeRate(ap.getExchangeRate());
+        voucher.setTotalAmount(ap.getTotalAmount());
         voucher.setAmount(amount);
-        voucher.setPaymentMethod(paymentMethod);
-        voucher.setTransactionNo(transactionNo);
-        voucher.setPaidBy(operator);
+        voucher.setDiscountAmount(BigDecimal.ZERO);
+        voucher.setPaidAmount(newPaid);
+        voucher.setDocumentNo(documentNo);
+        voucher.setSourceBillType("应付单");
+        voucher.setSourceBillNo(ap.getApNo());
         voucher.setStatus("已确认");
-        voucher.setConfirmedBy(operator);
-        voucher.setConfirmedDate(LocalDate.now());
+        voucher.setApprovalStatus("已审核");
         voucherMapper.insert(voucher);
 
         log.info("付款登记: {} 金额: {} 累计: {}", ap.getApNo(), amount, newPaid);
@@ -245,7 +278,10 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
             receipt.setReceiptNo(generateReceiptNo());
         }
         if (receipt.getStatus() == null) receipt.setStatus("待确认");
+        if (receipt.getApprovalStatus() == null) receipt.setApprovalStatus("待审核");
         if (receipt.getReceiptDate() == null) receipt.setReceiptDate(LocalDate.now());
+        if (receipt.getExchangeRate() == null) receipt.setExchangeRate(BigDecimal.ONE);
+        if (receipt.getDiscountAmount() == null) receipt.setDiscountAmount(BigDecimal.ZERO);
         receiptMapper.insert(receipt);
         return receipt;
     }
@@ -272,14 +308,17 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
         }
 
         receipt.setStatus("已确认");
-        receipt.setConfirmedBy(confirmedBy);
-        receipt.setConfirmedDate(LocalDate.now());
+        receipt.setApprovalStatus("已审核");
+        receipt.setApprovedBy(confirmedBy);
+        receipt.setApprovedAt(java.time.LocalDateTime.now());
         receiptMapper.updateById(receipt);
 
-        // 更新应收
-        if (receipt.getArId() != null) {
-            receivePayment(receipt.getArId(), receipt.getAmount(),
-                    receipt.getPaymentMethod(), receipt.getTransactionNo(), confirmedBy);
+        // 若关联应收单，更新应收
+        if (receipt.getSourceBillNo() != null && "应收单".equals(receipt.getSourceBillType())) {
+            AccountsReceivable ar = arMapper.selectOne(new QueryWrapper<AccountsReceivable>().eq("ar_no", receipt.getSourceBillNo()));
+            if (ar != null) {
+                receivePayment(ar.getArId(), receipt.getAmount(), receipt.getSettleModeId(), receipt.getDocumentNo(), confirmedBy);
+            }
         }
 
         log.info("收款确认: {}", receipt.getReceiptNo());
@@ -290,11 +329,14 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
     @Override
     @Transactional
     public PaymentVoucher createVoucher(PaymentVoucher voucher) {
-        if (voucher.getVoucherNo() == null || voucher.getVoucherNo().isBlank()) {
-            voucher.setVoucherNo(generateVoucherNo());
+        if (voucher.getPaymentNo() == null || voucher.getPaymentNo().isBlank()) {
+            voucher.setPaymentNo(generateVoucherNo());
         }
         if (voucher.getStatus() == null) voucher.setStatus("待确认");
+        if (voucher.getApprovalStatus() == null) voucher.setApprovalStatus("待审核");
         if (voucher.getPaymentDate() == null) voucher.setPaymentDate(LocalDate.now());
+        if (voucher.getExchangeRate() == null) voucher.setExchangeRate(BigDecimal.ONE);
+        if (voucher.getDiscountAmount() == null) voucher.setDiscountAmount(BigDecimal.ZERO);
         voucherMapper.insert(voucher);
         return voucher;
     }
@@ -305,7 +347,7 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
         wrapper.orderByDesc("created_at");
         if (supplierName != null && !supplierName.isBlank()) wrapper.like("supplier_name", supplierName);
         if (status != null && !status.isBlank()) wrapper.eq("status", status);
-        if (voucherNo != null && !voucherNo.isBlank()) wrapper.like("voucher_no", voucherNo);
+        if (voucherNo != null && !voucherNo.isBlank()) wrapper.like("payment_no", voucherNo);
         Page<PaymentVoucher> page = new Page<>(current, size);
         Page<PaymentVoucher> result = voucherMapper.selectPage(page, wrapper);
         return PageResult.of(result.getRecords(), result.getTotal(), current, size);
@@ -321,17 +363,20 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
         }
 
         voucher.setStatus("已确认");
-        voucher.setConfirmedBy(confirmedBy);
-        voucher.setConfirmedDate(LocalDate.now());
+        voucher.setApprovalStatus("已审核");
+        voucher.setApprovedBy(confirmedBy);
+        voucher.setApprovedAt(java.time.LocalDateTime.now());
         voucherMapper.updateById(voucher);
 
-        // 更新应付
-        if (voucher.getApId() != null) {
-            makePayment(voucher.getApId(), voucher.getAmount(),
-                    voucher.getPaymentMethod(), voucher.getTransactionNo(), confirmedBy);
+        // 若关联应付单，更新应付
+        if (voucher.getSourceBillNo() != null && "应付单".equals(voucher.getSourceBillType())) {
+            AccountsPayable ap = apMapper.selectOne(new QueryWrapper<AccountsPayable>().eq("ap_no", voucher.getSourceBillNo()));
+            if (ap != null) {
+                makePayment(ap.getApId(), voucher.getAmount(), voucher.getSettleModeId(), voucher.getDocumentNo(), confirmedBy);
+            }
         }
 
-        log.info("付款确认: {}", voucher.getVoucherNo());
+        log.info("付款确认: {}", voucher.getPaymentNo());
     }
 
     // ========== 财务报表 ==========
@@ -340,32 +385,28 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
     public Map<String, Object> getSummary() {
         Map<String, Object> summary = new HashMap<>();
 
-        // 应收账款汇总
-        QueryWrapper<AccountsReceivable> arWrapper = new QueryWrapper<>();
-        List<AccountsReceivable> arList = arMapper.selectList(arWrapper);
+        List<AccountsReceivable> arList = arMapper.selectList(new QueryWrapper<>());
         BigDecimal totalAr = BigDecimal.ZERO;
         BigDecimal receivedAr = BigDecimal.ZERO;
         int arCount = 0;
         int overdueCount = 0;
         for (AccountsReceivable ar : arList) {
-            totalAr = totalAr.add(ar.getTotalAmount());
-            receivedAr = receivedAr.add(ar.getReceivedAmount());
+            totalAr = totalAr.add(ar.getTotalAmount() != null ? ar.getTotalAmount() : BigDecimal.ZERO);
+            receivedAr = receivedAr.add(ar.getPaidAmount() != null ? ar.getPaidAmount() : BigDecimal.ZERO);
             arCount++;
-            if (ar.getExpectedDate() != null && ar.getExpectedDate().isBefore(LocalDate.now())
+            if (ar.getDueDate() != null && ar.getDueDate().isBefore(LocalDate.now())
                     && !"已结清".equals(ar.getStatus())) {
                 overdueCount++;
             }
         }
 
-        // 应付账款汇总
-        QueryWrapper<AccountsPayable> apWrapper = new QueryWrapper<>();
-        List<AccountsPayable> apList = apMapper.selectList(apWrapper);
+        List<AccountsPayable> apList = apMapper.selectList(new QueryWrapper<>());
         BigDecimal totalAp = BigDecimal.ZERO;
         BigDecimal paidAp = BigDecimal.ZERO;
         int apCount = 0;
         for (AccountsPayable ap : apList) {
-            totalAp = totalAp.add(ap.getTotalAmount());
-            paidAp = paidAp.add(ap.getPaidAmount());
+            totalAp = totalAp.add(ap.getTotalAmount() != null ? ap.getTotalAmount() : BigDecimal.ZERO);
+            paidAp = paidAp.add(ap.getPaidAmount() != null ? ap.getPaidAmount() : BigDecimal.ZERO);
             apCount++;
         }
 
@@ -398,9 +439,9 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
                   amt90_180 = BigDecimal.ZERO, amt180_plus = BigDecimal.ZERO;
 
         for (AccountsReceivable ar : arList) {
-            if (ar.getExpectedDate() == null) continue;
-            long days = java.time.temporal.ChronoUnit.DAYS.between(ar.getExpectedDate(), LocalDate.now());
-            BigDecimal bal = ar.getBalanceAmount();
+            if (ar.getDueDate() == null) continue;
+            long days = java.time.temporal.ChronoUnit.DAYS.between(ar.getDueDate(), LocalDate.now());
+            BigDecimal bal = ar.getBalanceAmount() != null ? ar.getBalanceAmount() : BigDecimal.ZERO;
 
             if (days <= 0) {
                 amt0_30 = amt0_30.add(bal);
@@ -470,11 +511,11 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
     private String generateVoucherNo() {
         String prefix = "PAY" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         QueryWrapper<PaymentVoucher> wrapper = new QueryWrapper<>();
-        wrapper.likeRight("voucher_no", prefix).orderByDesc("voucher_no").last("LIMIT 1");
+        wrapper.likeRight("payment_no", prefix).orderByDesc("payment_no").last("LIMIT 1");
         PaymentVoucher last = voucherMapper.selectOne(wrapper);
         int seq = 1;
-        if (last != null && last.getVoucherNo() != null) {
-            try { seq = Integer.parseInt(last.getVoucherNo().substring(prefix.length())) + 1; } catch (Exception ignored) {}
+        if (last != null && last.getPaymentNo() != null) {
+            try { seq = Integer.parseInt(last.getPaymentNo().substring(prefix.length())) + 1; } catch (Exception ignored) {}
         }
         return prefix + String.format("%04d", seq);
     }

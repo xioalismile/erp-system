@@ -24,7 +24,7 @@ public interface FinanceService extends IService<AccountsReceivable> {
     /**
      * 收款时更新应收
      */
-    void receivePayment(Long arId, BigDecimal amount, String paymentMethod, String transactionNo, String operator);
+    void receivePayment(Long arId, BigDecimal amount, Long settleModeId, String documentNo, String operator);
 
     /**
      * 应收账款列表
@@ -46,7 +46,7 @@ public interface FinanceService extends IService<AccountsReceivable> {
     /**
      * 付款时更新应付
      */
-    void makePayment(Long apId, BigDecimal amount, String paymentMethod, String transactionNo, String operator);
+    void makePayment(Long apId, BigDecimal amount, Long settleModeId, String documentNo, String operator);
 
     /**
      * 应付账款列表

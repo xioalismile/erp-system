@@ -16,18 +16,18 @@
 
         <el-table :data="arList" border>
           <el-table-column prop="arNo" label="应收单号" width="150" />
-          <el-table-column prop="sourceNo" label="来源单据" width="130" />
+          <el-table-column prop="sourceBillNo" label="来源单据" width="130" />
           <el-table-column prop="customerName" label="客户名称" />
           <el-table-column label="应收金额" width="120">
             <template #default="{ row }">{{ row.totalAmount?.toFixed(2) }}</template>
           </el-table-column>
           <el-table-column label="已收金额" width="120">
-            <template #default="{ row }">{{ row.receivedAmount?.toFixed(2) }}</template>
+            <template #default="{ row }">{{ row.paidAmount?.toFixed(2) }}</template>
           </el-table-column>
           <el-table-column label="余额" width="120">
             <template #default="{ row }">{{ row.balanceAmount?.toFixed(2) }}</template>
           </el-table-column>
-          <el-table-column prop="expectedDate" label="预计收款日期" width="120" />
+          <el-table-column prop="dueDate" label="预计收款日期" width="120" />
           <el-table-column prop="status" label="状态" width="100">
             <template #default="{ row }">
               <el-tag :type="getArStatusType(row.status)">{{ row.status }}</el-tag>
@@ -67,7 +67,7 @@
 
         <el-table :data="apList" border>
           <el-table-column prop="apNo" label="应付单号" width="150" />
-          <el-table-column prop="sourceNo" label="来源单据" width="130" />
+          <el-table-column prop="sourceBillNo" label="来源单据" width="130" />
           <el-table-column prop="supplierName" label="供应商名称" />
           <el-table-column label="应付金额" width="120">
             <template #default="{ row }">{{ row.totalAmount?.toFixed(2) }}</template>
@@ -78,7 +78,7 @@
           <el-table-column label="余额" width="120">
             <template #default="{ row }">{{ row.balanceAmount?.toFixed(2) }}</template>
           </el-table-column>
-          <el-table-column prop="expectedDate" label="预计付款日期" width="120" />
+          <el-table-column prop="dueDate" label="预计付款日期" width="120" />
           <el-table-column prop="status" label="状态" width="100">
             <template #default="{ row }">
               <el-tag :type="getApStatusType(row.status)">{{ row.status }}</el-tag>
@@ -121,12 +121,12 @@
           <el-table-column prop="receiptNo" label="收款单号" width="150" />
           <el-table-column prop="receiptDate" label="收款日期" width="120" />
           <el-table-column prop="customerName" label="客户名称" />
-          <el-table-column prop="arNo" label="应收单号" width="150" />
+          <el-table-column prop="sourceBillNo" label="应收单号" width="150" />
           <el-table-column label="收款金额" width="120">
             <template #default="{ row }">{{ row.amount?.toFixed(2) }}</template>
           </el-table-column>
-          <el-table-column prop="paymentMethod" label="收款方式" width="100" />
-          <el-table-column prop="transactionNo" label="交易流水" width="150" />
+          <el-table-column prop="settleModeId" label="收款方式" width="100" />
+          <el-table-column prop="documentNo" label="交易流水" width="150" />
           <el-table-column prop="status" label="状态" width="100">
             <template #default="{ row }">
               <el-tag :type="row.status === '已确认' ? 'success' : 'info'">{{ row.status }}</el-tag>
@@ -153,7 +153,7 @@
       <!-- 付款记录 -->
       <el-tab-pane label="付款记录" name="vouchers">
         <div class="filter-bar">
-          <el-input v-model="voucherFilters.voucherNo" placeholder="付款单号" class="filter-input" />
+          <el-input v-model="voucherFilters.paymentNo" placeholder="付款单号" class="filter-input" />
           <el-input v-model="voucherFilters.supplierName" placeholder="供应商名称" class="filter-input" />
           <el-select v-model="voucherFilters.status" placeholder="状态" clearable class="filter-input">
             <el-option label="待确认" value="待确认" />
@@ -165,15 +165,15 @@
         </div>
 
         <el-table :data="voucherList" border>
-          <el-table-column prop="voucherNo" label="付款单号" width="150" />
+          <el-table-column prop="paymentNo" label="付款单号" width="150" />
           <el-table-column prop="paymentDate" label="付款日期" width="120" />
           <el-table-column prop="supplierName" label="供应商名称" />
-          <el-table-column prop="apNo" label="应付单号" width="150" />
+          <el-table-column prop="sourceBillNo" label="应付单号" width="150" />
           <el-table-column label="付款金额" width="120">
             <template #default="{ row }">{{ row.amount?.toFixed(2) }}</template>
           </el-table-column>
-          <el-table-column prop="paymentMethod" label="付款方式" width="100" />
-          <el-table-column prop="transactionNo" label="交易流水" width="150" />
+          <el-table-column prop="settleModeId" label="付款方式" width="100" />
+          <el-table-column prop="documentNo" label="交易流水" width="150" />
           <el-table-column prop="status" label="状态" width="100">
             <template #default="{ row }">
               <el-tag :type="row.status === '已确认' ? 'success' : 'info'">{{ row.status }}</el-tag>
@@ -266,28 +266,28 @@
     <!-- 收款对话框 -->
     <el-dialog title="收款登记" v-model="showReceiveDialog" width="400px">
       <el-form :model="receiveForm" label-width="100px">
-        <el-form-item label="应收单号">{{ receiveForm.arNo }}</el-item>
-        <el-form-item label="客户名称">{{ receiveForm.customerName }}</el-item>
-        <el-form-item label="应收余额">{{ receiveForm.balanceAmount?.toFixed(2) }}</el-item>
+        <el-form-item label="应收单号">{{ receiveForm.arNo }}</el-form-item>
+        <el-form-item label="客户名称">{{ receiveForm.customerName }}</el-form-item>
+        <el-form-item label="应收余额">{{ receiveForm.balanceAmount?.toFixed(2) }}</el-form-item>
         <el-form-item label="收款金额" required>
           <el-input type="number" v-model="receiveForm.amount" />
         </el-form-item>
         <el-form-item label="收款方式">
-          <el-select v-model="receiveForm.paymentMethod">
-            <el-option label="银行转账" value="银行转账" />
-            <el-option label="现金" value="现金" />
-            <el-option label="支票" value="支票" />
-            <el-option label="汇票" value="汇票" />
+          <el-select v-model="receiveForm.settleModeId">
+            <el-option label="银行转账" :value="1" />
+            <el-option label="现金" :value="2" />
+            <el-option label="支票" :value="3" />
+            <el-option label="汇票" :value="4" />
           </el-select>
         </el-form-item>
         <el-form-item label="交易流水号">
-          <el-input v-model="receiveForm.transactionNo" />
+          <el-input v-model="receiveForm.documentNo" />
         </el-form-item>
       </el-form>
-      <div slot="footer">
+      <template #footer>
         <el-button @click="showReceiveDialog = false">取消</el-button>
         <el-button type="primary" @click="submitReceive">确认收款</el-button>
-      </div>
+      </template>
     </el-dialog>
 
     <!-- 付款对话框 -->
@@ -300,21 +300,21 @@
           <el-input type="number" v-model="paymentForm.amount" />
         </el-form-item>
         <el-form-item label="付款方式">
-          <el-select v-model="paymentForm.paymentMethod">
-            <el-option label="银行转账" value="银行转账" />
-            <el-option label="现金" value="现金" />
-            <el-option label="支票" value="支票" />
-            <el-option label="汇票" value="汇票" />
+          <el-select v-model="paymentForm.settleModeId">
+            <el-option label="银行转账" :value="1" />
+            <el-option label="现金" :value="2" />
+            <el-option label="支票" :value="3" />
+            <el-option label="汇票" :value="4" />
           </el-select>
         </el-form-item>
         <el-form-item label="交易流水号">
-          <el-input v-model="paymentForm.transactionNo" />
+          <el-input v-model="paymentForm.documentNo" />
         </el-form-item>
       </el-form>
-      <div slot="footer">
+      <template #footer>
         <el-button @click="showPaymentDialog = false">取消</el-button>
         <el-button type="primary" @click="submitPayment">确认付款</el-button>
-      </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -345,7 +345,7 @@ const receiptTotal = ref(0)
 const receiptPage = ref(1)
 
 // Voucher filters
-const voucherFilters = reactive({ voucherNo: '', supplierName: '', status: '' })
+const voucherFilters = reactive({ paymentNo: '', supplierName: '', status: '' })
 const voucherList = ref([])
 const voucherTotal = ref(0)
 const voucherPage = ref(1)
@@ -356,10 +356,10 @@ const agingList = ref([])
 
 // Dialogs
 const showReceiveDialog = ref(false)
-const receiveForm = reactive({ id: null, arNo: '', customerName: '', balanceAmount: 0, amount: 0, paymentMethod: '银行转账', transactionNo: '' })
+const receiveForm = reactive({ arId: null, arNo: '', customerName: '', balanceAmount: 0, amount: 0, settleModeId: 1, documentNo: '' })
 
 const showPaymentDialog = ref(false)
-const paymentForm = reactive({ id: null, apNo: '', supplierName: '', balanceAmount: 0, amount: 0, paymentMethod: '银行转账', transactionNo: '' })
+const paymentForm = reactive({ apId: null, apNo: '', supplierName: '', balanceAmount: 0, amount: 0, settleModeId: 1, documentNo: '' })
 
 // Load AR
 const loadAr = async () => {
@@ -412,7 +412,7 @@ const getApStatusType = (status) => {
 
 // Receive payment
 const receivePayment = (row) => {
-  Object.assign(receiveForm, { id: row.id, arNo: row.arNo, customerName: row.customerName, balanceAmount: row.balanceAmount, amount: row.balanceAmount, paymentMethod: '银行转账', transactionNo: '' })
+  Object.assign(receiveForm, { arId: row.arId, arNo: row.arNo, customerName: row.customerName, balanceAmount: row.balanceAmount, amount: row.balanceAmount, settleModeId: 1, documentNo: '' })
   showReceiveDialog.value = true
 }
 
@@ -421,10 +421,10 @@ const submitReceive = async () => {
     ElMessage.warning('请输入正确的收款金额')
     return
   }
-  await api.post(`/finance/ar/${receiveForm.id}/receive`, {
+  await api.post(`/finance/ar/${receiveForm.arId}/receive`, {
     amount: receiveForm.amount,
-    paymentMethod: receiveForm.paymentMethod,
-    transactionNo: receiveForm.transactionNo
+    settleModeId: receiveForm.settleModeId,
+    documentNo: receiveForm.documentNo
   })
   ElMessage.success('收款成功')
   showReceiveDialog.value = false
@@ -434,7 +434,7 @@ const submitReceive = async () => {
 
 // Make payment
 const makePayment = (row) => {
-  Object.assign(paymentForm, { id: row.id, apNo: row.apNo, supplierName: row.supplierName, balanceAmount: row.balanceAmount, amount: row.balanceAmount, paymentMethod: '银行转账', transactionNo: '' })
+  Object.assign(paymentForm, { apId: row.apId, apNo: row.apNo, supplierName: row.supplierName, balanceAmount: row.balanceAmount, amount: row.balanceAmount, settleModeId: 1, documentNo: '' })
   showPaymentDialog.value = true
 }
 
@@ -443,10 +443,10 @@ const submitPayment = async () => {
     ElMessage.warning('请输入正确的付款金额')
     return
   }
-  await api.post(`/finance/ap/${paymentForm.id}/pay`, {
+  await api.post(`/finance/ap/${paymentForm.apId}/pay`, {
     amount: paymentForm.amount,
-    paymentMethod: paymentForm.paymentMethod,
-    transactionNo: paymentForm.transactionNo
+    settleModeId: paymentForm.settleModeId,
+    documentNo: paymentForm.documentNo
   })
   ElMessage.success('付款成功')
   showPaymentDialog.value = false
@@ -456,18 +456,18 @@ const submitPayment = async () => {
 
 // View detail
 const viewArDetail = (row) => {
-  ElMessageBox.alert(`应收单号: ${row.arNo}<br>客户: ${row.customerName}<br>应收金额: ${row.totalAmount}<br>已收金额: ${row.receivedAmount}<br>余额: ${row.balanceAmount}<br>预计收款日期: ${row.expectedDate || '未指定'}`, '应收单详情', { dangerouslyUseHTMLString: true })
+  ElMessageBox.alert(`应收单号: ${row.arNo}<br>客户: ${row.customerName}<br>应收金额: ${row.totalAmount}<br>已收金额: ${row.paidAmount}<br>余额: ${row.balanceAmount}<br>预计收款日期: ${row.dueDate || '未指定'}`, '应收单详情', { dangerouslyUseHTMLString: true })
 }
 
 const viewApDetail = (row) => {
-  ElMessageBox.alert(`应付单号: ${row.apNo}<br>供应商: ${row.supplierName}<br>应付金额: ${row.totalAmount}<br>已付金额: ${row.paidAmount}<br>余额: ${row.balanceAmount}<br>预计付款日期: ${row.expectedDate || '未指定'}`, '应付单详情', { dangerouslyUseHTMLString: true })
+  ElMessageBox.alert(`应付单号: ${row.apNo}<br>供应商: ${row.supplierName}<br>应付金额: ${row.totalAmount}<br>已付金额: ${row.paidAmount}<br>余额: ${row.balanceAmount}<br>预计付款日期: ${row.dueDate || '未指定'}`, '应付单详情', { dangerouslyUseHTMLString: true })
 }
 
 // Confirm receipt
 const confirmReceipt = async (row) => {
   try {
     await ElMessageBox.confirm('确认此收款记录?', '提示')
-    await api.post(`/finance/receipts/${row.id}/confirm`)
+    await api.post(`/finance/receipts/${row.receiptId}/confirm`)
     ElMessage.success('确认成功')
     loadReceipts()
   } catch (e) {}
@@ -477,7 +477,7 @@ const confirmReceipt = async (row) => {
 const confirmVoucher = async (row) => {
   try {
     await ElMessageBox.confirm('确认此付款记录?', '提示')
-    await api.post(`/finance/vouchers/${row.id}/confirm`)
+    await api.post(`/finance/vouchers/${row.paymentId}/confirm`)
     ElMessage.success('确认成功')
     loadVouchers()
   } catch (e) {}

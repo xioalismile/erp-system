@@ -3,36 +3,43 @@ package com.erp.inventory.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.erp.inventory.entity.InventoryTransaction;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 public interface InventoryTransactionService extends IService<InventoryTransaction> {
 
     /**
-     * 记录库存台账
-     * @param documentNo 单据编号
-     * @param documentType 单据类型
-     * @param materialCode 物料编码
-     * @param materialName 物料名称
-     * @param warehouseCode 仓库编码
-     * @param quantity 数量变化(正数入库,负数出库)
-     * @param sourceId 关联单据ID
-     * @param sourceType 关联单据类型
+     * 记录库存台账流水
+     * @param transNo 单据编号 (业务单号)
+     * @param transType 单据类型 (PURCHASE_IN/SALE_OUT/OTHER_IN/OTHER_OUT/STOCK_TRANSFER/STOCK_CHECK等)
+     * @param stockId 仓库ID
+     * @param binId 货位ID (可空)
+     * @param materialId 物料ID
+     * @param batchNo 批次号 (可空)
+     * @param inQuantity 入库数量 (出库时传null或0)
+     * @param inAmount 入库金额 (出库时传null或0)
+     * @param outQuantity 出库数量 (入库时传null或0)
+     * @param outAmount 出库金额 (入库时传null或0)
+     * @param unitCost 单位成本
+     * @param sourceBillType 来源单据类型
+     * @param sourceBillNo 来源单据号
      * @param operator 操作人
      * @param remark 备注
      */
-    void recordTransaction(String documentNo, String documentType, String materialCode, String materialName,
-                          String warehouseCode, BigDecimal quantity, Long sourceId, String sourceType,
+    void recordTransaction(String transNo, String transType,
+                          Long stockId, Long binId, Long materialId, String batchNo,
+                          java.math.BigDecimal inQuantity, java.math.BigDecimal inAmount,
+                          java.math.BigDecimal outQuantity, java.math.BigDecimal outAmount,
+                          java.math.BigDecimal unitCost,
+                          String sourceBillType, String sourceBillNo,
                           String operator, String remark);
 
     /**
      * 查询物料的库存流水
      */
-    List<InventoryTransaction> getMaterialTransactions(String materialCode, String warehouseCode);
+    List<InventoryTransaction> getMaterialTransactions(Long materialId, Long stockId);
 
     /**
      * 查询单据的库存流水
      */
-    List<InventoryTransaction> getDocumentTransactions(String documentNo);
+    List<InventoryTransaction> getDocumentTransactions(String transNo);
 }

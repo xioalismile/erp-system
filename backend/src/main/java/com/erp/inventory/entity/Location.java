@@ -35,8 +35,4 @@ public class Location {
 
     @TableField("updated_by")
     private String updatedBy;
-
-    @TableLogic
-    @TableField("deleted")
-    private Integer deleted;
 }

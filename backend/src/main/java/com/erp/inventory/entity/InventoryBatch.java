@@ -61,8 +61,4 @@ public class InventoryBatch {
 
     @TableField("updated_by")
     private String updatedBy;
-
-    @TableLogic
-    @TableField("deleted")
-    private Integer deleted;
 }

@@ -2,96 +2,119 @@ package com.erp.sale.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @TableName("sale_order")
 public class SaleOrder {
-    @TableId(type = IdType.AUTO)
-    private Long id;
 
-    /** 销售订单编号: SO+年月日+4位流水 */
+    @TableId(value = "order_id", type = IdType.AUTO)
+    private Long orderId;
+
+    @TableField("order_no")
     private String orderNo;
 
+    @TableField("order_date")
     private LocalDate orderDate;
+
+    @TableField("customer_id")
     private Long customerId;
-    private String customerCode;
-    private String customerName;
+
+    @TableField("contact_person")
     private String contactPerson;
+
+    @TableField("contact_phone")
     private String contactPhone;
-    private String deliveryAddress;
 
-    /** 发货方式: 快递/物流/自提/客户自取 */
-    private String deliveryMethod;
+    @TableField("saler_id")
+    private Long salerId;
 
-    /** 物流单号 */
-    private String logisticsNo;
+    @TableField("price_level_id")
+    private Long priceLevelId;
 
-    private String salesperson;
-    private String department;
-    private String currency;
+    @TableField("currency_id")
+    private Long currencyId;
+
+    @TableField("exchange_rate")
     private BigDecimal exchangeRate;
-    private String paymentMethod;
-    private LocalDate expectedDeliveryDate;
 
-    /** 实际发货日期 */
-    private LocalDate actualShipDate;
-
-    // ========== 金额字段 ==========
-    /** 订单总额(明细金额合计) */
+    @TableField("total_amount")
     private BigDecimal totalAmount;
 
-    /** 运费 */
-    private BigDecimal freight;
-
-    /** 整单优惠金额 */
-    private BigDecimal discountAmount;
-
-    /** 税额 */
+    @TableField("tax_amount")
     private BigDecimal taxAmount;
 
-    /** 价税合计 = totalAmount + freight - discountAmount + taxAmount */
-    private BigDecimal totalWithTax;
+    @TableField("discount_rate")
+    private BigDecimal discountRate;
 
-    // ========== 状态字段 ==========
-    /** 草稿/已确认/已发货/已开票/已完成/已取消/已退货 */
-    private String status;
+    @TableField("discount_amount")
+    private BigDecimal discountAmount;
 
-    /** 来源渠道: MANUAL/AI/WEB/DINGTALK/WECOM */
-    private String sourceChannel;
+    @TableField("net_amount")
+    private BigDecimal netAmount;
 
-    /** 开票状态: 未开票/部分开票/已开票 */
-    private String invoiceStatus;
+    @TableField("delivery_date")
+    private LocalDate deliveryDate;
 
-    /** 发票号 */
-    private String invoiceNo;
+    @TableField("payment_term_id")
+    private Long paymentTermId;
 
-    /** 收款状态: 未收款/部分收款/已收款 */
-    private String paymentStatus;
+    @TableField("source_bill_type")
+    private String sourceBillType;
 
-    /** 已收金额 */
-    private BigDecimal receivedAmount;
+    @TableField("source_bill_no")
+    private String sourceBillNo;
 
-    private String auditor;
-    private LocalDate auditDate;
+    @TableField("quote_no")
+    private String quoteNo;
+
+    @TableField("remark")
     private String remark;
 
-    @TableField(fill = FieldFill.INSERT)
+    @TableField("attachment_urls")
+    private String attachmentUrls;
+
+    @TableField("status")
+    private String status;
+
+    @TableField("approval_status")
+    private String approvalStatus;
+
+    @TableField("approved_by")
+    private String approvedBy;
+
+    @TableField("approved_at")
+    private LocalDateTime approvedAt;
+
+    @TableField("closed_by")
+    private String closedBy;
+
+    @TableField("closed_at")
+    private LocalDateTime closedAt;
+
+    @TableField("closed_reason")
+    private String closedReason;
+
+    @TableField(value = "created_at", fill = FieldFill.INSERT)
+    private LocalDateTime createdAt;
+
+    @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updatedAt;
+
+    @TableField("created_by")
     private String createdBy;
-    @TableField(fill = FieldFill.INSERT)
-    private Date createdAt;
-    @TableField(fill = FieldFill.INSERT_UPDATE)
+
+    @TableField("updated_by")
     private String updatedBy;
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Date updatedAt;
 
-    @TableLogic
-    private Integer deleted;
+    @TableField("org_code")
+    private String orgCode;
 
-    /** 明细列表(非数据库字段) */
+    /** 销售订单明细列表(非数据库字段) */
     @TableField(exist = false)
     private List<SaleOrderItem> items;
 }

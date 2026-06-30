@@ -1,17 +1,18 @@
 package com.erp.production.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.erp.common.PageResult;
 import com.erp.common.Result;
 import com.erp.production.entity.WorkOrder;
 import com.erp.production.service.MrpCalculationService;
 import com.erp.production.service.WorkOrderService;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,10 +28,9 @@ public class ProductionController {
     public Result<PageResult<WorkOrder>> page(
             @RequestParam(defaultValue = "1") int current,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String productCode,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) String workOrderNo) {
-        return Result.success(workOrderService.pageQuery(current, size, productCode, status, workOrderNo));
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String status) {
+        return Result.success(workOrderService.pageQuery(current, size, keyword, status));
     }
 
     @GetMapping("/workorders/{id}")
@@ -38,57 +38,59 @@ public class ProductionController {
         return Result.success(workOrderService.getDetail(id));
     }
 
-    @GetMapping("/workorders/{id}/progress")
-    public Result<Map<String, Object>> progress(@PathVariable Long id) {
-        return Result.success(workOrderService.getProgress(id));
-    }
-
     @PostMapping("/workorders")
-    public Result<WorkOrder> create(@RequestBody WorkOrder wo) {
-        return Result.success(workOrderService.createWorkOrder(wo));
+    public Result<Void> create(@RequestBody WorkOrder wo) {
+        workOrderService.saveOrderWithItems(wo, wo.getMaterials());
+        return Result.success();
     }
 
     @PutMapping("/workorders/{id}")
     public Result<Void> update(@PathVariable Long id, @RequestBody WorkOrder wo) {
-        wo.setId(id);
-        workOrderService.updateWorkOrder(wo);
+        wo.setOrderId(id);
+        workOrderService.saveOrderWithItems(wo, wo.getMaterials());
         return Result.success();
     }
 
-    @PostMapping("/workorders/{id}/issue")
-    public Result<Void> issue(@PathVariable Long id, @RequestBody IssueRequest body) {
-        workOrderService.issueMaterial(id, body.getMaterialId(), body.getQuantity());
+    @PostMapping("/workorders/{id}/release")
+    public Result<Void> release(@PathVariable Long id,
+                                @RequestHeader(value = "X-Operator", required = false) String operator) {
+        workOrderService.release(id, operator);
         return Result.success();
     }
 
-    @PostMapping("/workorders/{id}/start")
-    public Result<Void> start(@PathVariable Long id) {
-        workOrderService.startWork(id);
-        return Result.success();
-    }
-
-    @PostMapping("/workorders/{id}/report")
-    public Result<Void> report(@PathVariable Long id, @RequestBody ReportRequest body) {
-        workOrderService.reportCompletion(id, body.getCompletedQty(), body.getScrapQty());
-        return Result.success();
-    }
-
-    @PostMapping("/workorders/{id}/finish")
-    public Result<Void> finish(@PathVariable Long id) {
-        workOrderService.finishWork(id);
+    @PostMapping("/workorders/{id}/complete")
+    public Result<Void> complete(@PathVariable Long id,
+                                 @RequestHeader(value = "X-Operator", required = false) String operator) {
+        workOrderService.complete(id, operator);
         return Result.success();
     }
 
     @PostMapping("/workorders/{id}/close")
-    public Result<Void> close(@PathVariable Long id) {
-        workOrderService.closeWork(id);
+    public Result<Void> close(@PathVariable Long id, @RequestBody(required = false) Map<String, String> body,
+                             @RequestHeader(value = "X-Operator", required = false) String operator) {
+        String reason = body != null ? body.get("reason") : null;
+        workOrderService.close(id, operator, reason);
         return Result.success();
     }
 
-    @PostMapping("/workorders/{id}/cancel")
-    public Result<Void> cancel(@PathVariable Long id, @RequestBody Map<String, String> body) {
-        workOrderService.cancelWork(id, body.get("reason"));
-        return Result.success();
+    @GetMapping("/workorders/generate-no")
+    public Result<Map<String, String>> generateOrderNo() {
+        Map<String, String> map = new HashMap<>();
+        map.put("orderNo", workOrderService.generateOrderNo());
+        return Result.success(map);
+    }
+
+    /** 仪表盘统计: 工单总数 + 各状态数量 */
+    @GetMapping("/dashboard")
+    public Result<Map<String, Object>> dashboard() {
+        Map<String, Object> stats = new HashMap<>();
+        long total = workOrderService.count();
+        stats.put("totalWorkOrders", total);
+        stats.put("draft", workOrderService.count(new QueryWrapper<WorkOrder>().eq("status", "草稿")));
+        stats.put("released", workOrderService.count(new QueryWrapper<WorkOrder>().eq("status", "已下达")));
+        stats.put("completed", workOrderService.count(new QueryWrapper<WorkOrder>().eq("status", "已完工")));
+        stats.put("closed", workOrderService.count(new QueryWrapper<WorkOrder>().eq("status", "已关闭")));
+        return Result.success(stats);
     }
 
     @PostMapping("/mrp/calculate")
@@ -121,35 +123,5 @@ public class ProductionController {
         BigDecimal quantity = body.get("quantity") != null
                 ? new BigDecimal(body.get("quantity").toString()) : BigDecimal.ONE;
         return Result.success(mrpCalculationService.expandBom(materialCode, quantity));
-    }
-
-    @PostMapping("/mrp/generate-workorders")
-    public Result<List<WorkOrder>> generateWorkOrders(@RequestBody Map<String, Object> body) {
-        @SuppressWarnings("unchecked")
-        List<Map<String, Object>> suggestions = (List<Map<String, Object>>) body.get("suggestions");
-        LocalDate demandDate = body.get("demandDate") != null
-                ? LocalDate.parse(body.get("demandDate").toString()) : LocalDate.now().plusDays(30);
-        return Result.success(workOrderService.generateFromMrp(suggestions, demandDate));
-    }
-
-    @PostMapping("/workorders/from-sale-order")
-    public Result<List<WorkOrder>> generateFromSaleOrder(@RequestBody Map<String, Object> body) {
-        Long saleOrderId = Long.valueOf(body.get("saleOrderId").toString());
-        @SuppressWarnings("unchecked")
-        List<Long> itemIds = body.get("itemIds") != null
-                ? (List<Long>) body.get("itemIds") : null;
-        return Result.success(workOrderService.generateFromSaleOrder(saleOrderId, itemIds));
-    }
-
-    @Data
-    public static class IssueRequest {
-        private Long materialId;
-        private BigDecimal quantity;
-    }
-
-    @Data
-    public static class ReportRequest {
-        private BigDecimal completedQty;
-        private BigDecimal scrapQty;
     }
 }

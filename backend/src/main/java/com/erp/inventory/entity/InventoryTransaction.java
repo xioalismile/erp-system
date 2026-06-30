@@ -79,8 +79,4 @@ public class InventoryTransaction {
 
     @TableField("created_by")
     private String createdBy;
-
-    @TableLogic
-    @TableField("deleted")
-    private Integer deleted;
 }

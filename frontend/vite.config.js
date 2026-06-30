@@ -18,6 +18,13 @@ export default defineConfig({
       }
     }
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@import "@/styles/variables.scss";`
+      }
+    }
+  },
   build: {
     outDir: 'dist',
     chunkSizeWarningLimit: 1000

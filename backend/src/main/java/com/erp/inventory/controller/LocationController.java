@@ -18,14 +18,13 @@ public class LocationController {
 
     @GetMapping("/list")
     public Result<List<Location>> list(
-            @RequestParam(required = false) String warehouseCode,
-            @RequestParam(required = false) String locationCode,
+            @RequestParam(required = false) String stockCode,
+            @RequestParam(required = false) String binCode,
             @RequestParam(required = false) String status) {
         QueryWrapper<Location> wrapper = new QueryWrapper<>();
-        if (warehouseCode != null && !warehouseCode.isBlank()) wrapper.eq("warehouse_code", warehouseCode);
-        if (locationCode != null && !locationCode.isBlank()) wrapper.like("location_code", locationCode);
+        if (binCode != null && !binCode.isBlank()) wrapper.like("bin_code", binCode);
         if (status != null && !status.isBlank()) wrapper.eq("status", status);
-        wrapper.orderByAsc("warehouse_code").orderByAsc("location_code");
+        wrapper.orderByAsc("bin_code");
         return Result.success(locationService.list(wrapper));
     }
 
@@ -47,7 +46,7 @@ public class LocationController {
 
     @PutMapping("/{id}")
     public Result<Location> update(@PathVariable Long id, @RequestBody Location location) {
-        location.setId(id);
+        location.setBinId(id);
         locationService.updateById(location);
         return Result.success(location);
     }

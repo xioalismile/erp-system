@@ -20,27 +20,22 @@ public class InventoryBatchController {
 
     @GetMapping("/list")
     public Result<List<InventoryBatch>> list(
-            @RequestParam(required = false) String materialCode,
-            @RequestParam(required = false) String warehouseCode,
-            @RequestParam(required = false) String batchNo) {
+            @RequestParam(required = false) Long materialId,
+            @RequestParam(required = false) String batchNo,
+            @RequestParam(defaultValue = "false") Boolean onlyExpired) {
+        if (Boolean.TRUE.equals(onlyExpired)) {
+            return Result.success(batchService.getExpiredBatches());
+        }
         QueryWrapper<InventoryBatch> wrapper = new QueryWrapper<>();
-        if (materialCode != null && !materialCode.isBlank()) wrapper.like("material_code", materialCode);
-        if (warehouseCode != null && !warehouseCode.isBlank()) wrapper.eq("warehouse_code", warehouseCode);
+        if (materialId != null) wrapper.eq("material_id", materialId);
         if (batchNo != null && !batchNo.isBlank()) wrapper.like("batch_no", batchNo);
-        wrapper.orderByAsc("warehouse_code").orderByAsc("material_code").orderByAsc("production_date");
+        wrapper.orderByAsc("expiry_date");
         return Result.success(batchService.list(wrapper));
     }
 
-    @GetMapping("/warehouse/{warehouseCode}")
-    public Result<List<InventoryBatch>> getByWarehouse(@PathVariable String warehouseCode) {
-        return Result.success(batchService.getByWarehouse(warehouseCode));
-    }
-
-    @GetMapping("/material/{materialCode}/warehouse/{warehouseCode}")
-    public Result<List<InventoryBatch>> getByMaterialAndWarehouse(
-            @PathVariable String materialCode,
-            @PathVariable String warehouseCode) {
-        return Result.success(batchService.getByMaterialAndWarehouse(materialCode, warehouseCode));
+    @GetMapping("/material/{materialId}")
+    public Result<List<InventoryBatch>> getByMaterial(@PathVariable Long materialId) {
+        return Result.success(batchService.getByMaterial(materialId));
     }
 
     @GetMapping("/{id}")
@@ -60,10 +55,9 @@ public class InventoryBatchController {
 
     @PostMapping("/allocate")
     public Result<Map<String, Object>> allocate(
-            @RequestParam String materialCode,
-            @RequestParam String warehouseCode,
+            @RequestParam Long materialId,
             @RequestParam BigDecimal quantity) {
-        return Result.success(batchService.allocateByFifo(materialCode, warehouseCode, quantity));
+        return Result.success(batchService.allocateByFifo(materialId, quantity));
     }
 
     @PostMapping
@@ -74,7 +68,7 @@ public class InventoryBatchController {
 
     @PutMapping("/{id}")
     public Result<InventoryBatch> update(@PathVariable Long id, @RequestBody InventoryBatch batch) {
-        batch.setId(id);
+        batch.setBatchId(id);
         batchService.updateById(batch);
         return Result.success(batch);
     }
