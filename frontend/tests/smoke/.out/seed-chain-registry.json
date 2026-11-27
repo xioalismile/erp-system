@@ -1,0 +1,68 @@
+[
+  {
+    "chain": "sale",
+    "name": "销售订单",
+    "path": "/api/sale/orders",
+    "id": 41
+  },
+  {
+    "chain": "stock",
+    "name": "其他入库单（成品A）",
+    "path": "/api/inventory/other-receipts",
+    "id": 28
+  },
+  {
+    "chain": "sale",
+    "name": "销售出库单",
+    "path": "/api/sale/deliveries",
+    "id": 32
+  },
+  {
+    "chain": "sale",
+    "name": "销售发票",
+    "path": "/api/sale/invoices",
+    "id": 27
+  },
+  {
+    "chain": "purchase",
+    "name": "采购申请单",
+    "path": "/api/purchase/requests",
+    "id": 33
+  },
+  {
+    "chain": "purchase",
+    "name": "采购订单",
+    "path": "/api/purchase/orders",
+    "id": 26
+  },
+  {
+    "chain": "purchase",
+    "name": "采购入库单",
+    "path": "/api/purchase/inbounds",
+    "id": 24
+  },
+  {
+    "chain": "production",
+    "name": "生产工单",
+    "path": "/api/production/workorders",
+    "id": 33
+  },
+  {
+    "chain": "stock",
+    "name": "其他入库单（原料C）",
+    "path": "/api/inventory/other-receipts",
+    "id": 29
+  },
+  {
+    "chain": "production",
+    "name": "领料单",
+    "path": "/api/inventory/material-requisitions",
+    "id": 25
+  },
+  {
+    "chain": "production",
+    "name": "生产入库单",
+    "path": "/api/production/receipts",
+    "id": 23
+  }
+]

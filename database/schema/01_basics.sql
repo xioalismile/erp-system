@@ -4,6 +4,7 @@
 -- 版本：V1.0
 -- 日期：2026-06-22
 -- 说明：共14张表，包含物料、客户、供应商、仓库、货位、部门、员工等基础档案
+-- 注意：表创建顺序按外键依赖排列，被引用的表必须先创建
 -- ============================================================================
 
 -- 1. 计量单位表 (unit_of_measure)
@@ -79,6 +80,8 @@ CREATE TABLE material (
     min_stock NUMERIC(18,4) DEFAULT 0.0000,
     max_stock NUMERIC(18,4) DEFAULT 0.0000,
     status VARCHAR(10) NOT NULL DEFAULT '正常',
+    image_urls VARCHAR(2000),
+    main_image VARCHAR(500),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
     created_by VARCHAR(50),
@@ -199,7 +202,58 @@ COMMENT ON COLUMN location.bin_code IS '货位编码';
 COMMENT ON COLUMN location.bin_name IS '货位名称';
 COMMENT ON COLUMN location.stock_id IS '所属仓库';
 
--- 8. 客户档案表 (customer)
+-- 8. 币种表 (currency) - 被客户/供应商表引用，必须先创建
+CREATE TABLE currency (
+    currency_id BIGSERIAL PRIMARY KEY,
+    currency_code VARCHAR(10) NOT NULL UNIQUE,
+    currency_name VARCHAR(50) NOT NULL,
+    currency_symbol VARCHAR(10),
+    is_base_currency SMALLINT NOT NULL DEFAULT 0,
+    exchange_rate NUMERIC(18,8) NOT NULL DEFAULT 1.00000000,
+    status VARCHAR(10) NOT NULL DEFAULT '启用',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP,
+    created_by VARCHAR(50),
+    updated_by VARCHAR(50)
+);
+
+COMMENT ON TABLE currency IS '币种档案';
+
+-- 9. 付款条件表 (payment_term) - 被客户/供应商表引用，必须先创建
+CREATE TABLE payment_term (
+    payment_term_id BIGSERIAL PRIMARY KEY,
+    payment_term_code VARCHAR(20) NOT NULL UNIQUE,
+    payment_term_name VARCHAR(100) NOT NULL,
+    payment_days INT NOT NULL DEFAULT 0,
+    discount_days INT DEFAULT 0,
+    discount_rate NUMERIC(8,4) DEFAULT 0.0000,
+    advance_rate NUMERIC(8,4) DEFAULT 0.0000,
+    status VARCHAR(10) NOT NULL DEFAULT '启用',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP,
+    created_by VARCHAR(50),
+    updated_by VARCHAR(50)
+);
+
+COMMENT ON TABLE payment_term IS '付款条件档案';
+
+-- 10. 价格等级表 (price_level)
+CREATE TABLE price_level (
+    price_level_id BIGSERIAL PRIMARY KEY,
+    price_level_code VARCHAR(20) NOT NULL UNIQUE,
+    price_level_name VARCHAR(50) NOT NULL,
+    price_adjust_rate NUMERIC(8,4) NOT NULL DEFAULT 0.0000,
+    sort_order INT NOT NULL DEFAULT 0,
+    status VARCHAR(10) NOT NULL DEFAULT '启用',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP,
+    created_by VARCHAR(50),
+    updated_by VARCHAR(50)
+);
+
+COMMENT ON TABLE price_level IS '价格等级档案';
+
+-- 11. 客户档案表 (customer)
 CREATE TABLE customer (
     customer_id BIGSERIAL PRIMARY KEY,
     customer_code VARCHAR(50) NOT NULL UNIQUE,
@@ -229,7 +283,7 @@ CREATE TABLE customer (
     FOREIGN KEY (default_saler_id) REFERENCES employee(employee_id)
 );
 
--- 9. 供应商档案表 (supplier)
+-- 12. 供应商档案表 (supplier)
 CREATE TABLE supplier (
     supplier_id BIGSERIAL PRIMARY KEY,
     supplier_code VARCHAR(50) NOT NULL UNIQUE,
@@ -260,24 +314,7 @@ CREATE TABLE supplier (
 
 COMMENT ON TABLE supplier IS '供应商档案';
 
--- 10. 币种表 (currency)
-CREATE TABLE currency (
-    currency_id BIGSERIAL PRIMARY KEY,
-    currency_code VARCHAR(10) NOT NULL UNIQUE,
-    currency_name VARCHAR(50) NOT NULL,
-    currency_symbol VARCHAR(10),
-    is_base_currency SMALLINT NOT NULL DEFAULT 0,
-    exchange_rate NUMERIC(18,8) NOT NULL DEFAULT 1.00000000,
-    status VARCHAR(10) NOT NULL DEFAULT '启用',
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
-    created_by VARCHAR(50),
-    updated_by VARCHAR(50)
-);
-
-COMMENT ON TABLE currency IS '币种档案';
-
--- 11. 会计科目表 (account)
+-- 13. 会计科目表 (account)
 CREATE TABLE account (
     account_id BIGSERIAL PRIMARY KEY,
     account_code VARCHAR(50) NOT NULL UNIQUE,
@@ -301,7 +338,7 @@ CREATE TABLE account (
 
 COMMENT ON TABLE account IS '会计科目档案';
 
--- 12. 结算方式表 (settlement_mode)
+-- 14. 结算方式表 (settlement_mode)
 CREATE TABLE settlement_mode (
     settle_mode_id BIGSERIAL PRIMARY KEY,
     settle_mode_code VARCHAR(20) NOT NULL UNIQUE,
@@ -317,40 +354,6 @@ CREATE TABLE settlement_mode (
 
 COMMENT ON TABLE settlement_mode IS '结算方式档案';
 COMMENT ON COLUMN settlement_mode.settle_type IS '结算类型';
-
--- 13. 付款条件表 (payment_term)
-CREATE TABLE payment_term (
-    payment_term_id BIGSERIAL PRIMARY KEY,
-    payment_term_code VARCHAR(20) NOT NULL UNIQUE,
-    payment_term_name VARCHAR(100) NOT NULL,
-    payment_days INT NOT NULL DEFAULT 0,
-    discount_days INT DEFAULT 0,
-    discount_rate NUMERIC(8,4) DEFAULT 0.0000,
-    advance_rate NUMERIC(8,4) DEFAULT 0.0000,
-    status VARCHAR(10) NOT NULL DEFAULT '启用',
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
-    created_by VARCHAR(50),
-    updated_by VARCHAR(50)
-);
-
-COMMENT ON TABLE payment_term IS '付款条件档案';
-
--- 14. 价格等级表 (price_level)
-CREATE TABLE price_level (
-    price_level_id BIGSERIAL PRIMARY KEY,
-    price_level_code VARCHAR(20) NOT NULL UNIQUE,
-    price_level_name VARCHAR(50) NOT NULL,
-    price_adjust_rate NUMERIC(8,4) NOT NULL DEFAULT 0.0000,
-    sort_order INT NOT NULL DEFAULT 0,
-    status VARCHAR(10) NOT NULL DEFAULT '启用',
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
-    created_by VARCHAR(50),
-    updated_by VARCHAR(50)
-);
-
-COMMENT ON TABLE price_level IS '价格等级档案';
 
 -- 创建索引
 CREATE INDEX idx_material_code ON material(material_code);

@@ -1,28 +1,50 @@
 <template>
   <div class="erp-page">
-    <CrudTable
-      title="客户"
+    <CrudTable ref="tableRef"
+      :hide-buttons="['print']"
+      :title="$tt('客户')"
+      custom-field-entity="customer"
       :columns="columns"
       :fetch-data="fetchData"
       :on-save="onSave"
       :on-delete="onDelete"
+      :on-batch-delete="onBatchDelete"
       :search-fields="searchFields"
-      :form-fields="formFields"
+      :preset-search="presetSearch"
+      add-route="/basedata/customer/new"
+      edit-route="/basedata/customer/edit"
       id-field="customerId"
       perm-add="basedata:customer:add"
       perm-edit="basedata:customer:edit"
       perm-delete="basedata:customer:delete"
+      entity-name="customer"
     >
       <template #statusSlot="{ row }">
-        <el-tag :type="row.status === '正常' ? 'success' : 'info'" size="small">{{ row.status }}</el-tag>
+        <el-tag :type="row.status === '正常' ? 'success' : 'info'" size="small">{{ $dt(row.status) }}</el-tag>
       </template>
     </CrudTable>
   </div>
 </template>
 
 <script setup>
+import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { useAutoRefresh } from '@/composables/useAutoRefresh'
+const tableRef = ref(null)
+useAutoRefresh(() => tableRef.value?.loadData?.())
+
+// 数据看板穿透：区域 → 按自定义字段 region 预置检索；新客户 → 按建档时间区间（无 query 时为空对象，行为不变）
+const route = useRoute()
+const presetSearch = computed(() => {
+  const q = route.query || {}
+  const s = {}
+  if (q.region) s.cf_region = String(q.region)
+  if (q.createdFrom) s.createdFrom = String(q.createdFrom)
+  if (q.createdTo) s.createdTo = String(q.createdTo)
+  return s
+})
 import CrudTable from '@/components/CrudTable.vue'
-import { listCustomer, saveCustomer, updateCustomer, deleteCustomer } from '@/api/basedata/customer'
+import { listCustomer, saveCustomer, updateCustomer, deleteCustomer, batchDeleteCustomer } from '@/api/basedata/customer'
 
 const searchFields = [
   { prop: 'keyword', label: '关键字', placeholder: '编码/名称/简称' }
@@ -36,36 +58,8 @@ const columns = [
   { prop: 'customerLevel', label: '客户等级', minWidth: 120 },
   { prop: 'contactPerson', label: '联系人', minWidth: 120 },
   { prop: 'contactPhone', label: '联系电话', minWidth: 130 },
-  { prop: 'status', label: '状态', width: 100, slot: 'statusSlot' }
-]
-
-const formFields = [
-  { prop: 'customerCode', label: '客户编码', required: true, placeholder: '如 C001' },
-  { prop: 'customerName', label: '客户名称', required: true, placeholder: '如 XX科技有限公司' },
-  { prop: 'shortName', label: '简称', placeholder: '客户简称' },
-  { prop: 'customerType', label: '客户类型', type: 'select', default: '企业客户', options: [
-    { value: '企业客户', label: '企业客户' },
-    { value: '个人客户', label: '个人客户' }
-  ] },
-  { prop: 'customerLevel', label: '客户等级', type: 'select', default: '普通客户', options: [
-    { value: '普通客户', label: '普通客户' },
-    { value: 'VIP客户', label: 'VIP客户' },
-    { value: '战略客户', label: '战略客户' }
-  ] },
-  { prop: 'taxNo', label: '税号', placeholder: '税号' },
-  { prop: 'contactPerson', label: '联系人', placeholder: '联系人' },
-  { prop: 'contactPhone', label: '联系电话', placeholder: '联系电话' },
-  { prop: 'email', label: '邮箱', placeholder: '邮箱' },
-  { prop: 'address', label: '地址', textarea: true, rows: 2, placeholder: '请输入地址' },
-  { prop: 'bankName', label: '开户行', placeholder: '开户行' },
-  { prop: 'bankAccount', label: '银行账号', placeholder: '银行账号' },
-  { prop: 'creditLimit', label: '信用额度', type: 'number', precision: 2, default: 0 },
-  { prop: 'paymentTermId', label: '付款条件ID', type: 'number', placeholder: '付款条件ID' },
-  { prop: 'currencyId', label: '币种ID', type: 'number', placeholder: '币种ID' },
-  { prop: 'defaultSalerId', label: '默认业务员ID', type: 'number', placeholder: '默认业务员ID' },
-  { prop: 'status', label: '状态', type: 'select', required: true, default: '正常', options: [
-    { value: '正常', label: '正常' }, { value: '停用', label: '停用' }
-  ] }
+  { prop: 'status', label: '状态', width: 100, slot: 'statusSlot' },
+  { prop: 'remark', label: '备注', minWidth: 150, showOverflowTooltip: true }
 ]
 
 async function fetchData(params) {
@@ -78,5 +72,9 @@ async function onSave(data, isEdit) {
 }
 async function onDelete(row) {
   await deleteCustomer(row.customerId)
+}
+/** 批量删除（2026-09-20 接入：CrudTable 一次请求批量删，替代原先逐条循环） */
+async function onBatchDelete(rows) {
+  await batchDeleteCustomer(rows.map(r => r.customerId))
 }
 </script>

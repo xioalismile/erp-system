@@ -29,8 +29,10 @@ public class SysDictController {
     public Result<PageResult<SysDictType>> typePage(
             @RequestParam(defaultValue = "1") int current,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String keyword) {
-        return Result.success(sysDictTypeService.pageQuery(current, size, keyword));
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String sortOrder) {
+        return Result.success(sysDictTypeService.pageQuery(current, size, keyword, sortBy, sortOrder));
     }
 
     @GetMapping("/type/{id}")
@@ -62,6 +64,19 @@ public class SysDictController {
     @GetMapping("/data/{typeId}")
     public Result<List<SysDictData>> dataList(@PathVariable Long typeId) {
         return Result.success(sysDictDataService.listByTypeId(typeId));
+    }
+
+    /** 按类型编码查字典数据（前端下拉框直接用 code 取选项） */
+    @GetMapping("/data/code/{typeCode}")
+    public Result<List<SysDictData>> dataListByCode(@PathVariable String typeCode) {
+        return Result.success(sysDictDataService.listByTypeCode(typeCode));
+    }
+
+    /** 按类型编码新增字典选项（前端"回车保存新选项"，label 已存在则幂等返回已有记录） */
+    @PostMapping("/data/code/{typeCode}")
+    public Result<SysDictData> createDataByCode(@PathVariable String typeCode,
+                                                @RequestBody java.util.Map<String, String> body) {
+        return Result.success(sysDictDataService.saveOptionByTypeCode(typeCode, body.get("label")));
     }
 
     @PostMapping("/data")

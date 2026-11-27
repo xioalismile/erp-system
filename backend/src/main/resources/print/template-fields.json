@@ -1,0 +1,4703 @@
+{
+  "commonItemFields": [
+    {
+      "key": "lineNo",
+      "label": "行号"
+    },
+    {
+      "key": "materialCode",
+      "label": "物料编码"
+    },
+    {
+      "key": "materialName",
+      "label": "物料名称"
+    },
+    {
+      "key": "specification",
+      "label": "规格"
+    },
+    {
+      "key": "unit",
+      "label": "单位"
+    },
+    {
+      "key": "quantity",
+      "label": "数量"
+    },
+    {
+      "key": "unitPrice",
+      "label": "单价"
+    },
+    {
+      "key": "amount",
+      "label": "金额"
+    },
+    {
+      "key": "taxRate",
+      "label": "税率(%)"
+    },
+    {
+      "key": "taxAmount",
+      "label": "税额"
+    },
+    {
+      "key": "netAmount",
+      "label": "价税合计"
+    },
+    {
+      "key": "remark",
+      "label": "备注"
+    }
+  ],
+  "docTypeFieldsMap": {
+    "SALE_QUOTE": {
+      "header": [
+        {
+          "key": "quoteNo",
+          "label": "报价编号"
+        },
+        {
+          "key": "customerName",
+          "label": "客户名称"
+        },
+        {
+          "key": "customerNo",
+          "label": "客户编码"
+        },
+        {
+          "key": "salerName",
+          "label": "销售员"
+        },
+        {
+          "key": "quoteDate",
+          "label": "报价日期"
+        },
+        {
+          "key": "validDate",
+          "label": "有效期"
+        },
+        {
+          "key": "currencyCode",
+          "label": "币种"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "unitPrice",
+          "label": "单价"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "taxRate",
+          "label": "税率(%)"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额"
+        },
+        {
+          "key": "netAmount",
+          "label": "价税合计"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalAmount",
+          "label": "合计金额"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额合计"
+        },
+        {
+          "key": "netAmount",
+          "label": "价税合计"
+        },
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "SALE_ORDER": {
+      "header": [
+        {
+          "key": "orderNo",
+          "label": "订单编号"
+        },
+        {
+          "key": "customerName",
+          "label": "客户名称"
+        },
+        {
+          "key": "customerNo",
+          "label": "客户编码"
+        },
+        {
+          "key": "salerName",
+          "label": "销售员"
+        },
+        {
+          "key": "orderDate",
+          "label": "订单日期"
+        },
+        {
+          "key": "deliveryDate",
+          "label": "交货日期"
+        },
+        {
+          "key": "currencyCode",
+          "label": "币种"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "approvalStatus",
+          "label": "审核状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "unitPrice",
+          "label": "单价"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "taxRate",
+          "label": "税率(%)"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额"
+        },
+        {
+          "key": "netAmount",
+          "label": "价税合计"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        },
+        {
+          "key": "discountRate",
+          "label": "折扣率(%)"
+        },
+        {
+          "key": "discountAmount",
+          "label": "折扣额"
+        },
+        {
+          "key": "deliveryDate",
+          "label": "交货日期"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalAmount",
+          "label": "合计金额(折前)"
+        },
+        {
+          "key": "discountAmount",
+          "label": "折扣额合计"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额合计"
+        },
+        {
+          "key": "netAmount",
+          "label": "价税合计"
+        },
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "approvedBy",
+          "label": "审核人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "SALE_CONTRACT": {
+      "header": [
+        {
+          "key": "contractNo",
+          "label": "合同编号"
+        },
+        {
+          "key": "contractDate",
+          "label": "签订日期"
+        },
+        {
+          "key": "contractType",
+          "label": "合同类型"
+        },
+        {
+          "key": "customerShortName",
+          "label": "客户名称"
+        },
+        {
+          "key": "customerNo",
+          "label": "客户编码"
+        },
+        {
+          "key": "contactPerson",
+          "label": "联系人"
+        },
+        {
+          "key": "contactPhone",
+          "label": "联系电话"
+        },
+        {
+          "key": "validityStart",
+          "label": "有效期起"
+        },
+        {
+          "key": "validityEnd",
+          "label": "有效期止"
+        },
+        {
+          "key": "exchangeRate",
+          "label": "汇率"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "approvalStatus",
+          "label": "审核状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "unitPrice",
+          "label": "单价"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "taxRate",
+          "label": "税率(%)"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额"
+        },
+        {
+          "key": "netAmount",
+          "label": "价税合计"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        },
+        {
+          "key": "discountRate",
+          "label": "折扣率(%)"
+        },
+        {
+          "key": "discountAmount",
+          "label": "折扣额"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalAmount",
+          "label": "合计金额"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额合计"
+        },
+        {
+          "key": "discountAmount",
+          "label": "折扣额合计"
+        },
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "approvedBy",
+          "label": "审核人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "SALE_DELIVERY": {
+      "header": [
+        {
+          "key": "deliveryNo",
+          "label": "出库编号"
+        },
+        {
+          "key": "customerName",
+          "label": "客户名称"
+        },
+        {
+          "key": "orderNo",
+          "label": "源订单号"
+        },
+        {
+          "key": "salerName",
+          "label": "销售员"
+        },
+        {
+          "key": "deliveryDate",
+          "label": "出库日期"
+        },
+        {
+          "key": "warehouseName",
+          "label": "发货仓库"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "spec",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "应发数量"
+        },
+        {
+          "key": "actualQty",
+          "label": "实发数量"
+        },
+        {
+          "key": "unitPrice",
+          "label": "单价"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalAmount",
+          "label": "合计金额"
+        },
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "approvedBy",
+          "label": "审核人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "SALE_RETURN": {
+      "header": [
+        {
+          "key": "returnNo",
+          "label": "退货编号"
+        },
+        {
+          "key": "customerName",
+          "label": "客户名称"
+        },
+        {
+          "key": "orderNo",
+          "label": "源订单号"
+        },
+        {
+          "key": "returnDate",
+          "label": "退货日期"
+        },
+        {
+          "key": "warehouseName",
+          "label": "入库仓库"
+        },
+        {
+          "key": "reason",
+          "label": "退货原因"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "spec",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "退货数量"
+        },
+        {
+          "key": "unitPrice",
+          "label": "单价"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalAmount",
+          "label": "合计金额"
+        },
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "SALE_EXCHANGE": {
+      "header": [
+        {
+          "key": "exchangeNo",
+          "label": "换货单号"
+        },
+        {
+          "key": "customerName",
+          "label": "客户名称"
+        },
+        {
+          "key": "contactPerson",
+          "label": "联系人"
+        },
+        {
+          "key": "contactPhone",
+          "label": "联系电话"
+        },
+        {
+          "key": "salerName",
+          "label": "销售员"
+        },
+        {
+          "key": "exchangeDate",
+          "label": "换货日期"
+        },
+        {
+          "key": "currencyCode",
+          "label": "币种"
+        },
+        {
+          "key": "sourceBillNo",
+          "label": "来源订单号"
+        },
+        {
+          "key": "deliveryAddress",
+          "label": "收货地址"
+        },
+        {
+          "key": "totalQuantity",
+          "label": "数量合计"
+        },
+        {
+          "key": "totalAmount",
+          "label": "金额"
+        },
+        {
+          "key": "discountAmount",
+          "label": "折扣额"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额"
+        },
+        {
+          "key": "netAmount",
+          "label": "价税合计"
+        },
+        {
+          "key": "generatedDeliveryNo",
+          "label": "已生成出库单"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "approvalStatus",
+          "label": "审核状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "originMaterialCode",
+          "label": "原物料编码"
+        },
+        {
+          "key": "originMaterialName",
+          "label": "原物料名称"
+        },
+        {
+          "key": "originSpecification",
+          "label": "原规格"
+        },
+        {
+          "key": "originUnit",
+          "label": "原单位"
+        },
+        {
+          "key": "originUnitPrice",
+          "label": "原单价"
+        },
+        {
+          "key": "materialCode",
+          "label": "换货物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "换货物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "unitPrice",
+          "label": "单价"
+        },
+        {
+          "key": "discountRate",
+          "label": "折扣率(%)"
+        },
+        {
+          "key": "discountAmount",
+          "label": "折扣额"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "taxRate",
+          "label": "税率(%)"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额"
+        },
+        {
+          "key": "netAmount",
+          "label": "价税合计"
+        },
+        {
+          "key": "sourceBillNo",
+          "label": "来源单号"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalQuantity",
+          "label": "数量合计"
+        },
+        {
+          "key": "totalAmount",
+          "label": "金额合计"
+        },
+        {
+          "key": "discountAmount",
+          "label": "折扣额合计"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额合计"
+        },
+        {
+          "key": "netAmount",
+          "label": "价税合计"
+        },
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "SALE_REPAIR": {
+      "header": [
+        {
+          "key": "repairNo",
+          "label": "维修单号"
+        },
+        {
+          "key": "customerName",
+          "label": "客户名称"
+        },
+        {
+          "key": "contactPerson",
+          "label": "联系人"
+        },
+        {
+          "key": "contactPhone",
+          "label": "联系电话"
+        },
+        {
+          "key": "sourceBillNo",
+          "label": "来源单号"
+        },
+        {
+          "key": "serviceType",
+          "label": "服务类型"
+        },
+        {
+          "key": "warrantyStatus",
+          "label": "保修状态"
+        },
+        {
+          "key": "warrantyBasis",
+          "label": "保修依据"
+        },
+        {
+          "key": "warrantyMonths",
+          "label": "保修月数"
+        },
+        {
+          "key": "receiveDate",
+          "label": "收件日期"
+        },
+        {
+          "key": "returnDate",
+          "label": "返还日期"
+        },
+        {
+          "key": "totalQuantity",
+          "label": "数量合计"
+        },
+        {
+          "key": "repairFee",
+          "label": "维修费"
+        },
+        {
+          "key": "partsFee",
+          "label": "配件费"
+        },
+        {
+          "key": "totalFee",
+          "label": "合计费用"
+        },
+        {
+          "key": "repairResult",
+          "label": "维修结果"
+        },
+        {
+          "key": "transferredBillNo",
+          "label": "转出单据号"
+        },
+        {
+          "key": "receivedInboundNo",
+          "label": "收件入库单号"
+        },
+        {
+          "key": "returnedIssueNo",
+          "label": "返还出库单号"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "approvalStatus",
+          "label": "审核状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "serialNo",
+          "label": "序列号"
+        },
+        {
+          "key": "batchNo",
+          "label": "批次号"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "faultDescription",
+          "label": "故障描述"
+        },
+        {
+          "key": "repairPlan",
+          "label": "维修方案"
+        },
+        {
+          "key": "warrantyStatus",
+          "label": "保修状态"
+        },
+        {
+          "key": "laborHours",
+          "label": "工时"
+        },
+        {
+          "key": "receivedQuantity",
+          "label": "收件数量"
+        },
+        {
+          "key": "returnedQuantity",
+          "label": "返还数量"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalQuantity",
+          "label": "数量合计"
+        },
+        {
+          "key": "repairFee",
+          "label": "维修费合计"
+        },
+        {
+          "key": "partsFee",
+          "label": "配件费合计"
+        },
+        {
+          "key": "totalFee",
+          "label": "合计费用"
+        },
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "SALE_INVOICE": {
+      "header": [
+        {
+          "key": "invoiceNo",
+          "label": "发票编号"
+        },
+        {
+          "key": "taxInvoiceNo",
+          "label": "税票号码"
+        },
+        {
+          "key": "customerName",
+          "label": "客户名称"
+        },
+        {
+          "key": "invoiceDate",
+          "label": "开票日期"
+        },
+        {
+          "key": "invoiceType",
+          "label": "发票类型"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "unitPrice",
+          "label": "单价"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "taxRate",
+          "label": "税率(%)"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额"
+        },
+        {
+          "key": "netAmount",
+          "label": "价税合计"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalAmount",
+          "label": "合计金额"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额合计"
+        },
+        {
+          "key": "netAmount",
+          "label": "价税合计"
+        },
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        }
+      ]
+    },
+    "SALE_EXPENSE": {
+      "header": [
+        {
+          "key": "expenseNo",
+          "label": "费用单号"
+        },
+        {
+          "key": "customerName",
+          "label": "客户名称"
+        },
+        {
+          "key": "expenseTypeName",
+          "label": "费用类型"
+        },
+        {
+          "key": "expenseDate",
+          "label": "费用日期"
+        },
+        {
+          "key": "totalAmount",
+          "label": "费用金额"
+        },
+        {
+          "key": "baseAmount",
+          "label": "本位币金额"
+        },
+        {
+          "key": "currencyCode",
+          "label": "币种"
+        },
+        {
+          "key": "relatedDocNo",
+          "label": "关联单据号"
+        },
+        {
+          "key": "costSharingMethod",
+          "label": "分摊方式"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "approvalStatus",
+          "label": "审核状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "sourceNo",
+          "label": "来源单号"
+        },
+        {
+          "key": "sourceType",
+          "label": "来源类型"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "sharingAmount",
+          "label": "分摊金额"
+        },
+        {
+          "key": "sharingRatio",
+          "label": "分摊比例"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalAmount",
+          "label": "费用合计"
+        },
+        {
+          "key": "baseAmount",
+          "label": "本位币合计"
+        },
+        {
+          "key": "createBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createTime",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "PURCHASE_REQUEST": {
+      "header": [
+        {
+          "key": "requestNo",
+          "label": "申请编号"
+        },
+        {
+          "key": "requesterName",
+          "label": "申请人"
+        },
+        {
+          "key": "departmentName",
+          "label": "申请部门"
+        },
+        {
+          "key": "requestDate",
+          "label": "申请日期"
+        },
+        {
+          "key": "needDate",
+          "label": "需求日期"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "spec",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "申请数量"
+        },
+        {
+          "key": "needDate",
+          "label": "需求日期"
+        },
+        {
+          "key": "remark",
+          "label": "用途说明"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "approvedBy",
+          "label": "审核人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "PURCHASE_ORDER": {
+      "header": [
+        {
+          "key": "orderNo",
+          "label": "订单编号"
+        },
+        {
+          "key": "supplierName",
+          "label": "供应商名称"
+        },
+        {
+          "key": "supplierNo",
+          "label": "供应商编码"
+        },
+        {
+          "key": "purchaserName",
+          "label": "采购员"
+        },
+        {
+          "key": "orderDate",
+          "label": "订单日期"
+        },
+        {
+          "key": "deliveryDate",
+          "label": "交货日期"
+        },
+        {
+          "key": "currencyCode",
+          "label": "币种"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "unitPrice",
+          "label": "单价"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "taxRate",
+          "label": "税率(%)"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额"
+        },
+        {
+          "key": "netAmount",
+          "label": "价税合计"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        },
+        {
+          "key": "deliveryDate",
+          "label": "交货日期"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalAmount",
+          "label": "合计金额"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额合计"
+        },
+        {
+          "key": "netAmount",
+          "label": "价税合计"
+        },
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "approvedBy",
+          "label": "审核人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "PURCHASE_CONTRACT": {
+      "header": [
+        {
+          "key": "contractNo",
+          "label": "合同编号"
+        },
+        {
+          "key": "contractDate",
+          "label": "签订日期"
+        },
+        {
+          "key": "contractType",
+          "label": "合同类型"
+        },
+        {
+          "key": "supplierShortName",
+          "label": "供应商名称"
+        },
+        {
+          "key": "supplierNo",
+          "label": "供应商编码"
+        },
+        {
+          "key": "contactPerson",
+          "label": "联系人"
+        },
+        {
+          "key": "contactPhone",
+          "label": "联系电话"
+        },
+        {
+          "key": "validityStart",
+          "label": "有效期起"
+        },
+        {
+          "key": "validityEnd",
+          "label": "有效期止"
+        },
+        {
+          "key": "exchangeRate",
+          "label": "汇率"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "approvalStatus",
+          "label": "审核状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "unitPrice",
+          "label": "单价"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "taxRate",
+          "label": "税率(%)"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额"
+        },
+        {
+          "key": "netAmount",
+          "label": "价税合计"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        },
+        {
+          "key": "discountRate",
+          "label": "折扣率(%)"
+        },
+        {
+          "key": "discountAmount",
+          "label": "折扣额"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalAmount",
+          "label": "合计金额"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额合计"
+        },
+        {
+          "key": "discountAmount",
+          "label": "折扣额合计"
+        },
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "approvedBy",
+          "label": "审核人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "PURCHASE_INBOUND": {
+      "header": [
+        {
+          "key": "inboundNo",
+          "label": "入库编号"
+        },
+        {
+          "key": "supplierName",
+          "label": "供应商名称"
+        },
+        {
+          "key": "orderNo",
+          "label": "源订单号"
+        },
+        {
+          "key": "purchaserName",
+          "label": "采购员"
+        },
+        {
+          "key": "inboundDate",
+          "label": "入库日期"
+        },
+        {
+          "key": "warehouseName",
+          "label": "入库仓库"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "spec",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "应收数量"
+        },
+        {
+          "key": "actualQty",
+          "label": "实收数量"
+        },
+        {
+          "key": "unitPrice",
+          "label": "单价"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalAmount",
+          "label": "合计金额"
+        },
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "approvedBy",
+          "label": "审核人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "PURCHASE_RETURN": {
+      "header": [
+        {
+          "key": "returnNo",
+          "label": "退货编号"
+        },
+        {
+          "key": "supplierName",
+          "label": "供应商名称"
+        },
+        {
+          "key": "returnDate",
+          "label": "退货日期"
+        },
+        {
+          "key": "warehouseName",
+          "label": "出库仓库"
+        },
+        {
+          "key": "reason",
+          "label": "退货原因"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "quantity",
+          "label": "退货数量"
+        },
+        {
+          "key": "unitPrice",
+          "label": "单价"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalAmount",
+          "label": "合计金额"
+        },
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "PURCHASE_INVOICE": {
+      "header": [
+        {
+          "key": "invoiceNo",
+          "label": "发票编号"
+        },
+        {
+          "key": "supplierName",
+          "label": "供应商名称"
+        },
+        {
+          "key": "invoiceDate",
+          "label": "开票日期"
+        },
+        {
+          "key": "invoiceType",
+          "label": "发票类型"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "unitPrice",
+          "label": "单价"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "taxRate",
+          "label": "税率(%)"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalAmount",
+          "label": "合计金额"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额合计"
+        },
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        }
+      ]
+    },
+    "PURCHASE_EXPENSE": {
+      "header": [
+        {
+          "key": "expenseNo",
+          "label": "费用单号"
+        },
+        {
+          "key": "supplierName",
+          "label": "供应商名称"
+        },
+        {
+          "key": "expenseTypeName",
+          "label": "费用类型"
+        },
+        {
+          "key": "expenseDate",
+          "label": "费用日期"
+        },
+        {
+          "key": "totalAmount",
+          "label": "费用金额"
+        },
+        {
+          "key": "baseAmount",
+          "label": "本位币金额"
+        },
+        {
+          "key": "currencyCode",
+          "label": "币种"
+        },
+        {
+          "key": "relatedDocNo",
+          "label": "关联单据号"
+        },
+        {
+          "key": "costSharingMethod",
+          "label": "分摊方式"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "approvalStatus",
+          "label": "审核状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "sourceNo",
+          "label": "来源单号"
+        },
+        {
+          "key": "sourceType",
+          "label": "来源类型"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "sharingAmount",
+          "label": "分摊金额"
+        },
+        {
+          "key": "sharingRatio",
+          "label": "分摊比例"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalAmount",
+          "label": "费用合计"
+        },
+        {
+          "key": "baseAmount",
+          "label": "本位币合计"
+        },
+        {
+          "key": "createBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createTime",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "WORK_ORDER": {
+      "header": [
+        {
+          "key": "orderNo",
+          "label": "工单编号"
+        },
+        {
+          "key": "orderDate",
+          "label": "下单日期"
+        },
+        {
+          "key": "materialCode",
+          "label": "产品编码"
+        },
+        {
+          "key": "materialName",
+          "label": "产品名称"
+        },
+        {
+          "key": "model",
+          "label": "型号"
+        },
+        {
+          "key": "quantity",
+          "label": "生产数量"
+        },
+        {
+          "key": "completedQuantity",
+          "label": "完工数量"
+        },
+        {
+          "key": "reportedQuantity",
+          "label": "报工数量"
+        },
+        {
+          "key": "rejectedQuantity",
+          "label": "不合格数量"
+        },
+        {
+          "key": "priority",
+          "label": "优先级"
+        },
+        {
+          "key": "planStartDate",
+          "label": "计划开工"
+        },
+        {
+          "key": "planEndDate",
+          "label": "计划完工"
+        },
+        {
+          "key": "actualStartDate",
+          "label": "实际开工"
+        },
+        {
+          "key": "actualEndDate",
+          "label": "实际完工"
+        },
+        {
+          "key": "bomVersion",
+          "label": "BOM版本"
+        },
+        {
+          "key": "routingVersion",
+          "label": "工艺版本"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "spec",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "需求数量"
+        },
+        {
+          "key": "issuedQuantity",
+          "label": "已领数量"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "PRODUCTION_RECEIPT": {
+      "header": [
+        {
+          "key": "receiptNo",
+          "label": "入库单号"
+        },
+        {
+          "key": "receiptDate",
+          "label": "入库日期"
+        },
+        {
+          "key": "workOrderNo",
+          "label": "源工单号"
+        },
+        {
+          "key": "warehouseName",
+          "label": "入库仓库"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "产品编码"
+        },
+        {
+          "key": "materialName",
+          "label": "产品名称"
+        },
+        {
+          "key": "spec",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "入库数量"
+        },
+        {
+          "key": "qualifiedQuantity",
+          "label": "合格数量"
+        },
+        {
+          "key": "rejectedQuantity",
+          "label": "不合格数量"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "approvedBy",
+          "label": "审核人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "MATERIAL_REQUISITION": {
+      "header": [
+        {
+          "key": "requisitionNo",
+          "label": "领料编号"
+        },
+        {
+          "key": "departmentName",
+          "label": "领料部门"
+        },
+        {
+          "key": "warehouseName",
+          "label": "发料仓库"
+        },
+        {
+          "key": "requisitionDate",
+          "label": "领料日期"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "spec",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "领料数量"
+        },
+        {
+          "key": "actualQty",
+          "label": "实发数量"
+        },
+        {
+          "key": "remark",
+          "label": "用途"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "approvedBy",
+          "label": "审核人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "PRODUCE_ASSEMBLE": {
+      "header": [
+        {
+          "key": "serial_no",
+          "label": "组装单号"
+        },
+        {
+          "key": "assembleDate",
+          "label": "组装日期"
+        },
+        {
+          "key": "warehouseName",
+          "label": "仓库"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "spec",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "PRODUCE_DISASSEMBLE": {
+      "header": [
+        {
+          "key": "serial_no",
+          "label": "拆卸单号"
+        },
+        {
+          "key": "disassembleDate",
+          "label": "拆卸日期"
+        },
+        {
+          "key": "warehouseName",
+          "label": "仓库"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "spec",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "OPERATION_REPORT": {
+      "header": [
+        {
+          "key": "reportNo",
+          "label": "汇报单号"
+        },
+        {
+          "key": "reportDate",
+          "label": "汇报日期"
+        },
+        {
+          "key": "productionOrderNo",
+          "label": "生产工单号"
+        },
+        {
+          "key": "processNo",
+          "label": "工序号"
+        },
+        {
+          "key": "operationName",
+          "label": "工序名称"
+        },
+        {
+          "key": "workCenterName",
+          "label": "工作中心"
+        },
+        {
+          "key": "employeeName",
+          "label": "报工人"
+        },
+        {
+          "key": "reportType",
+          "label": "报工类型"
+        },
+        {
+          "key": "totalQuantity",
+          "label": "报工数量"
+        },
+        {
+          "key": "qualifiedQuantity",
+          "label": "合格数量"
+        },
+        {
+          "key": "rejectedQuantity",
+          "label": "报废数量"
+        },
+        {
+          "key": "workHours",
+          "label": "工时"
+        },
+        {
+          "key": "overtimeHours",
+          "label": "加班工时"
+        },
+        {
+          "key": "shiftType",
+          "label": "班次"
+        },
+        {
+          "key": "sourceBillNo",
+          "label": "来源单号"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "approvalStatus",
+          "label": "审核状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [],
+      "footer": [
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "MRP_PLAN": {
+      "header": [
+        {
+          "key": "planNo",
+          "label": "计划单号"
+        },
+        {
+          "key": "planName",
+          "label": "计划名称"
+        },
+        {
+          "key": "planDate",
+          "label": "计划日期"
+        },
+        {
+          "key": "demandSource",
+          "label": "需求来源"
+        },
+        {
+          "key": "planHorizon",
+          "label": "计划展望期(天)"
+        },
+        {
+          "key": "timeFenceDays",
+          "label": "冻结期(天)"
+        },
+        {
+          "key": "lotSizeType",
+          "label": "批量方式"
+        },
+        {
+          "key": "lotSize",
+          "label": "批量"
+        },
+        {
+          "key": "minOrderQty",
+          "label": "最小订货量"
+        },
+        {
+          "key": "totalNetDemand",
+          "label": "净需求合计"
+        },
+        {
+          "key": "totalPurchaseSuggestion",
+          "label": "建议采购合计"
+        },
+        {
+          "key": "totalProduceSuggestion",
+          "label": "建议生产合计"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "grossDemand",
+          "label": "毛需求"
+        },
+        {
+          "key": "availableStock",
+          "label": "可用库存"
+        },
+        {
+          "key": "safetyStock",
+          "label": "安全库存"
+        },
+        {
+          "key": "netDemand",
+          "label": "净需求"
+        },
+        {
+          "key": "planQuantity",
+          "label": "计划数量"
+        },
+        {
+          "key": "suggestType",
+          "label": "建议类型"
+        },
+        {
+          "key": "leadTime",
+          "label": "提前期(天)"
+        },
+        {
+          "key": "suggestDate",
+          "label": "建议日期"
+        },
+        {
+          "key": "level",
+          "label": "层级"
+        },
+        {
+          "key": "bomCode",
+          "label": "BOM编码"
+        },
+        {
+          "key": "bomVersion",
+          "label": "BOM版本"
+        },
+        {
+          "key": "saleOrderNo",
+          "label": "销售订单号"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createTime",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "SUBCONTRACT_ORDER": {
+      "header": [
+        {
+          "key": "orderNo",
+          "label": "委外单号"
+        },
+        {
+          "key": "supplierName",
+          "label": "供应商名称"
+        },
+        {
+          "key": "processItem",
+          "label": "加工项目"
+        },
+        {
+          "key": "orderDate",
+          "label": "下单日期"
+        },
+        {
+          "key": "expectDate",
+          "label": "预计交货"
+        },
+        {
+          "key": "actualDate",
+          "label": "实际交货"
+        },
+        {
+          "key": "totalQuantity",
+          "label": "加工数量"
+        },
+        {
+          "key": "finishedQuantity",
+          "label": "完工数量"
+        },
+        {
+          "key": "unitPrice",
+          "label": "加工单价"
+        },
+        {
+          "key": "currencyCode",
+          "label": "币种"
+        },
+        {
+          "key": "sourceBillType",
+          "label": "来源类型"
+        },
+        {
+          "key": "sourceBillNo",
+          "label": "来源单号"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "unitPrice",
+          "label": "单价"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "taxRate",
+          "label": "税率(%)"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额"
+        },
+        {
+          "key": "netAmount",
+          "label": "价税合计"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalAmount",
+          "label": "加工金额"
+        },
+        {
+          "key": "taxRate",
+          "label": "税率(%)"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额"
+        },
+        {
+          "key": "netAmount",
+          "label": "价税合计"
+        },
+        {
+          "key": "createBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createTime",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "SUBCONTRACT_PICK": {
+      "header": [
+        {
+          "key": "pickNo",
+          "label": "发料单号"
+        },
+        {
+          "key": "orderNo",
+          "label": "委外订单号"
+        },
+        {
+          "key": "supplierName",
+          "label": "供应商名称"
+        },
+        {
+          "key": "pickDate",
+          "label": "发料日期"
+        },
+        {
+          "key": "totalQuantity",
+          "label": "发料数量"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "approvalStatus",
+          "label": "审核状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "warehouseName",
+          "label": "仓库"
+        },
+        {
+          "key": "sourceBillNo",
+          "label": "来源单号"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createTime",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "SUBCONTRACT_INBOUND": {
+      "header": [
+        {
+          "key": "inboundNo",
+          "label": "入库单号"
+        },
+        {
+          "key": "orderNo",
+          "label": "委外订单号"
+        },
+        {
+          "key": "supplierName",
+          "label": "供应商名称"
+        },
+        {
+          "key": "inboundDate",
+          "label": "入库日期"
+        },
+        {
+          "key": "totalQuantity",
+          "label": "入库数量"
+        },
+        {
+          "key": "processingFee",
+          "label": "加工费"
+        },
+        {
+          "key": "qualifiedQuantity",
+          "label": "合格数量"
+        },
+        {
+          "key": "rejectedQuantity",
+          "label": "不合格数量"
+        },
+        {
+          "key": "payableAmount",
+          "label": "应付金额"
+        },
+        {
+          "key": "qcStatus",
+          "label": "质检状态"
+        },
+        {
+          "key": "sourceBillNo",
+          "label": "来源单号"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "approvalStatus",
+          "label": "审核状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "warehouseName",
+          "label": "仓库"
+        },
+        {
+          "key": "processingFee",
+          "label": "加工费"
+        },
+        {
+          "key": "qualifiedQuantity",
+          "label": "合格数量"
+        },
+        {
+          "key": "rejectedQuantity",
+          "label": "不合格数量"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalQuantity",
+          "label": "数量合计"
+        },
+        {
+          "key": "processingFee",
+          "label": "加工费合计"
+        },
+        {
+          "key": "payableAmount",
+          "label": "应付金额"
+        },
+        {
+          "key": "createBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createTime",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "SUBCONTRACT_RETURN": {
+      "header": [
+        {
+          "key": "returnNo",
+          "label": "退料单号"
+        },
+        {
+          "key": "orderNo",
+          "label": "委外订单号"
+        },
+        {
+          "key": "supplierName",
+          "label": "供应商名称"
+        },
+        {
+          "key": "returnDate",
+          "label": "退料日期"
+        },
+        {
+          "key": "totalQuantity",
+          "label": "退料数量"
+        },
+        {
+          "key": "pickNo",
+          "label": "来源发料单号"
+        },
+        {
+          "key": "sourceBillNo",
+          "label": "来源单号"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "approvalStatus",
+          "label": "审核状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "warehouseName",
+          "label": "仓库"
+        },
+        {
+          "key": "sourceBillNo",
+          "label": "来源单号"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createTime",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "SUBCONTRACT_SUPPLEMENT": {
+      "header": [
+        {
+          "key": "supplementNo",
+          "label": "补料单号"
+        },
+        {
+          "key": "orderNo",
+          "label": "委外订单号"
+        },
+        {
+          "key": "supplierName",
+          "label": "供应商名称"
+        },
+        {
+          "key": "supplementDate",
+          "label": "补料日期"
+        },
+        {
+          "key": "totalQuantity",
+          "label": "补料数量"
+        },
+        {
+          "key": "pickNo",
+          "label": "来源发料单号"
+        },
+        {
+          "key": "sourceBillNo",
+          "label": "来源单号"
+        },
+        {
+          "key": "reason",
+          "label": "补料原因"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "approvalStatus",
+          "label": "审核状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "warehouseName",
+          "label": "仓库"
+        },
+        {
+          "key": "sourceBillNo",
+          "label": "来源单号"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createTime",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "SAMPLE": {
+      "header": [
+        {
+          "key": "sampleNo",
+          "label": "打样单号"
+        },
+        {
+          "key": "sampleName",
+          "label": "样品名称"
+        },
+        {
+          "key": "sampleType",
+          "label": "样品类型"
+        },
+        {
+          "key": "sampleStage",
+          "label": "样品阶段"
+        },
+        {
+          "key": "customerName",
+          "label": "客户名称"
+        },
+        {
+          "key": "contactPerson",
+          "label": "联系人"
+        },
+        {
+          "key": "contactPhone",
+          "label": "联系电话"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "sampleQty",
+          "label": "打样数量"
+        },
+        {
+          "key": "demandDate",
+          "label": "需求日期"
+        },
+        {
+          "key": "planFinishDate",
+          "label": "计划完成"
+        },
+        {
+          "key": "actualFinishDate",
+          "label": "实际完成"
+        },
+        {
+          "key": "priority",
+          "label": "优先级"
+        },
+        {
+          "key": "costAmount",
+          "label": "打样成本"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "progress",
+          "label": "进度"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "costAmount",
+          "label": "成本合计"
+        },
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "FREE_SAMPLE": {
+      "header": [
+        {
+          "key": "orderNo",
+          "label": "样品单号"
+        },
+        {
+          "key": "customerName",
+          "label": "客户名称"
+        },
+        {
+          "key": "salesName",
+          "label": "业务员"
+        },
+        {
+          "key": "orderDate",
+          "label": "下单日期"
+        },
+        {
+          "key": "warehouseName",
+          "label": "发货仓库"
+        },
+        {
+          "key": "expressCompany",
+          "label": "快递公司"
+        },
+        {
+          "key": "expressNo",
+          "label": "快递单号"
+        },
+        {
+          "key": "totalQuantity",
+          "label": "总数量"
+        },
+        {
+          "key": "totalAmount",
+          "label": "总金额"
+        },
+        {
+          "key": "deliveryDate",
+          "label": "发货日期"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "spec",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalQuantity",
+          "label": "数量合计"
+        },
+        {
+          "key": "totalAmount",
+          "label": "金额合计"
+        },
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "STOCK_TRANSFER": {
+      "header": [
+        {
+          "key": "transferNo",
+          "label": "调拨编号"
+        },
+        {
+          "key": "outWarehouseName",
+          "label": "调出仓库"
+        },
+        {
+          "key": "inWarehouseName",
+          "label": "调入仓库"
+        },
+        {
+          "key": "transferDate",
+          "label": "调拨日期"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "spec",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "调拨数量"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "approvedBy",
+          "label": "审核人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "STOCK_CHECK": {
+      "header": [
+        {
+          "key": "checkNo",
+          "label": "盘点编号"
+        },
+        {
+          "key": "warehouseName",
+          "label": "盘点仓库"
+        },
+        {
+          "key": "checkDate",
+          "label": "盘点日期"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "spec",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "bookQty",
+          "label": "账面数量"
+        },
+        {
+          "key": "actualQty",
+          "label": "实盘数量"
+        },
+        {
+          "key": "diffQty",
+          "label": "差异"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "approvedBy",
+          "label": "审核人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "OTHER_RECEIPT": {
+      "header": [
+        {
+          "key": "receiptNo",
+          "label": "入库编号"
+        },
+        {
+          "key": "warehouseName",
+          "label": "入库仓库"
+        },
+        {
+          "key": "receiptDate",
+          "label": "入库日期"
+        },
+        {
+          "key": "receiptType",
+          "label": "入库类型"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "spec",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "OTHER_ISSUE": {
+      "header": [
+        {
+          "key": "issueNo",
+          "label": "出库编号"
+        },
+        {
+          "key": "warehouseName",
+          "label": "出库仓库"
+        },
+        {
+          "key": "issueDate",
+          "label": "出库日期"
+        },
+        {
+          "key": "issueType",
+          "label": "出库类型"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "spec",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "PAYMENT_RECEIPT": {
+      "header": [
+        {
+          "key": "receiptNo",
+          "label": "收款单号"
+        },
+        {
+          "key": "receiptDate",
+          "label": "收款日期"
+        },
+        {
+          "key": "customerName",
+          "label": "客户名称"
+        },
+        {
+          "key": "sourceBillType",
+          "label": "来源单据类型"
+        },
+        {
+          "key": "sourceBillNo",
+          "label": "来源单据号"
+        },
+        {
+          "key": "bankAccount",
+          "label": "银行账户"
+        },
+        {
+          "key": "exchangeRate",
+          "label": "汇率"
+        },
+        {
+          "key": "documentNo",
+          "label": "凭证号"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "approvalStatus",
+          "label": "审核状态"
+        },
+        {
+          "key": "commissionRate",
+          "label": "提成比例%"
+        },
+        {
+          "key": "specialServiceFee",
+          "label": "特殊服务费"
+        },
+        {
+          "key": "taxExcludedReceivedAmount",
+          "label": "不含税收款金额"
+        },
+        {
+          "key": "salesCommission",
+          "label": "销售提成"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "sourceBillNo",
+          "label": "源单号"
+        },
+        {
+          "key": "orderNo",
+          "label": "订单号"
+        },
+        {
+          "key": "amount",
+          "label": "本次收款"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalAmount",
+          "label": "应收金额"
+        },
+        {
+          "key": "discountAmount",
+          "label": "折让金额"
+        },
+        {
+          "key": "receivedAmount",
+          "label": "实收金额"
+        },
+        {
+          "key": "approvedBy",
+          "label": "审核人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "PAYMENT_VOUCHER": {
+      "header": [
+        {
+          "key": "paymentNo",
+          "label": "付款单号"
+        },
+        {
+          "key": "paymentDate",
+          "label": "付款日期"
+        },
+        {
+          "key": "supplierName",
+          "label": "供应商名称"
+        },
+        {
+          "key": "sourceBillType",
+          "label": "来源单据类型"
+        },
+        {
+          "key": "sourceBillNo",
+          "label": "来源单据号"
+        },
+        {
+          "key": "bankAccount",
+          "label": "银行账户"
+        },
+        {
+          "key": "exchangeRate",
+          "label": "汇率"
+        },
+        {
+          "key": "documentNo",
+          "label": "凭证号"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "approvalStatus",
+          "label": "审核状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "sourceBillNo",
+          "label": "源单号"
+        },
+        {
+          "key": "orderNo",
+          "label": "订单号"
+        },
+        {
+          "key": "amount",
+          "label": "本次付款"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "totalAmount",
+          "label": "应付金额"
+        },
+        {
+          "key": "discountAmount",
+          "label": "折让金额"
+        },
+        {
+          "key": "paidAmount",
+          "label": "实付金额"
+        },
+        {
+          "key": "approvedBy",
+          "label": "审核人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "SALE_PRE_RECEIPT": {
+      "header": [
+        {
+          "key": "receiptNo",
+          "label": "预收单号"
+        },
+        {
+          "key": "customerName",
+          "label": "客户名称"
+        },
+        {
+          "key": "orderNo",
+          "label": "关联订单号"
+        },
+        {
+          "key": "receiptDate",
+          "label": "收款日期"
+        },
+        {
+          "key": "currencyCode",
+          "label": "币种"
+        },
+        {
+          "key": "exchangeRate",
+          "label": "汇率"
+        },
+        {
+          "key": "paymentMethod",
+          "label": "收款方式"
+        },
+        {
+          "key": "accountName",
+          "label": "收款账户"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "orderNo",
+          "label": "订单号"
+        },
+        {
+          "key": "amount",
+          "label": "核销金额"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "amount",
+          "label": "预收金额"
+        },
+        {
+          "key": "baseAmount",
+          "label": "本位币金额"
+        },
+        {
+          "key": "usedAmount",
+          "label": "已核销"
+        },
+        {
+          "key": "remainAmount",
+          "label": "未核销"
+        },
+        {
+          "key": "createBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createTime",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "PURCHASE_PRE_PAYMENT": {
+      "header": [
+        {
+          "key": "paymentNo",
+          "label": "预付单号"
+        },
+        {
+          "key": "supplierName",
+          "label": "供应商名称"
+        },
+        {
+          "key": "orderNo",
+          "label": "关联订单号"
+        },
+        {
+          "key": "paymentDate",
+          "label": "付款日期"
+        },
+        {
+          "key": "currencyCode",
+          "label": "币种"
+        },
+        {
+          "key": "exchangeRate",
+          "label": "汇率"
+        },
+        {
+          "key": "paymentMethod",
+          "label": "付款方式"
+        },
+        {
+          "key": "accountName",
+          "label": "付款账户"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "orderNo",
+          "label": "订单号"
+        },
+        {
+          "key": "amount",
+          "label": "核销金额"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "amount",
+          "label": "预付金额"
+        },
+        {
+          "key": "baseAmount",
+          "label": "本位币金额"
+        },
+        {
+          "key": "usedAmount",
+          "label": "已核销"
+        },
+        {
+          "key": "remainAmount",
+          "label": "未核销"
+        },
+        {
+          "key": "createBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createTime",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "OPERATION_EXPENSE": {
+      "header": [
+        {
+          "key": "expenseNo",
+          "label": "费用单号"
+        },
+        {
+          "key": "expenseType",
+          "label": "费用类型"
+        },
+        {
+          "key": "expenseDate",
+          "label": "费用日期"
+        },
+        {
+          "key": "applicantName",
+          "label": "申请人"
+        },
+        {
+          "key": "departmentName",
+          "label": "部门"
+        },
+        {
+          "key": "relatedOrderType",
+          "label": "关联单据类型"
+        },
+        {
+          "key": "relatedOrderNo",
+          "label": "关联单据号"
+        },
+        {
+          "key": "allocationMethod",
+          "label": "分摊方式"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "expenseType",
+          "label": "费用类型"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "amount",
+          "label": "费用金额"
+        },
+        {
+          "key": "approvedBy",
+          "label": "审核人"
+        },
+        {
+          "key": "approvedAt",
+          "label": "审核时间"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "COST_CALCULATION": {
+      "header": [
+        {
+          "key": "calcNo",
+          "label": "核算单号"
+        },
+        {
+          "key": "calcName",
+          "label": "核算名称"
+        },
+        {
+          "key": "calcDate",
+          "label": "核算日期"
+        },
+        {
+          "key": "period",
+          "label": "核算期间"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "calcMethod",
+          "label": "核算方法"
+        },
+        {
+          "key": "directMaterialCost",
+          "label": "直接材料"
+        },
+        {
+          "key": "directLaborCost",
+          "label": "直接人工"
+        },
+        {
+          "key": "manufacturingOverhead",
+          "label": "制造费用"
+        },
+        {
+          "key": "scrapLoss",
+          "label": "报废损失"
+        },
+        {
+          "key": "totalCost",
+          "label": "总成本"
+        },
+        {
+          "key": "unitCost",
+          "label": "单位成本"
+        },
+        {
+          "key": "version",
+          "label": "版本"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "approvalStatus",
+          "label": "审核状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "costType",
+          "label": "成本类型"
+        },
+        {
+          "key": "costName",
+          "label": "成本项目"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "unitPrice",
+          "label": "单价"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "directMaterialCost",
+          "label": "直接材料合计"
+        },
+        {
+          "key": "directLaborCost",
+          "label": "直接人工合计"
+        },
+        {
+          "key": "manufacturingOverhead",
+          "label": "制造费用合计"
+        },
+        {
+          "key": "scrapLoss",
+          "label": "报废损失合计"
+        },
+        {
+          "key": "totalCost",
+          "label": "总成本"
+        },
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "SALE_PRICE_STRATEGY": {
+      "header": [
+        {
+          "key": "strategyCode",
+          "label": "策略编码"
+        },
+        {
+          "key": "strategyName",
+          "label": "策略名称"
+        },
+        {
+          "key": "customerLevel",
+          "label": "客户等级"
+        },
+        {
+          "key": "priority",
+          "label": "优先级"
+        },
+        {
+          "key": "startDate",
+          "label": "生效日期"
+        },
+        {
+          "key": "endDate",
+          "label": "失效日期"
+        },
+        {
+          "key": "minQuantity",
+          "label": "最小数量"
+        },
+        {
+          "key": "maxQuantity",
+          "label": "最大数量"
+        },
+        {
+          "key": "priceType",
+          "label": "价格类型"
+        },
+        {
+          "key": "priceValue",
+          "label": "价格值"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "price",
+          "label": "价格"
+        },
+        {
+          "key": "minQuantity",
+          "label": "最小数量"
+        },
+        {
+          "key": "maxQuantity",
+          "label": "最大数量"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "PURCHASE_PRICE_STRATEGY": {
+      "header": [
+        {
+          "key": "strategyCode",
+          "label": "策略编码"
+        },
+        {
+          "key": "strategyName",
+          "label": "策略名称"
+        },
+        {
+          "key": "priority",
+          "label": "优先级"
+        },
+        {
+          "key": "startDate",
+          "label": "生效日期"
+        },
+        {
+          "key": "endDate",
+          "label": "失效日期"
+        },
+        {
+          "key": "minQuantity",
+          "label": "最小数量"
+        },
+        {
+          "key": "maxQuantity",
+          "label": "最大数量"
+        },
+        {
+          "key": "priceType",
+          "label": "价格类型"
+        },
+        {
+          "key": "priceValue",
+          "label": "价格值"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "price",
+          "label": "价格"
+        },
+        {
+          "key": "minQuantity",
+          "label": "最小数量"
+        },
+        {
+          "key": "maxQuantity",
+          "label": "最大数量"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "BOM": {
+      "header": [
+        {
+          "key": "bomCode",
+          "label": "BOM编码"
+        },
+        {
+          "key": "bomName",
+          "label": "BOM名称"
+        },
+        {
+          "key": "materialCode",
+          "label": "产品编码"
+        },
+        {
+          "key": "materialName",
+          "label": "产品名称"
+        },
+        {
+          "key": "version",
+          "label": "版本"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "子件编码"
+        },
+        {
+          "key": "materialName",
+          "label": "子件名称"
+        },
+        {
+          "key": "spec",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "用量"
+        },
+        {
+          "key": "lossRate",
+          "label": "损耗率(%)"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "approvedBy",
+          "label": "审核人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    },
+    "MATERIAL": {
+      "header": [
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "fullName",
+          "label": "物料全称"
+        },
+        {
+          "key": "model",
+          "label": "型号"
+        },
+        {
+          "key": "categoryName",
+          "label": "物料分类"
+        },
+        {
+          "key": "unitName",
+          "label": "单位"
+        },
+        {
+          "key": "baseUnitName",
+          "label": "基本单位"
+        },
+        {
+          "key": "salePrice",
+          "label": "销售价"
+        },
+        {
+          "key": "purchasePrice",
+          "label": "采购价"
+        },
+        {
+          "key": "taxRate",
+          "label": "税率(%)"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [],
+      "footer": []
+    },
+    "WORK_OPERATION": {
+      "header": [
+        {
+          "key": "operationName",
+          "label": "工序名称"
+        },
+        {
+          "key": "operationCode",
+          "label": "工序编码"
+        },
+        {
+          "key": "orderNo",
+          "label": "工单号"
+        },
+        {
+          "key": "lineNo",
+          "label": "工序行号"
+        },
+        {
+          "key": "planQuantity",
+          "label": "计划数量"
+        },
+        {
+          "key": "reportedQuantity",
+          "label": "已报工数量"
+        },
+        {
+          "key": "operationStatus",
+          "label": "工序状态"
+        },
+        {
+          "key": "workCenterName",
+          "label": "工作中心"
+        },
+        {
+          "key": "assigneeName",
+          "label": "责任人"
+        },
+        {
+          "key": "planStartDate",
+          "label": "计划开始"
+        },
+        {
+          "key": "planEndDate",
+          "label": "计划结束"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "pieceRate",
+          "label": "计件单价"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "items": [],
+      "footer": []
+    },
+    "GENERIC": {
+      "header": [
+        {
+          "key": "billNo",
+          "label": "单据编号"
+        },
+        {
+          "key": "billTypeName",
+          "label": "单据类型"
+        },
+        {
+          "key": "billDate",
+          "label": "单据日期"
+        },
+        {
+          "key": "status",
+          "label": "状态"
+        }
+      ],
+      "items": [
+        {
+          "key": "lineNo",
+          "label": "行号"
+        },
+        {
+          "key": "materialCode",
+          "label": "物料编码"
+        },
+        {
+          "key": "materialName",
+          "label": "物料名称"
+        },
+        {
+          "key": "specification",
+          "label": "规格"
+        },
+        {
+          "key": "unit",
+          "label": "单位"
+        },
+        {
+          "key": "quantity",
+          "label": "数量"
+        },
+        {
+          "key": "unitPrice",
+          "label": "单价"
+        },
+        {
+          "key": "amount",
+          "label": "金额"
+        },
+        {
+          "key": "taxRate",
+          "label": "税率(%)"
+        },
+        {
+          "key": "taxAmount",
+          "label": "税额"
+        },
+        {
+          "key": "netAmount",
+          "label": "价税合计"
+        },
+        {
+          "key": "remark",
+          "label": "备注"
+        }
+      ],
+      "footer": [
+        {
+          "key": "createdBy",
+          "label": "制单人"
+        },
+        {
+          "key": "createdAt",
+          "label": "制单时间"
+        }
+      ]
+    }
+  },
+  "docTypes": [
+    {
+      "value": "SALE_QUOTE",
+      "label": "销售报价单"
+    },
+    {
+      "value": "SALE_ORDER",
+      "label": "销售订单"
+    },
+    {
+      "value": "SALE_CONTRACT",
+      "label": "销售合同"
+    },
+    {
+      "value": "SALE_DELIVERY",
+      "label": "销售出库单"
+    },
+    {
+      "value": "SALE_RETURN",
+      "label": "销售退货单"
+    },
+    {
+      "value": "SALE_EXCHANGE",
+      "label": "销售换货单"
+    },
+    {
+      "value": "SALE_REPAIR",
+      "label": "售后维修单"
+    },
+    {
+      "value": "SALE_INVOICE",
+      "label": "销售发票"
+    },
+    {
+      "value": "SALE_EXPENSE",
+      "label": "销售费用单"
+    },
+    {
+      "value": "PURCHASE_REQUEST",
+      "label": "采购申请单"
+    },
+    {
+      "value": "PURCHASE_ORDER",
+      "label": "采购订单"
+    },
+    {
+      "value": "PURCHASE_CONTRACT",
+      "label": "采购合同"
+    },
+    {
+      "value": "PURCHASE_INBOUND",
+      "label": "采购入库单"
+    },
+    {
+      "value": "PURCHASE_RETURN",
+      "label": "采购退货单"
+    },
+    {
+      "value": "PURCHASE_INVOICE",
+      "label": "采购发票"
+    },
+    {
+      "value": "PURCHASE_EXPENSE",
+      "label": "采购费用单"
+    },
+    {
+      "value": "WORK_ORDER",
+      "label": "生产订单"
+    },
+    {
+      "value": "PRODUCTION_RECEIPT",
+      "label": "生产入库单"
+    },
+    {
+      "value": "MATERIAL_REQUISITION",
+      "label": "生产领料单"
+    },
+    {
+      "value": "PRODUCE_ASSEMBLE",
+      "label": "组装单"
+    },
+    {
+      "value": "PRODUCE_DISASSEMBLE",
+      "label": "拆卸单"
+    },
+    {
+      "value": "OPERATION_REPORT",
+      "label": "报工单"
+    },
+    {
+      "value": "MRP_PLAN",
+      "label": "MRP计划"
+    },
+    {
+      "value": "SUBCONTRACT_ORDER",
+      "label": "委外加工单"
+    },
+    {
+      "value": "SUBCONTRACT_PICK",
+      "label": "委外发料单"
+    },
+    {
+      "value": "SUBCONTRACT_INBOUND",
+      "label": "委外入库单"
+    },
+    {
+      "value": "SUBCONTRACT_RETURN",
+      "label": "委外退料单"
+    },
+    {
+      "value": "SUBCONTRACT_SUPPLEMENT",
+      "label": "委外补料单"
+    },
+    {
+      "value": "SAMPLE",
+      "label": "打样单"
+    },
+    {
+      "value": "FREE_SAMPLE",
+      "label": "免费样品单"
+    },
+    {
+      "value": "STOCK_TRANSFER",
+      "label": "库存调拨单"
+    },
+    {
+      "value": "STOCK_CHECK",
+      "label": "库存盘点单"
+    },
+    {
+      "value": "OTHER_RECEIPT",
+      "label": "其他入库单"
+    },
+    {
+      "value": "OTHER_ISSUE",
+      "label": "其他出库单"
+    },
+    {
+      "value": "PAYMENT_RECEIPT",
+      "label": "收款单"
+    },
+    {
+      "value": "PAYMENT_VOUCHER",
+      "label": "付款单"
+    },
+    {
+      "value": "SALE_PRE_RECEIPT",
+      "label": "销售预收单"
+    },
+    {
+      "value": "PURCHASE_PRE_PAYMENT",
+      "label": "采购预付单"
+    },
+    {
+      "value": "OPERATION_EXPENSE",
+      "label": "费用分摊"
+    },
+    {
+      "value": "COST_CALCULATION",
+      "label": "成本核算单"
+    },
+    {
+      "value": "SALE_PRICE_STRATEGY",
+      "label": "销售价格策略"
+    },
+    {
+      "value": "PURCHASE_PRICE_STRATEGY",
+      "label": "采购价格策略"
+    },
+    {
+      "value": "BOM",
+      "label": "BOM物料清单"
+    },
+    {
+      "value": "MATERIAL",
+      "label": "商品标签（二维码）"
+    },
+    {
+      "value": "WORK_OPERATION",
+      "label": "工序卡（二维码）"
+    },
+    {
+      "value": "GENERIC",
+      "label": "通用模板"
+    }
+  ]
+}

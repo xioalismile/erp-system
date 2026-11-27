@@ -1,0 +1,59 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Mac ###
+.DS_Store
+
+### Logs ###
+*.log
+compile_errors*.txt
+
+### Temp files ###
+T.java
+GenHash.java
+GenPwd.java
+api_test.js
+business_flow_test.js
+pwd_out.txt
+*.temp
+*.tmp
+
+# 构建版本号文件(由 Publish.ps1 生成,不入版本控制)
+build-info.properties
+build-version.txt
+
+# JWT 自举密钥文件(2026-09-15)：后端首次启动自动生成，绝不入版本控制
+erp-jwt-secret.key
+*.jwt-secret
+

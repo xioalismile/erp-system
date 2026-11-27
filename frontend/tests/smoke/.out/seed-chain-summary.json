@@ -1,0 +1,202 @@
+{
+  "finishedAt": "2026-11-11T14:38:00.403Z",
+  "chains": {
+    "sale": true,
+    "purchase": true,
+    "production": true
+  },
+  "passed": 38,
+  "failed": 0,
+  "steps": [
+    {
+      "name": "创建销售订单",
+      "ok": true,
+      "detail": "id=41"
+    },
+    {
+      "name": "销售订单 自检（客户/销售员/币种/明细非空）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "销售订单 提交",
+      "ok": true,
+      "detail": "状态=已生效"
+    },
+    {
+      "name": "创建其他入库单（成品A）",
+      "ok": true,
+      "detail": "id=28"
+    },
+    {
+      "name": "其他入库单（成品A） 提交",
+      "ok": true,
+      "detail": "状态=已生效"
+    },
+    {
+      "name": "成品A库存已备（主仓）",
+      "ok": true,
+      "detail": "入库 50"
+    },
+    {
+      "name": "下推：销售订单 → 销售出库",
+      "ok": true,
+      "detail": "新单 id=32"
+    },
+    {
+      "name": "销售出库单 改部分发货数量",
+      "ok": true,
+      "detail": "每行 4（订单 10 未发完，订单不会自动结案）"
+    },
+    {
+      "name": "销售出库单 提交",
+      "ok": true,
+      "detail": "状态=已生效"
+    },
+    {
+      "name": "销售出库单 自检（明细/来源关联）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "下推：销售出库单 → 销售发票",
+      "ok": true,
+      "detail": "新单 id=27"
+    },
+    {
+      "name": "销售发票 补发票类型",
+      "ok": true,
+      "detail": "增值税专用发票"
+    },
+    {
+      "name": "销售发票 提交",
+      "ok": true,
+      "detail": "状态=已生效"
+    },
+    {
+      "name": "销售发票 自检（发票类型/明细）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "创建采购申请单",
+      "ok": true,
+      "detail": "id=33"
+    },
+    {
+      "name": "采购申请单 自检（部门/申请人/类型/明细）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "采购申请单 提交",
+      "ok": true,
+      "detail": "状态=已生效"
+    },
+    {
+      "name": "下推：采购申请单 → 采购订单",
+      "ok": true,
+      "detail": "新单 id=26"
+    },
+    {
+      "name": "采购订单 已生效（已生效）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "采购订单 自检（供应商/明细）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "下推：采购订单 → 采购入库单",
+      "ok": true,
+      "detail": "新单 id=24"
+    },
+    {
+      "name": "采购入库单 补明细行仓库",
+      "ok": true,
+      "detail": "每行仓库=E2E-主仓"
+    },
+    {
+      "name": "采购入库单 提交",
+      "ok": true,
+      "detail": "状态=已生效"
+    },
+    {
+      "name": "采购入库单 自检（供应商/明细）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "BOM（复用已有）",
+      "ok": true,
+      "detail": "id=1"
+    },
+    {
+      "name": "BOM 自检（母件/单位/子件明细）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "创建生产工单",
+      "ok": true,
+      "detail": "id=33"
+    },
+    {
+      "name": "生产工单 自检（成品/原料明细）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "生产工单 提交",
+      "ok": true,
+      "detail": "状态=已生效"
+    },
+    {
+      "name": "创建其他入库单（原料C）",
+      "ok": true,
+      "detail": "id=29"
+    },
+    {
+      "name": "其他入库单（原料C） 提交",
+      "ok": true,
+      "detail": "状态=已生效"
+    },
+    {
+      "name": "原料C库存已备（主仓）",
+      "ok": true,
+      "detail": "入库 50"
+    },
+    {
+      "name": "下推：生产工单 → 领料单",
+      "ok": true,
+      "detail": "新单 id=25"
+    },
+    {
+      "name": "领料单 已生效（已生效）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "领料单 自检（明细非空）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "下推：生产工单 → 生产入库单",
+      "ok": true,
+      "detail": "新单 id=23"
+    },
+    {
+      "name": "生产入库单 审核",
+      "ok": true,
+      "detail": "状态=已生效"
+    },
+    {
+      "name": "生产入库单 自检（明细非空）",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

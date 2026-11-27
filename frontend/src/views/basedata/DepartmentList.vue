@@ -1,29 +1,35 @@
 <template>
   <div class="erp-page">
     <CrudTable
-      title="部门"
+      :hide-buttons="['print']"
+      :title="$tt('部门')"
+      custom-field-entity="department"
       :columns="columns"
       :fetch-data="fetchData"
       :on-save="onSave"
       :on-delete="onDelete"
+      :on-batch-delete="onBatchDelete"
       :search-fields="searchFields"
-      :form-fields="formFields"
+      add-route="/basedata/department/new"
+      edit-route="/basedata/department/edit"
       id-field="deptId"
       perm-add="basedata:department:add"
       perm-edit="basedata:department:edit"
       perm-delete="basedata:department:delete"
+      entity-name="department"
     >
       <template #statusSlot="{ row }">
-        <el-tag :type="row.status === '启用' ? 'success' : 'info'" size="small">{{ row.status }}</el-tag>
+        <el-tag :type="row.status === '启用' ? 'success' : 'info'" size="small">{{ $dt(row.status) }}</el-tag>
       </template>
     </CrudTable>
   </div>
 </template>
 
 <script setup>
+import { useAutoRefresh } from '@/composables/useAutoRefresh'
 import { ref, onMounted } from 'vue'
 import CrudTable from '@/components/CrudTable.vue'
-import { listDepartment, saveDepartment, updateDepartment, deleteDepartment, treeDepartment } from '@/api/basedata/department'
+import { listDepartment, saveDepartment, updateDepartment, deleteDepartment, batchDeleteDepartment, treeDepartment } from '@/api/basedata/department'
 
 // 部门树数据（CrudTable表单暂不支持自定义slot，parentDeptId字段先用数字ID输入）
 const deptTree = ref([])
@@ -36,6 +42,7 @@ async function loadDeptTree() {
   }
 }
 onMounted(loadDeptTree)
+useAutoRefresh(loadDeptTree)
 
 const searchFields = [
   { prop: 'keyword', label: '关键字', placeholder: '编码/名称' }
@@ -45,20 +52,8 @@ const columns = [
   { prop: 'deptCode', label: '部门编码', minWidth: 120 },
   { prop: 'deptName', label: '部门名称', minWidth: 140 },
   { prop: 'deptType', label: '部门类型', minWidth: 120 },
-  { prop: 'status', label: '状态', width: 100, slot: 'statusSlot' }
-]
-
-const formFields = [
-  { prop: 'deptCode', label: '部门编码', required: true, placeholder: '如 D001' },
-  { prop: 'deptName', label: '部门名称', required: true, placeholder: '如 财务部' },
-  // 注意：CrudTable暂不支持表单自定义slot，parentDeptId暂用数字ID输入（可空）；后续可扩展为el-tree-select
-  { prop: 'parentDeptId', label: '上级部门ID', type: 'number', placeholder: '留空表示顶级部门', min: 0 },
-  { prop: 'deptType', label: '部门类型', type: 'select', required: true, default: '职能部门', options: [
-    { value: '职能部门', label: '职能部门' }, { value: '业务部门', label: '业务部门' }, { value: '决策部门', label: '决策部门' }
-  ] },
-  { prop: 'status', label: '状态', type: 'select', required: true, default: '启用', options: [
-    { value: '启用', label: '启用' }, { value: '停用', label: '停用' }
-  ] }
+  { prop: 'status', label: '状态', width: 100, slot: 'statusSlot' },
+  { prop: 'remark', label: '备注', minWidth: 150, showOverflowTooltip: true }
 ]
 
 async function fetchData(params) {
@@ -71,5 +66,9 @@ async function onSave(data, isEdit) {
 }
 async function onDelete(row) {
   await deleteDepartment(row.deptId)
+}
+/** 批量删除（2026-09-20 接入：CrudTable 一次请求批量删，替代原先逐条循环） */
+async function onBatchDelete(rows) {
+  await batchDeleteDepartment(rows.map(r => r.deptId))
 }
 </script>

@@ -1,0 +1,105 @@
+{
+  "startedAt": "2026-11-11T15:33:32.650Z",
+  "baseUrl": "https://kaiyu.pro",
+  "gradual": true,
+  "modules": [
+    {
+      "module": "dashboard",
+      "label": "工作台",
+      "total": 1,
+      "steps": 1,
+      "ok": true
+    },
+    {
+      "module": "databoard",
+      "label": "数据看板",
+      "total": 4,
+      "steps": 4,
+      "ok": true
+    },
+    {
+      "module": "basedata",
+      "label": "基础资料",
+      "total": 15,
+      "steps": 15,
+      "ok": true
+    },
+    {
+      "module": "crm",
+      "label": "客户管理",
+      "total": 14,
+      "steps": 14,
+      "ok": true
+    },
+    {
+      "module": "acquisition",
+      "label": "获客管理",
+      "total": 4,
+      "steps": 4,
+      "ok": true
+    },
+    {
+      "module": "sale",
+      "label": "销售管理",
+      "total": 10,
+      "steps": 10,
+      "ok": true
+    },
+    {
+      "module": "purchase",
+      "label": "采购管理",
+      "total": 9,
+      "steps": 9,
+      "ok": true
+    },
+    {
+      "module": "inventory",
+      "label": "库存管理",
+      "total": 10,
+      "steps": 10,
+      "ok": true
+    },
+    {
+      "module": "production",
+      "label": "生产管理",
+      "total": 11,
+      "steps": 11,
+      "ok": true
+    },
+    {
+      "module": "subcontract",
+      "label": "委外管理",
+      "total": 6,
+      "steps": 6,
+      "ok": true
+    },
+    {
+      "module": "sample",
+      "label": "打样管理",
+      "total": 2,
+      "steps": 2,
+      "ok": true
+    },
+    {
+      "module": "finance",
+      "label": "财务管理",
+      "total": 11,
+      "steps": 11,
+      "ok": true
+    },
+    {
+      "module": "report",
+      "label": "报表中心",
+      "total": 1,
+      "steps": 1,
+      "ok": true
+    },
+    {
+      "module": "system",
+      "label": "系统管理",
+      "total": 1,
+      "steps": 1,
+      "ok": true
+    }
+  ]
+}

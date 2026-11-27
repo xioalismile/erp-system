@@ -1,28 +1,37 @@
 <template>
   <div class="erp-page">
-    <CrudTable
-      title="员工"
+    <CrudTable ref="tableRef"
+      :hide-buttons="['print']"
+      :title="$tt('员工')"
+      custom-field-entity="employee"
       :columns="columns"
       :fetch-data="fetchData"
       :on-save="onSave"
       :on-delete="onDelete"
+      :on-batch-delete="onBatchDelete"
       :search-fields="searchFields"
-      :form-fields="formFields"
+      add-route="/basedata/employee/new"
+      edit-route="/basedata/employee/edit"
       id-field="employeeId"
       perm-add="basedata:employee:add"
       perm-edit="basedata:employee:edit"
       perm-delete="basedata:employee:delete"
+      entity-name="employee"
     >
       <template #statusSlot="{ row }">
-        <el-tag :type="row.status === '在职' ? 'success' : 'info'" size="small">{{ row.status }}</el-tag>
+        <el-tag :type="row.status === '在职' ? 'success' : 'info'" size="small">{{ $dt(row.status) }}</el-tag>
       </template>
     </CrudTable>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import { useAutoRefresh } from '@/composables/useAutoRefresh'
+const tableRef = ref(null)
+useAutoRefresh(() => tableRef.value?.loadData?.())
 import CrudTable from '@/components/CrudTable.vue'
-import { listEmployee, saveEmployee, updateEmployee, deleteEmployee } from '@/api/basedata/employee'
+import { listEmployee, saveEmployee, updateEmployee, deleteEmployee, batchDeleteEmployee } from '@/api/basedata/employee'
 
 const searchFields = [
   { prop: 'keyword', label: '关键字', placeholder: '编码/名称' }
@@ -31,26 +40,15 @@ const searchFields = [
 const columns = [
   { prop: 'employeeCode', label: '员工编码', minWidth: 120 },
   { prop: 'employeeName', label: '员工姓名', minWidth: 120 },
+  { prop: 'deptName', label: '部门', minWidth: 120 },
+  { prop: 'position', label: '岗位', minWidth: 120 },
+  // 第5期：工时费率（工序计时工资取数来源）
+  { prop: 'hourlyRate', label: '工时费率(元/小时)', minWidth: 140, align: 'right' },
   { prop: 'gender', label: '性别', minWidth: 80 },
   { prop: 'mobilePhone', label: '手机', minWidth: 130 },
   { prop: 'email', label: '邮箱', minWidth: 180 },
-  { prop: 'status', label: '状态', width: 100, slot: 'statusSlot' }
-]
-
-const formFields = [
-  { prop: 'employeeCode', label: '员工编码', required: true, placeholder: '如 E001' },
-  { prop: 'employeeName', label: '员工姓名', required: true, placeholder: '如 张三' },
-  { prop: 'deptId', label: '所属部门ID', type: 'number', required: true, placeholder: '部门ID' },
-  { prop: 'position', label: '职位', placeholder: '如 经理' },
-  { prop: 'gender', label: '性别', type: 'select', default: '男', options: [
-    { value: '男', label: '男' }, { value: '女', label: '女' }, { value: '未知', label: '未知' }
-  ] },
-  { prop: 'mobilePhone', label: '手机', placeholder: '请输入手机号' },
-  { prop: 'email', label: '邮箱', placeholder: '请输入邮箱' },
-  { prop: 'entryDate', label: '入职日期', type: 'date' },
-  { prop: 'status', label: '状态', type: 'select', required: true, default: '在职', options: [
-    { value: '在职', label: '在职' }, { value: '离职', label: '离职' }
-  ] }
+  { prop: 'status', label: '状态', width: 100, slot: 'statusSlot' },
+  { prop: 'remark', label: '备注', minWidth: 150, showOverflowTooltip: true }
 ]
 
 async function fetchData(params) {
@@ -63,5 +61,9 @@ async function onSave(data, isEdit) {
 }
 async function onDelete(row) {
   await deleteEmployee(row.employeeId)
+}
+/** 批量删除（2026-09-20 接入：CrudTable 一次请求批量删，替代原先逐条循环） */
+async function onBatchDelete(rows) {
+  await batchDeleteEmployee(rows.map(r => r.employeeId))
 }
 </script>

@@ -25,6 +25,14 @@ export function deleteDictType(id) {
 export function listDictData(typeId) {
   return request.get(`${DATA_BASE}/${typeId}`)
 }
+// 按类型编码查选项（下拉框直接用 code 取）
+export function listDictDataByCode(typeCode) {
+  return request.get(`${DATA_BASE}/code/${typeCode}`)
+}
+// 按类型编码幂等新增选项（label 已存在则返回已有记录）
+export function createDictDataByCode(typeCode, label) {
+  return request.post(`${DATA_BASE}/code/${typeCode}`, { label })
+}
 export function createDictData(data) {
   return request.post(DATA_BASE, data)
 }

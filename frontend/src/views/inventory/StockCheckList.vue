@@ -1,405 +1,518 @@
 <template>
-  <div class="app-container">
-    <!-- 搜索栏 -->
-    <div class="filter-bar">
-      <el-input v-model="search.keyword" placeholder="盘点单号" style="width:200px" clearable @clear="load" />
-      <el-select v-model="search.status" placeholder="状态" clearable style="width:140px">
-        <el-option label="草稿" value="草稿" />
-        <el-option label="已审核" value="已审核" />
-        <el-option label="已关闭" value="已关闭" />
-        <el-option label="已取消" value="已取消" />
-      </el-select>
-      <el-button type="primary" @click="load">查询</el-button>
-      <el-button type="success" @click="openCreate">新增盘点单</el-button>
-    </div>
+  <!-- 通用列表壳（页头/统计卡/搜索条/表格外壳/分页/打印/列设置）+ 声明式筛选维度 -->
+  <BillListPage
+    page-class="stock-check-list-page"
+    back-path="/inventory"
+    :title="$tt('库存盘点')"
+    badge="CHECK"
+    sub-title="定期清查库存 · 确保账实相符"
+    :stats="stats"
+    :active-stat-key="activeStatKey"
+    search-placeholder="输入盘点单号搜索"
+    keyword-label="单据编号"
+    :filters="['status', 'date', 'employee']"
+    :filter-defs="filterDefs"
+    :detail-filter-defs="detailFilterDefs"
+    :status-options="statusOptions"
+    :filter-model="search"
+    employee-label="经办人"
+    :table-data="list"
+    :loading="loading"
+    :pagination="page"
+    storage-key="StockCheckList"
+    :columns="columns"
+    :table-key="configVersion"
+    bill-type="STOCK_CHECK"
+    v-model:keyword="search.keyword"
+    v-model:selected-rows="selectedRows"
+    :batch-actions="batchActions"
+    v-model:column-setting-visible="columnSettingVisible"
+    v-model:print-visible="printVisible"
+    v-model:print-bill-id="printBillId"
+    @search="handleSearch"
+    @reset="reset"
+    @filter-change="onFilterChange"
+    @filter-params="onHeaderFilterParams"
+    @stat-click="onStatClick"
+    @sort-change="onSortChange"
+    @page-change="load"
+  >
+    <template #header-actions="{ selectedRows: sel }">
+      <!-- 页头按钮统一走通用组件（2026-09-19）：按钮码由 perm-prefix 派生，权限控制一处生效 -->
+      <BillHeaderActions
+        perm-prefix="inventory:stock-checks"
+        :add-text="$tt('新增盘点单')"
+        :print-disabled="!sel.length"
+        @add="openCreate"
+        @print="handleBatchPrint(sel)"
+        @export="handleExport"
+        @import="handleImport"
+      />
+    </template>
 
-    <!-- 列表 -->
-    <el-table :data="list" stripe border v-loading="loading">
-      <el-table-column prop="checkNo" label="盘点单号" width="160" />
-      <el-table-column prop="checkDate" label="盘点日期" width="120" />
-      <el-table-column prop="warehouseId" label="仓库ID" width="90" />
-      <el-table-column prop="stockType" label="盘点类型" width="110" />
-      <el-table-column prop="bookAmount" label="账面金额" width="120" align="right" />
-      <el-table-column prop="checkAmount" label="盘点金额" width="120" align="right" />
-      <el-table-column prop="profitLossAmount" label="盈亏金额" width="120" align="right">
-        <template #default="{ row }">
-          <span :style="{ color: row.profitLossAmount > 0 ? '#67C23A' : row.profitLossAmount < 0 ? '#F56C6C' : '' }">
-            {{ row.profitLossAmount }}
-          </span>
+    <el-table-column type="selection" width="50" />
+    <el-table-column type="index" label="#" width="60" />
+    <!-- 动态列渲染：列顺序由列设置拖拽配置驱动（sortedColumns），单元格按 col.type 分支渲染 -->
+    <template v-for="col in visibleSortedColumns" :key="col.prop">
+      <el-table-column
+        :prop="col.prop"
+        :label="$tf(col.label)"
+        :width="col.width"
+        :min-width="col.minWidth"
+        :align="col.align || 'left'"
+        :sortable="col.sortable ? 'custom' : false"
+        :show-overflow-tooltip="!!col.tooltip"
+        :fixed="getColFixed(col.prop)"
+      >
+        <template v-if="col.type" #default="{ row }">
+          <div v-if="col.type === 'code'" class="order-no-cell">
+            <span class="order-no-text" @click="openEdit(row)">{{ row[col.prop] }}</span>
+            <el-icon class="link-icon"><Link /></el-icon>
+          </div>
+          <span v-else-if="col.type === 'warehouse'">{{ getWarehouseName(row.warehouseId) }}</span>
+          <span v-else-if="col.type === 'amount2'" class="amount-text">{{ Number(row[col.prop] || 0).toFixed(2) }}</span>
+          <span v-else-if="col.type === 'profitLoss'" :class="['amount-text', profitLossClass(row)]">{{ Number(row[col.prop] || 0).toFixed(2) }}</span>
+          <div v-else-if="col.type === 'status'" class="status-cell">
+            <span :class="['status-dot', statusDotClass(row.status)]"></span>
+            <el-tag size="small" :type="statusTagType(row.status)" effect="light" class="status-tag">{{ $dt(row.status) }}</el-tag>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column label="状态" width="90">
-        <template #default="{ row }">
-          <el-tag :type="statusTagType(row.status)" size="small">{{ row.status }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="createdBy" label="创建人" width="100" />
-      <el-table-column prop="createdAt" label="创建时间" width="160" />
-      <el-table-column label="操作" width="320" fixed="right">
-        <template #default="{ row }">
-          <el-button size="small" @click="openEdit(row)">编辑</el-button>
-          <el-button size="small" type="warning" :disabled="row.status !== '草稿'" @click="handleApprove(row)">审核</el-button>
-          <el-button size="small" @click="handleClose(row)" :disabled="row.status !== '已审核'">关闭</el-button>
-          <el-button size="small" type="info" @click="handleCancel(row)" :disabled="row.status !== '草稿'">取消</el-button>
-          <el-button size="small" type="danger" :disabled="row.status !== '草稿'" @click="handleDelete(row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    </template>
+    <AuditColumns />
+  </BillListPage>
 
-    <!-- 分页 -->
-    <el-pagination
-      style="margin-top:16px;justify-content:flex-end"
-      :current-page="page.current"
-      :page-size="page.size"
-      :total="page.total"
-      :page-sizes="[10, 20, 50]"
-      layout="total, sizes, prev, pager, next, jumper"
-      @current-change="onCurrentChange"
-      @size-change="onSizeChange"
-    />
-
-    <!-- 新增/编辑/查看 弹窗 -->
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="1100px" :close-on-click-modal="false">
-      <el-form :model="form" label-width="100px" :disabled="readonly">
-        <el-row :gutter="16">
-          <el-col :span="8">
-            <el-form-item label="盘点单号">
-              <el-input v-model="form.checkNo" placeholder="保存时自动生成" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="盘点日期">
-              <el-date-picker v-model="form.checkDate" type="date" value-format="YYYY-MM-DD" style="width:100%" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="仓库ID">
-              <el-input-number v-model="form.warehouseId" :min="1" controls-position="right" style="width:100%" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="16">
-          <el-col :span="8">
-            <el-form-item label="盘点类型">
-              <el-select v-model="form.stockType" style="width:100%">
-                <el-option label="动态盘点" value="动态盘点" />
-                <el-option label="全月盘点" value="全月盘点" />
-                <el-option label="全年盘点" value="全年盘点" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="经办人ID">
-              <el-input-number v-model="form.handlerId" :min="1" controls-position="right" style="width:100%" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="币别ID">
-              <el-input-number v-model="form.currencyId" :min="1" controls-position="right" style="width:100%" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="16">
-          <el-col :span="8">
-            <el-form-item label="汇率">
-              <el-input-number v-model="form.exchangeRate" :min="0" :precision="6" controls-position="right" style="width:100%" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="账面金额">
-              <el-input v-model="form.bookAmount" readonly />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="盘点金额">
-              <el-input v-model="form.checkAmount" readonly />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="16">
-          <el-col :span="8">
-            <el-form-item label="盈亏金额">
-              <el-input v-model="form.profitLossAmount" readonly />
-            </el-form-item>
-          </el-col>
-          <el-col :span="16">
-            <el-form-item label="备注">
-              <el-input v-model="form.remark" type="textarea" :rows="1" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <!-- 明细表格 -->
-        <div class="item-bar">
-          <span class="item-title">盘点明细</span>
-          <el-button v-if="!readonly" size="small" type="primary" @click="addItem">添加行</el-button>
+    <el-dialog
+      v-model="importDialogVisible"
+      :title="$tf('库存盘点单导入')"
+      width="560px"
+      :close-on-click-modal="false"
+      class="tech-dialog"
+    >
+      <div class="import-dialog-content">
+        <div class="import-step">
+          <div class="step-title">
+            <el-icon><Download /></el-icon>
+            <span>{{ $tt("第一步：下载导入模板") }}</span>
+          </div>
+          <div class="step-desc">{{ $tt("下载模板后，按模板格式填写数据，支持 .xlsx 格式") }}</div>
+          <div class="step-desc" style="color:#f56c6c;">{{ $tt("提示：模板中带") }} <b>*</b> {{ $tt("标记的字段为必填字段，请务必填写") }}</div>
+          <el-button v-permission="perm('downloadTemplate')" type="primary" @click="downloadTemplate" :loading="downloadingTemplate">
+            <el-icon><Download /></el-icon> 下载精简模板（含自定义字段）
+          </el-button>
+          <el-collapse class="template-field-panel" v-model="fieldPanelActive" style="margin-top:12px;">
+            <el-collapse-item name="custom">
+              <template #title><span style="font-weight:500;">{{ $tt("自定义模板字段（可勾选额外列）") }}</span></template>
+              <div class="field-custom-container">
+                <div class="field-custom-actions" style="margin-bottom:8px;">
+                  <el-button v-permission="perm('columnSetting')" size="small" @click="selectAllOptional">{{ $tt("全选可选列") }}</el-button>
+                  <el-button v-permission="perm('clear')" size="small" @click="clearOptional">{{ $tt("清空可选列") }}</el-button>
+                </div>
+                <div class="field-group-title" style="margin-bottom:6px;">{{ $tt("必带列（锁定，含自定义字段）") }}</div>
+                <div class="field-checkbox-group">
+                  <el-tag v-for="f in templateFields.required" :key="f" size="small" effect="plain" style="margin:4px 8px 4px 0;">{{ f }}</el-tag>
+                </div>
+                <div class="field-group-title" style="margin:12px 0 6px;">{{ $tt("可选列（按需勾选）") }}</div>
+                <div class="field-checkbox-group">
+                  <el-checkbox v-for="f in templateFields.optional" :key="f" v-model="checkedOptionalFields" :label="f" :border="true" size="small" style="margin:6px 12px 6px 0;">{{ f }}</el-checkbox>
+                </div>
+                <div style="margin-top:12px;text-align:right;">
+                  <el-button v-permission="perm('downloadTemplate')" type="success" size="small" @click="downloadCustomTemplate" :loading="downloadingCustomTemplate">
+                    <el-icon><Download /></el-icon> 按勾选下载
+                  </el-button>
+                </div>
+              </div>
+            </el-collapse-item>
+          </el-collapse>
         </div>
-        <el-table :data="form.items" border size="small" max-height="320">
-          <el-table-column label="序号" type="index" width="55" />
-          <el-table-column label="物料ID" width="100">
-            <template #default="{ row }">
-              <el-input-number v-model="row.materialId" :min="1" :controls="false" size="small" :disabled="readonly" style="width:100%" />
+        <el-divider />
+        <div class="import-step">
+          <div class="step-title">
+            <el-icon><Upload /></el-icon>
+            <span>{{ $tt("第二步：上传数据文件") }}</span>
+          </div>
+          <div class="step-desc">{{ $tt("选择填写好的 Excel 文件上传导入") }}</div>
+          <el-upload
+            ref="uploadRef"
+            action="#"
+            :auto-upload="false"
+            :on-change="handleFileChange"
+            :show-file-list="true"
+            accept=".xlsx,.xls,.csv"
+            drag
+            class="import-uploader"
+          >
+            <el-icon class="el-icon--upload"><Upload /></el-icon>
+            <div class="el-upload__text">{{ $tt("将文件拖到此处，或") }}<em>{{ $tt("点击上传") }}</em></div>
+            <template #tip>
+              <div class="el-upload__tip">{{ $tt("请上传 .xlsx / .xls 格式文件，文件大小不超过 10MB") }}</div>
             </template>
-          </el-table-column>
-          <el-table-column label="物料编码" width="130">
-            <template #default="{ row }">
-              <el-input v-model="row.materialCode" size="small" :disabled="readonly" />
-            </template>
-          </el-table-column>
-          <el-table-column label="物料名称" width="160">
-            <template #default="{ row }">
-              <el-input v-model="row.materialName" size="small" :disabled="readonly" />
-            </template>
-          </el-table-column>
-          <el-table-column label="规格" width="140">
-            <template #default="{ row }">
-              <el-input v-model="row.specification" size="small" :disabled="readonly" />
-            </template>
-          </el-table-column>
-          <el-table-column label="单位ID" width="80">
-            <template #default="{ row }">
-              <el-input-number v-model="row.unitId" :min="1" :controls="false" size="small" :disabled="readonly" style="width:100%" />
-            </template>
-          </el-table-column>
-          <el-table-column label="库存ID" width="80">
-            <template #default="{ row }">
-              <el-input-number v-model="row.stockId" :min="1" :controls="false" size="small" :disabled="readonly" style="width:100%" />
-            </template>
-          </el-table-column>
-          <el-table-column label="库位ID" width="80">
-            <template #default="{ row }">
-              <el-input-number v-model="row.binId" :min="1" :controls="false" size="small" :disabled="readonly" style="width:100%" />
-            </template>
-          </el-table-column>
-          <el-table-column label="批号" width="120">
-            <template #default="{ row }">
-              <el-input v-model="row.batchNo" size="small" :disabled="readonly" />
-            </template>
-          </el-table-column>
-          <el-table-column label="账面数量" width="110">
-            <template #default="{ row }">
-              <el-input-number v-model="row.bookQuantity" :min="0" :precision="4" :controls="false" size="small" :disabled="readonly" style="width:100%" @change="calcItem(row)" />
-            </template>
-          </el-table-column>
-          <el-table-column label="盘点数量" width="110">
-            <template #default="{ row }">
-              <el-input-number v-model="row.checkQuantity" :min="0" :precision="4" :controls="false" size="small" :disabled="readonly" style="width:100%" @change="calcItem(row)" />
-            </template>
-          </el-table-column>
-          <el-table-column label="单价" width="100">
-            <template #default="{ row }">
-              <el-input-number v-model="row.unitPrice" :min="0" :precision="4" :controls="false" size="small" :disabled="readonly" style="width:100%" @change="calcItem(row)" />
-            </template>
-          </el-table-column>
-          <el-table-column label="盘盈数量" width="100" align="right">
-            <template #default="{ row }">{{ row.profitQuantity }}</template>
-          </el-table-column>
-          <el-table-column label="盘亏数量" width="100" align="right">
-            <template #default="{ row }">{{ row.lossQuantity }}</template>
-          </el-table-column>
-          <el-table-column label="盘点结果" width="90">
-            <template #default="{ row }">
-              <el-tag :type="resultTagType(row.checkResult)" size="small">{{ row.checkResult }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="原因" width="140">
-            <template #default="{ row }">
-              <el-input v-model="row.reason" size="small" :disabled="readonly" />
-            </template>
-          </el-table-column>
-          <el-table-column v-if="!readonly" label="操作" width="70" fixed="right">
-            <template #default="{ $index }">
-              <el-button size="small" type="danger" link @click="removeItem($index)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-form>
-
+          </el-upload>
+        </div>
+        <div v-if="importResult" class="import-result">
+          <el-divider />
+          <div class="result-title">{{ $tt("导入结果") }}</div>
+          <el-row :gutter="16">
+            <el-col :span="8">
+              <el-statistic :title="$tt('总记录数')" :value="importResult.totalCount || 0" />
+            </el-col>
+            <el-col :span="8">
+              <el-statistic :title="$tt('成功')" :value="importResult.successCount || 0">
+                <template #suffix><el-icon color="#67C23A"><CircleCheck /></el-icon></template>
+              </el-statistic>
+            </el-col>
+            <el-col :span="8">
+              <el-statistic :title="$tt('失败')" :value="importResult.failCount || 0">
+                <template #suffix><el-icon color="#F56C6C"><CircleClose /></el-icon></template>
+              </el-statistic>
+            </el-col>
+          </el-row>
+          <el-alert
+            v-if="importResult.failCount > 0"
+            :title="`有 ${importResult.failCount} 条记录导入失败`"
+            type="error"
+            :closable="false"
+            class="import-error-alert"
+          >
+            <div class="error-list">
+              <div v-for="(err, idx) in (importResult.errors || []).slice(0, 10)" :key="idx" class="error-item">
+                第 {{ err.rowIndex }} 行 {{ err.fieldName ? '[' + err.fieldName + ']' : '' }}: {{ err.message }}
+              </div>
+              <div v-if="(importResult.errors || []).length > 10" class="error-more">
+                ... 还有 {{ importResult.errors.length - 10 }} 条错误
+              </div>
+            </div>
+          </el-alert>
+        </div>
+      </div>
       <template #footer>
-        <el-button @click="dialogVisible = false">关闭</el-button>
-        <el-button v-if="!readonly" type="primary" @click="handleSave">保存</el-button>
+        <el-button v-permission="perm('dlgClose')" @click="importDialogVisible = false">{{ $tt("关闭") }}</el-button>
+        <el-button v-permission="perm('import')" type="primary" @click="confirmImport" :loading="importing" :disabled="!selectedImportFile">
+          <el-icon><Upload /></el-icon> 开始导入
+        </el-button>
       </template>
     </el-dialog>
-  </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { useAutoRefresh } from '@/composables/useAutoRefresh'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
-  listStockCheck, getStockCheck, saveStockCheck, updateStockCheck,
-  deleteStockCheck, approveStockCheck, closeStockCheck, cancelStockCheck
+  listStockCheck, getStockCheckDashboard,
+  submitStockCheck, approveStockCheck, reverseApproveStockCheck,
+  deleteStockCheck, closeStockCheck, cancelStockCheck,
+  stockCheckDetailApi
 } from '@/api/inventory/stockCheck'
+// 筛选条件自定义共享工厂（2026-10-14 全面推广）：候选集拼装统一在工厂，页面只声明本单键位差异
+import { stdDefs, fld, cfDefs, detailFilterDefsOf } from '@/config/billFilterDefs'
+import BillListPage from '@/components/bill/BillListPage.vue'
+// 页头按钮通用组件（2026-09-19）：新增/打印/导出/导入统一渲染 + 统一按钮权限
+import BillHeaderActions from '@/components/bill/BillHeaderActions.vue'
+import { listAllWarehouse } from '@/api/basedata/warehouse'
+import { Printer, ArrowLeft, Search, Plus, Link, EditPen, CircleCheck, Lock, Close, Delete, Document, Clock, Setting, Upload, Download, CircleClose } from '@element-plus/icons-vue'
+import PrintPreviewDialog from '@/components/PrintPreviewDialog.vue'
+import ColumnSettingDrawer from '@/components/ColumnSettingDrawer.vue'
+import AuditColumns from '@/components/AuditColumns.vue'
+import { exportListAsSeen, downloadTemplate as downloadTemplateUtil, importData } from '@/utils/exportUtil'
+import { useColumnSetting } from '@/composables/useColumnSetting'
+import { useTableSort } from '@/composables/useTableSort'
+import { useCustomFieldSearch } from '@/composables/useCustomFieldSearch'
+import { tt } from '@/i18n'
+import { usePagePerm } from '@/utils/pagePerm'
+
+const perm = usePagePerm('inventory:stock-checks')
+const { handleSortChange, getSortParams } = useTableSort()
+// 自定义字段「可搜索」搜索项（设置中心 → 自定义字段配置里勾了「可搜索」的字段才渲染）
+const cf = useCustomFieldSearch('stock_check')
+
+
+/**
+ * 批量操作声明（2026-09-20）：与销售订单等单据同一口径，UI/确认/执行/结果面板全部由通用壳承担。
+ * 命名统一：批量提交 / 批量审批 / 批量重置草稿 / 批量删除 / 批量导出。
+ */
+const batchActions = [
+  {
+    key: 'submit',
+    label: tt('批量提交'),
+    perm: 'inventory:stock-checks:submit',
+    type: 'primary',
+    exec: (row) => submitStockCheck(row.checkId),
+    // 已提交/已审核的自动跳过（不报错，进"跳过清单"说明原因）
+    skipReason: (row) => (row.status && row.status !== '草稿'
+      ? tt('当前状态：') + row.status + tt('，不是草稿，无需提交') : '')
+  },
+  {
+    key: 'approve',
+    label: tt('批量审批'),
+    perm: 'inventory:stock-checks:audit',
+    exec: (row) => approveStockCheck(row.checkId),
+    skipReason: (row) => (row.status !== '待审核'
+      ? tt('当前状态：') + (row.status || '-') + tt('，不是待审核，无需审批') : '')
+  },
+  {
+    // 批量重置草稿：与编辑页「重置草稿」同一个后端入口（/reverse-approve），能否重置由后端判断
+    key: 'reverse',
+    label: tt('批量重置草稿'),
+    perm: 'inventory:stock-checks:reverseApprove',
+    exec: (row) => reverseApproveStockCheck(row.checkId)
+  },
+  {
+    key: 'delete',
+    label: tt('批量删除'),
+    type: 'danger',
+    perm: 'inventory:stock-checks:delete',
+    exec: (row) => deleteStockCheck(row.checkId),
+    // 状态冲突：选中行含非草稿 → 按钮置灰并说明原因
+    disabledReason: (rows) => (rows.some(r => r.status && r.status !== '草稿' && r.status !== '已驳回' && r.status !== '已取消')
+      ? tt('非草稿不能删除，请先重置草稿') : '')
+  },
+  {
+    key: 'export',
+    label: tt('批量导出'),
+    perm: 'inventory:stock-checks:export',
+    entity: 'stockCheck',
+    idOf: (row) => row.checkId
+  }
+]
+
+const onSortChange = (e) => { handleSortChange(e); load() }
+const router = useRouter()
+
+// 列定义（用于列设置抽屉+动态渲染）：type 标记单元格渲染分支
+// code=单号链接列(点击编辑) warehouse=仓库名称翻译列 amount2=金额(2位) profitLoss=盈亏金额(红绿) status=状态标签 纯文本列无 type
+const columns = [
+  { prop: 'checkNo', label: '盘点单号', minWidth: 160, sortable: true, type: 'code' },
+  { prop: 'checkDate', label: '盘点日期', width: 120, sortable: true },
+  { prop: 'warehouseId', label: '仓库', width: 140, tooltip: true, type: 'warehouse' },
+  { prop: 'stockType', label: '盘点类型', width: 110, sortable: true },
+  { prop: 'bookAmount', label: '账面金额', width: 130, align: 'right', type: 'amount2' },
+  { prop: 'checkAmount', label: '盘点金额', width: 130, align: 'right', type: 'amount2' },
+  { prop: 'profitLossAmount', label: '盈亏金额', width: 130, align: 'right', type: 'profitLoss' },
+  { prop: 'status', label: '状态', width: 100, align: 'center', type: 'status' },
+  { prop: 'createdBy', label: '创建人', width: 100, sortable: true },
+  { prop: 'createdAt', label: '创建时间', width: 160, sortable: true }
+]
+const { columnSettingVisible, openColumnSetting, isColVisible, getColFixed, configVersion, sortedColumns } = useColumnSetting('StockCheckList', columns)
+// 可见且按列设置拖拽顺序排列的列（v-for 渲染用，避免 v-for+v-if 反模式）
+const visibleSortedColumns = computed(() => sortedColumns.value.filter(col => isColVisible(col.prop)))
 
 const loading = ref(false)
 const list = ref([])
-const search = reactive({ keyword: '', status: '' })
+const search = reactive({ keyword: '', status: '', startDate: '', endDate: '', employeeId: '' })
 const page = reactive({ current: 1, size: 20, total: 0 })
+const selectedRows = ref([])
+const printVisible = ref(false)
+const printBillId = ref(null)
+// 通用搜索栏「单据状态」下拉选项（沿单据状态机的全部取值：草稿/盘点中/已盘点/待审核/已生效/已关闭/已取消）
+const statusOptions = [
+  { label: '草稿', value: '草稿' },
+  { label: '盘点中', value: '盘点中' },
+  { label: '已盘点', value: '已盘点' },
+  { label: '待审核', value: '待审核' },
+  { label: '已生效', value: '已生效' },
+  { label: '已关闭', value: '已关闭' },
+  { label: '已取消', value: '已取消' }
+]
 
-const dialogVisible = ref(false)
-const readonly = ref(false)
-const isEdit = ref(false)
-const form = reactive({
-  checkId: null,
-  checkNo: '',
-  checkDate: null,
-  warehouseId: null,
-  stockType: '动态盘点',
-  handlerId: null,
-  currencyId: null,
-  exchangeRate: 1,
-  bookAmount: 0,
-  checkAmount: 0,
-  profitLossAmount: 0,
-  remark: '',
-  items: []
-})
+// ============ 筛选条件自定义（2026-10-14 库存模块推广批次） ============
+// 条件候选 = 标准维度（状态/盘点日期/经办人，std 标记 → 值走页面 search 通道，与统计卡筛选互通）
+//          + 本单表头字段（f_<key> 参数化，后端白名单翻译）
+//          + 单据自定义字段（设置中心勾「可搜索」，沿用 customSearch 既有通道）。
+// 键与「库存盘点单明细报表」引擎筛选键同键 → 汇总/明细两种模式一套条件参数。
+// std 条件 = 现状默认勾选：没保存过筛选设置时查询区与改版前完全一致（守则 2.7.2-6）。
+const filterDefs = computed(() => [
+  ...stdDefs({
+    status: { options: statusOptions },
+    date: { key: 'checkDate', label: '盘点日期' },
+    employee: { key: 'handlerName', label: '经办人' }
+  }),
+  fld('text', 'checkNo', '盘点单号'),
+  fld('text', 'stockType', '盘点类型'),
+  fld('select', 'currencyCode', '币种', 'currency'),
+  fld('text', 'taxCalcMethod', '计税方式'),
+  fld('text', 'remark', '备注'),
+  fld('text', 'approvedBy', '审核人'),
+  fld('numberRange', 'bookAmount', '账面金额'),
+  fld('numberRange', 'checkAmount', '盘点金额'),
+  fld('numberRange', 'profitLossAmount', '盘盈盘亏金额'),
+  fld('numberRange', 'exchangeRate', '汇率'),
+  ...cfDefs(cf)
+])
 
-const dialogTitle = ref('新增盘点单')
+// 明细模式专属筛选条件（来源 = 明细报表 /columns 的 filters 元数据，键与引擎同键；
+// 默认勾选 = 现状三件套：状态/日期/经办人，明细行字段默认不勾）
+const detailFiltersMeta = ref([])
+const STD_BY_KEY = { status: 'status', checkDate: 'date', handlerName: 'employee' }
+const detailFilterDefs = computed(() => detailFilterDefsOf(detailFiltersMeta.value, STD_BY_KEY))
+
+/** 自定义条件参数（由通用壳经 filter-params 下发）：params 汇总用 / detailParams 明细用 / customSearch 自定义字段 */
+const headerFilterState = ref({ params: {}, customSearch: undefined, detailParams: {} })
+function onHeaderFilterParams(payload) {
+  headerFilterState.value = payload || { params: {}, customSearch: undefined, detailParams: {} }
+}
+// 统计卡片高亮（点卡片筛选列表时由 onStatClick 控制）
+const activeStatKey = ref('')
+
+const importDialogVisible = ref(false)
+const downloadingTemplate = ref(false)
+const downloadingCustomTemplate = ref(false)
+const importing = ref(false)
+const selectedImportFile = ref(null)
+const importResult = ref(null)
+const uploadRef = ref()
+const fieldPanelActive = ref('')
+const templateFields = reactive({ required: [], optional: [] })
+const checkedOptionalFields = ref([])
+
+const warehouseOptions = ref([])
+
+// 顶部统计卡片：数据来自后端 /api/inventory/stock-checks/dashboard（与列表同数据权限口径）
+// 带 filter 的卡片可点击 → 直接筛选下方列表（再点同一张卡 = 取消）
+const pad2 = (n) => String(n).padStart(2, '0')
+function monthRange() {
+  const d = new Date()
+  const y = d.getFullYear()
+  const m = d.getMonth() + 1
+  const lastDay = new Date(y, m, 0).getDate()
+  return { startDate: `${y}-${pad2(m)}-01`, endDate: `${y}-${pad2(m)}-${pad2(lastDay)}` }
+}
+const stats = ref([
+  { key: 'month', label: '本月盘点单', value: 0, type: 'primary', icon: 'Document', filter: monthRange() },
+  { key: 'draft', label: '草稿', value: 0, type: 'warning', icon: 'EditPen', filter: { status: '草稿' } },
+  { key: 'pending', label: '待审核', value: 0, type: 'info', icon: 'Clock', filter: { status: '待审核' } },
+  { key: 'approved', label: '已生效', value: 0, type: 'success', icon: 'CircleCheck', filter: { status: '已生效' } }
+])
+
+async function loadStats() {
+  try {
+    const d = (await getStockCheckDashboard()) || {}
+    stats.value = [
+      { key: 'month', label: '本月盘点单', value: d.monthCount ?? 0, type: 'primary', icon: 'Document', filter: monthRange() },
+      { key: 'draft', label: '草稿', value: d.draftCount ?? 0, type: 'warning', icon: 'EditPen', filter: { status: '草稿' } },
+      { key: 'pending', label: '待审核', value: d.pendingCount ?? 0, type: 'info', icon: 'Clock', filter: { status: '待审核' } },
+      { key: 'approved', label: '已生效', value: d.approvedCount ?? 0, type: 'success', icon: 'CircleCheck', filter: { status: '已生效' } }
+    ]
+  } catch (e) {
+    // 静默降级：取数失败时卡片保持原值，不弹诊断卡、不阻断列表
+  }
+}
+
+// 卡片点击 → 应用该卡筛选条件（状态/日期先清空再套用，避免上一张卡残留）；再点同一张卡 = 取消
+function onStatClick({ key, filter }) {
+  if (activeStatKey.value === key) {
+    activeStatKey.value = ''
+    Object.assign(search, { status: '', startDate: '', endDate: '' })
+  } else {
+    activeStatKey.value = key
+    Object.assign(search, { status: '', startDate: '', endDate: '' }, filter || {})
+  }
+  page.current = 1
+  load()
+}
+
+const headerCellStyle = {
+  background: 'rgba(99, 102, 241, 0.04)',
+  color: '#1f2937',
+  fontWeight: 600,
+  borderBottom: '2px solid #e0e7ff'
+}
+
+const getWarehouseName = (warehouseId) => {
+  const warehouse = warehouseOptions.value.find(w => w.value === warehouseId)
+  return warehouse ? warehouse.label : '-'
+}
+
+const profitLossClass = (row) => {
+  const amount = Number(row.profitLossAmount || 0)
+  if (amount > 0) return 'text-green'
+  if (amount < 0) return 'text-red'
+  return ''
+}
+
+async function loadDropdownOptions() {
+  try {
+    const whList = await listAllWarehouse()
+    warehouseOptions.value = (Array.isArray(whList) ? whList : (whList?.records || [])).map(w => ({ value: w.stockId, label: w.stockName }))
+  } catch (e) { console.warn('加载仓库失败', e) }
+}
 
 const statusTagType = (s) => ({
   '草稿': 'info',
-  '已审核': 'success',
+  '已生效': 'success',
   '已关闭': 'warning',
   '已取消': 'danger'
 }[s] || 'info')
 
-const resultTagType = (r) => ({
-  '盘平': 'info',
-  '盘盈': 'success',
-  '盘亏': 'danger'
-}[r] || 'info')
+const statusDotClass = (s) => ({
+  '草稿': 'dot-info',
+  '已生效': 'dot-success',
+  '已关闭': 'dot-warning',
+  '已取消': 'dot-danger'
+}[s] || 'dot-info')
 
-const newItem = () => ({
-  materialId: null, materialCode: '', materialName: '', specification: '',
-  unitId: null, stockId: null, binId: null, batchNo: '',
-  bookQuantity: 0, bookAmount: 0,
-  checkQuantity: 0, checkAmount: 0,
-  profitQuantity: 0, profitAmount: 0,
-  lossQuantity: 0, lossAmount: 0,
-  unitPrice: 0, checkResult: '盘平', reason: ''
-})
+function handleSelectionChange(rows) {
+  selectedRows.value = rows
+}
 
-const round2 = (n) => Number(Number(n || 0).toFixed(2))
+function handlePrint(row) {
+  printBillId.value = row.checkId
+  printVisible.value = true
+}
 
-/** 明细行盈亏计算 */
-const calcItem = (row) => {
-  const bookQty = Number(row.bookQuantity) || 0
-  const checkQty = Number(row.checkQuantity) || 0
-  const unitPrice = Number(row.unitPrice) || 0
-  const diff = Number((checkQty - bookQty).toFixed(4))
-  row.bookAmount = round2(bookQty * unitPrice)
-  row.checkAmount = round2(checkQty * unitPrice)
-  if (diff > 0) {
-    row.profitQuantity = diff
-    row.profitAmount = round2(diff * unitPrice)
-    row.lossQuantity = 0
-    row.lossAmount = 0
-    row.checkResult = '盘盈'
-  } else if (diff < 0) {
-    row.lossQuantity = -diff
-    row.lossAmount = round2(-diff * unitPrice)
-    row.profitQuantity = 0
-    row.profitAmount = 0
-    row.checkResult = '盘亏'
-  } else {
-    row.profitQuantity = 0
-    row.profitAmount = 0
-    row.lossQuantity = 0
-    row.lossAmount = 0
-    row.checkResult = '盘平'
+function handleBatchPrint(rows) {
+  // 以插槽实时勾选为准（明细/汇总两种视图模式都可用），页面级缓存仅兜底
+  const list = (rows && rows.length ? rows : selectedRows.value) || []
+  if (!list.length) {
+    ElMessage.warning(tt('请先勾选要打印的单据'))
+    return
   }
-  calcMaster()
+  if (list.length > 1) {
+    ElMessage.warning(tt('一次只能打印一张单据，请仅勾选一行'))
+    return
+  }
+  handlePrint(list[0])
 }
 
-/** 主单汇总 */
-const calcMaster = () => {
-  let book = 0, check = 0
-  form.items.forEach(it => {
-    book += Number(it.bookAmount) || 0
-    check += Number(it.checkAmount) || 0
-  })
-  form.bookAmount = round2(book)
-  form.checkAmount = round2(check)
-  form.profitLossAmount = round2(check - book)
+// 通用搜索栏（状态/日期/经办人）变更：先把值写回本页 search
+// 注：BillSearchBar 变更后会紧接着抛 search 事件（壳已转发 → handleSearch → load），这里不重复发起查询
+function onFilterChange(patch) {
+  Object.assign(search, patch || {})
 }
 
-const addItem = () => {
-  form.items.push(newItem())
+function handleSearch() {
+  page.current = 1
+  load()
 }
 
-const removeItem = (idx) => {
-  form.items.splice(idx, 1)
-  calcMaster()
-}
-
-const resetForm = () => {
-  Object.assign(form, {
-    checkId: null,
-    checkNo: '',
-    checkDate: null,
-    warehouseId: null,
-    stockType: '动态盘点',
-    handlerId: null,
-    currencyId: null,
-    exchangeRate: 1,
-    bookAmount: 0,
-    checkAmount: 0,
-    profitLossAmount: 0,
-    remark: '',
-    items: []
-  })
+const reset = () => {
+  // 重置 = 回到未筛选状态：关键词 + 通用搜索栏全部维度一并清空
+  // 自定义筛选条件（f_*/自定义字段）的值由通用壳在重置时统一清空并下发空参数
+  Object.assign(search, { keyword: '', status: '', startDate: '', endDate: '', employeeId: '' })
+  activeStatKey.value = ''
+  page.current = 1
+  load()
 }
 
 const openCreate = () => {
-  resetForm()
-  isEdit.value = false
-  readonly.value = false
-  dialogTitle.value = '新增盘点单'
-  dialogVisible.value = true
+  router.push('/inventory/stock-checks/edit')
 }
 
-const openEdit = async (row) => {
-  resetForm()
-  isEdit.value = true
-  readonly.value = false
-  dialogTitle.value = '编辑盘点单'
-  const data = await getStockCheck(row.checkId)
-  Object.assign(form, data)
-  form.items = (data.items || []).map(it => ({ ...it }))
-  dialogVisible.value = true
-}
-
-const handleSave = async () => {
-  if (!form.items || form.items.length === 0) {
-    ElMessage.warning('请至少添加一行盘点明细')
-    return
-  }
-  try {
-    if (isEdit.value) {
-      await updateStockCheck(form.checkId, form)
-      ElMessage.success('更新成功')
-    } else {
-      await saveStockCheck(form)
-      ElMessage.success('新增成功')
-    }
-    dialogVisible.value = false
-    load()
-  } catch (e) {
-    // 错误已由拦截器提示
-  }
+const openEdit = (row) => {
+  router.push(`/inventory/stock-checks/edit/${row.checkId}`)
 }
 
 const handleApprove = async (row) => {
   try {
     await ElMessageBox.confirm(
-      '审核盘点单后将执行：盘盈物料入库 + 盘亏物料出库',
-      '审核确认',
-      { confirmButtonText: '确定审核', cancelButtonText: '取消', type: 'warning' }
+      tt('审核盘点单后将执行：盘盈物料入库 + 盘亏物料出库'),
+      tt('审核确认'),
+      { confirmButtonText: tt('确定审核'), cancelButtonText: tt('取消'), type: 'warning' }
     )
     const approver = localStorage.getItem('username') || ''
     await approveStockCheck(row.checkId, approver)
-    ElMessage.success('审核成功')
+    ElMessage.success(tt('审核成功'))
     load()
   } catch (e) {
     if (e !== 'cancel') {
@@ -410,11 +523,11 @@ const handleApprove = async (row) => {
 
 const handleClose = async (row) => {
   try {
-    const { value } = await ElMessageBox.prompt('请输入关闭原因', '关闭盘点单', {
-      confirmButtonText: '确定', cancelButtonText: '取消', inputType: 'textarea'
+    const { value } = await ElMessageBox.prompt(tt('请输入关闭原因'), tt('关闭盘点单'), {
+      confirmButtonText: tt('确定'), cancelButtonText: tt('取消'), inputType: 'textarea'
     })
     await closeStockCheck(row.checkId, value || '')
-    ElMessage.success('关闭成功')
+    ElMessage.success(tt('关闭成功'))
     load()
   } catch (e) {
     if (e !== 'cancel') {
@@ -425,11 +538,11 @@ const handleClose = async (row) => {
 
 const handleCancel = async (row) => {
   try {
-    const { value } = await ElMessageBox.prompt('请输入取消原因', '取消盘点单', {
-      confirmButtonText: '确定', cancelButtonText: '取消', inputType: 'textarea'
+    const { value } = await ElMessageBox.prompt(tt('请输入取消原因'), tt('取消盘点单'), {
+      confirmButtonText: tt('确定'), cancelButtonText: tt('取消'), inputType: 'textarea'
     })
     await cancelStockCheck(row.checkId, value || '')
-    ElMessage.success('取消成功')
+    ElMessage.success(tt('取消成功'))
     load()
   } catch (e) {
     if (e !== 'cancel') {
@@ -438,28 +551,23 @@ const handleCancel = async (row) => {
   }
 }
 
-const handleDelete = async (row) => {
-  try {
-    await ElMessageBox.confirm(`确定删除盘点单 ${row.checkNo} 吗?`, '提示', { type: 'warning' })
-    await deleteStockCheck(row.checkId)
-    ElMessage.success('删除成功')
-    load()
-  } catch (e) {
-    if (e !== 'cancel') {
-      // 错误已由拦截器提示
-    }
+// 列表查询参数（列表加载与导出共用同一套，避免两处口径漂移）
+function buildQueryParams() {
+  return {
+    ...search,
+    ...getSortParams(),
+    // 筛选条件自定义（2026-10-14）：f_* 表头字段过滤参数由通用壳统一下发
+    ...(headerFilterState.value.params || {}),
+    // 单据自定义字段搜索：沿用既有 customSearch 通道（值由通用壳从筛选条件统一打包）
+    ...(headerFilterState.value.customSearch ? { customSearch: headerFilterState.value.customSearch } : {})
   }
 }
 
 const load = async () => {
   loading.value = true
   try {
-    const res = await listStockCheck({
-      current: page.current,
-      size: page.size,
-      keyword: search.keyword,
-      status: search.status
-    })
+    const params = { current: page.current, size: page.size, ...buildQueryParams() }
+    const res = await listStockCheck(params)
     list.value = res.records || []
     page.total = res.total || 0
   } catch (e) {
@@ -469,27 +577,447 @@ const load = async () => {
   }
 }
 
-const onCurrentChange = (v) => { page.current = v; load() }
-const onSizeChange = (v) => { page.size = v; page.current = 1; load() }
+async function loadTemplateFields() {
+  try {
+    const resp = await fetch(`/api/export/template/stockCheck/fields`, { headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` } })
+    const json = await resp.json()
+    if (json.code === 200 && json.data) {
+      templateFields.required = json.data.required || []
+      templateFields.optional = json.data.optional || []
+      checkedOptionalFields.value = []
+    }
+  } catch (e) { /* 静默失败 */ }
+}
 
-onMounted(load)
+function selectAllOptional() { checkedOptionalFields.value = [...templateFields.optional] }
+function clearOptional() { checkedOptionalFields.value = [] }
+
+async function downloadCustomTemplate() {
+  downloadingCustomTemplate.value = true
+  try {
+    await downloadTemplateUtil('stockCheck', checkedOptionalFields.value)
+    ElMessage.success(tt('自定义模板下载成功'))
+  } catch (e) {
+    ElMessage.error(tt('自定义模板下载失败'))
+  } finally {
+    downloadingCustomTemplate.value = false
+  }
+}
+
+// 导出（与其它单据一致：表头 + 物料明细，含表头/明细自定义字段）
+async function handleExport() {
+  try {
+    // 页面上看到什么列，导出就带什么列；行 = 当前筛选条件下的全部
+    await exportListAsSeen({
+      entityName: 'stockCheck',
+      columns: visibleSortedColumns.value,
+      fetchPage: listStockCheck,
+      params: buildQueryParams(),
+      idField: 'checkId'
+    })
+    ElMessage.success(tt('导出成功'))
+  } catch (e) {
+    // 失败原因已由 exportUtil 统一提示
+  }
+}
+
+const handleImport = () => {
+  importDialogVisible.value = true
+  importResult.value = null
+  selectedImportFile.value = null
+  if (uploadRef.value) {
+    uploadRef.value.clearFiles()
+  }
+  loadTemplateFields()
+}
+
+const downloadTemplate = async () => {
+  downloadingTemplate.value = true
+  try {
+    await downloadTemplateUtil('stockCheck')
+    ElMessage.success(tt('模板下载成功'))
+  } catch (err) {
+    ElMessage.error(tt('模板下载失败'))
+  } finally {
+    downloadingTemplate.value = false
+  }
+}
+
+const handleFileChange = (file) => {
+  selectedImportFile.value = file.raw
+  importResult.value = null
+}
+
+const confirmImport = async () => {
+  if (!selectedImportFile.value) {
+    ElMessage.warning(tt('请先选择文件'))
+    return
+  }
+  importing.value = true
+  try {
+    const result = await importData('stockCheck', selectedImportFile.value)
+    importResult.value = result
+    if (result.failCount === 0) {
+      ElMessage.success(`${tt("导入成功：共 ")}${result.successCount}${tt(" 条记录")}`)
+      importDialogVisible.value = false
+      load()
+    } else {
+      ElMessage.warning(`${tt("导入完成：成功 ")}${result.successCount}${tt(" 条，失败 ")}${result.failCount}${tt(" 条")}`)
+    }
+  } catch (err) {
+    ElMessage.error(tt('导入失败：') + (err.message || tt('未知错误')))
+  } finally {
+    importing.value = false
+  }
+}
+
+onMounted(async () => {
+  loadDropdownOptions()
+  cf.load()
+  loadStats()
+  load()
+  // 明细模式专属筛选条件元数据（复用库存盘点单明细报表 /columns 同一次元数据；失败静默：仅筛选设置里少明细条件）
+  try {
+    const res = await stockCheckDetailApi.getColumns()
+    detailFiltersMeta.value = (res && res.filters) || []
+  } catch (e) { /* 静默降级 */ }
+})
+useAutoRefresh(() => { async () => {
+  loadDropdownOptions()
+  load()
+} })
 </script>
 
-<style scoped>
-.filter-bar {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-  align-items: center;
+<style scoped lang="scss">
+.stock-check-list-page {
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 50%, #f8fcff 100%);
+  min-height: calc(100vh - 60px);
 }
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #6b7280;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    transition: all .2s;
+    &:hover {
+      color: #6366f1;
+      border-color: #c7d2fe;
+    }
+  }
+
+  .title-group { display: flex; flex-direction: column; gap: 2px; }
+
+  .page-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .title-badge {
+    font-size: 10px;
+    font-weight: 600;
+    color: #6366f1;
+    background: linear-gradient(135deg, #e0e7ff, #f0f4ff);
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+  }
+
+  .page-sub { font-size: 12px; color: #9ca3af; }
+
+  .header-actions { display: flex; gap: 8px; }
+}
+
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all .3s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.1);
+    border-color: #c7d2fe;
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #fff;
+    position: relative;
+    z-index: 1;
+
+    &.primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+    &.warning { background: linear-gradient(135deg, #f59e0b, #f97316); }
+    &.info { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+    &.success { background: linear-gradient(135deg, #10b981, #34d399); }
+    &.danger { background: linear-gradient(135deg, #ef4444, #f87171); }
+  }
+
+  .stat-info { flex: 1; }
+  .stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.2;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 4px;
+  }
+
+  .stat-glow {
+    position: absolute;
+    right: -20px;
+    top: -20px;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    opacity: 0.1;
+    filter: blur(20px);
+
+    &.primary { background: #6366f1; }
+    &.warning { background: #f59e0b; }
+    &.info { background: #3b82f6; }
+    &.success { background: #10b981; }
+    &.danger { background: #ef4444; }
+  }
+}
+
+/* 状态页签样式已删除：状态改为通用搜索栏的「单据状态」下拉（filters 声明 'status'，壳自动隐藏页签） */
+
+.content-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.search-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f3f4f6;
+  gap: 8px;
+
+  .search-input {
+    width: 220px;
+    :deep(.el-input__wrapper) {
+      border-radius: 8px;
+      box-shadow: 0 0 0 1px #e5e7eb inset;
+      &:hover { box-shadow: 0 0 0 1px #c7d2fe inset; }
+      &.is-focus { box-shadow: 0 0 0 1px #6366f1 inset; }
+    }
+  }
+}
+
+.tech-table {
+  :deep(.el-table__header th) {
+    background: rgba(99, 102, 241, 0.04) !important;
+  }
+
+  :deep(.el-table__row:hover > td) {
+    background: rgba(99, 102, 241, 0.03) !important;
+  }
+
+  :deep(.el-table td) {
+    border-bottom: 1px solid #f3f4f6;
+  }
+}
+
+.order-no-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+
+  .order-no-text {
+    color: #6366f1;
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .link-icon {
+    font-size: 12px;
+    color: #9ca3af;
+  }
+}
+
+.amount-text { color: #374151; font-variant-numeric: tabular-nums; font-weight: 600; }
+.text-green { color: #10b981; }
+.text-red { color: #ef4444; }
+
+.status-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+
+    &.dot-success { background: #10b981; box-shadow: 0 0 6px rgba(16, 185, 129, 0.5); }
+    &.dot-warning { background: #f59e0b; box-shadow: 0 0 6px rgba(245, 158, 11, 0.5); }
+    &.dot-info { background: #3b82f6; box-shadow: 0 0 6px rgba(59, 130, 246, 0.5); }
+    &.dot-danger { background: #ef4444; box-shadow: 0 0 6px rgba(239, 68, 68, 0.5); }
+  }
+
+  .status-tag {
+    border-radius: 4px;
+    font-weight: 500;
+  }
+}
+
+.action-cell {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
 .item-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin: 8px 0;
 }
+
 .item-title {
   font-weight: bold;
   font-size: 14px;
+}
+
+.pagination-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-top: 1px solid #f3f4f6;
+
+  .pagination-info {
+    font-size: 13px;
+    color: #6b7280;
+  }
+}
+
+:deep(.el-button) {
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+@media (max-width: 1200px) {
+  .stat-cards { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .stock-check-list-page { padding: 12px; }
+  .stat-cards { grid-template-columns: 1fr; }
+  .search-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.import-dialog-content {
+  padding: 4px 0;
+}
+.import-step {
+  margin-bottom: 8px;
+}
+.step-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+.step-desc {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+.import-uploader {
+  margin-top: 8px;
+}
+.import-result {
+  margin-top: 16px;
+}
+.result-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+.import-error-alert {
+  margin-top: 12px;
+}
+.error-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+.error-item {
+  padding: 4px 8px;
+  background: #fef0f0;
+  border-radius: 3px;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: #f56c6c;
+}
+.error-more {
+  padding: 4px 8px;
+  font-size: 12px;
+  color: #909399;
+  text-align: center;
 }
 </style>

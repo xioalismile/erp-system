@@ -1,0 +1,672 @@
+-- deploy-kit-manifest.txt
+-- 部署套件 v2：一次性升级脚本白名单（每行一个文件，相对 db/ 目录，行序=执行序）。
+-- 打包时 Build-Package.ps1 / Publish.ps1 按 manifest 顺序复制进 zip 的 sql/once/。
+-- agent（update-agent.ps1）按文件名序执行，deploy_sql_log 表防重复。
+--
+-- 【铁律】进本清单的脚本必须：
+--   1. 幂等：CREATE TABLE IF NOT EXISTS / ADD COLUMN IF NOT EXISTS /
+--      INSERT ... WHERE NOT EXISTS / ON CONFLICT DO NOTHING，重复执行零副作用
+--   2. 只增不改不删：禁止 DELETE / TRUNCATE / DROP TABLE / UPDATE 无 WHERE 全表覆盖
+--      （UPDATE ... WHERE col IS NULL 兜底类允许；固定值 UPDATE 视为基线收敛，允许）
+--   3. 新增功能必须带脚本进本清单，否则部署闸门（SchemaGuard 报缺表）会拦截部署
+--
+-- 【禁止进清单】（历史一次性手术，已全部应用，重跑有破坏）：
+--   25_cloud_init_data.sql（DELETE sys_menu/sys_role_permission）
+--   23_crm_sale_finance_integration.sql（DROP TABLE）
+--   27_sys_param_keys_sync.sql（DELETE sys_config）
+--   00_fix_and_complete_data.sql / clear_business_data.sql / test_pool_data.sql / basedata-mock-data.sql
+--   76_approval_dirty_flow_cleanup.sql（作废乱码审批人的待办任务 + 单据回退草稿 + DELETE 脏流程
+--      TESTFLOW-VERIFY*，均为一次性数据手术，违反"只增不改不删"铁律；开发库已于 2026-09-14 执行，
+--      客户库如有同款脏数据须人工确认后单独跑，禁止进自动升级清单）
+--
+deploy-kit/010_role_permission_menu_id_varchar.sql
+28_serial_no_config_auto_generate.sql
+29_serial_no_config_basedata.sql
+29b_default_role_permissions.sql
+41_entity_columns_safety_net.sql
+sys_notification.sql
+field_permission_schema.sql
+42_payment_delivery_control.sql
+43_sys_config_dynamic_settings.sql
+44_finance_bill_state_machine.sql
+45_custom_report.sql
+46_custom_report_menus.sql
+47_custom_dashboard.sql
+48_drop_standard_report_menus.sql
+49_data_board_menus.sql
+50_employee_account_cleanup.sql
+51_notification_route_fix.sql
+52_approval_condition_value_text.sql
+50_download_log_import_task.sql
+53_crm_created_by_columns.sql
+54_finance_role_menus.sql
+54_sale_contract_rhtags_template.sql
+55_finance_ar_source_fix.sql
+56_bom_default_unique_index.sql
+57_ai_knowledge.sql
+58_payment_category_simplify.sql
+59_delivery_payment_quota.sql
+60_pre_receipt_account_fields.sql
+61_credit_approval.sql
+62_i18n.sql
+63_i18n_l2_fields.sql
+64_logistics_17track.sql
+65_backfill_created_at.sql
+-- 68 需排在 66 之前：先给 PG 环境补 sys_config.config_key 唯一约束，66 的 ON CONFLICT 才能成立
+68_sys_config_config_key_unique.sql
+66_ui_bill_link_switch.sql
+67_data_board_region_field.sql
+69_i18n_l3_text.sql
+70_i18n_l3_text_seed.sql
+71_i18n_l3_dict_seed.sql
+72_custom_field_drop_show.sql
+73_custom_field_drop_display_switch.sql
+74_notification_voice.sql
+75_ai_usage_tenant_ratio.sql
+76_notification_dedup_include_type.sql
+77_ai_write_confirm_switch.sql
+78_purchase_contract_require_source.sql
+79_material_dedup_fields_and_ui_section.sql
+80_fix_field_permission_required_conflict.sql
+81_custom_field_ext_data_columns.sql
+82_stock_qty_i18n_scope_label.sql
+83_custom_field_ext_data_basedata_archives.sql
+84_ui_size_settings.sql
+85_assemble_disassemble_status_and_bill_names.sql
+86_pilot_bill_approval_flows.sql
+87_production_bill_approval_flows.sql
+88_approval_switch_seed.sql
+89_approval_switch_display_fill.sql
+90_assemble_disassemble_approval_status.sql
+91_remaining_bill_approval_flows.sql
+93_approval_status_columns.sql
+95_other_issue_flow.sql
+-- 96：获客采集长文本列放宽（否则风鸟/企查查经营范围超 varchar(255) 导致采集结果整批回滚、结果页为空）
+96_acquisition_result_text_columns.sql
+-- 97：销售预收款单/采购预付款单补「收款人 / 付款人」员工列（列表页员工筛选维度；全部 ADD COLUMN IF NOT EXISTS，幂等）
+97_prepayment_employee_columns.sql
+-- 98：客户归属人 owner_user_id 脏数据修正（把被写成员工ID的归属还原成用户ID，幂等；代码侧已改为转换后写库）
+98_customer_owner_user_id_fix.sql
+-- 99：获客采集任务/采集结果补 created_by/updated_by 审计列（幂等；修复"销售新增任务后列表看不到"的数据权限维度缺失）
+99_acquisition_audit_fields.sql
+-- 100：语音识别新增「服务器自建识别」提供方（provider/local.url/local.timeout，幂等；默认 qwen = 升级前行为不变）
+100_ai_asr_local_provider.sql
+-- 101：库存台账补「物料冗余展示列」（material_code/material_name/specification，幂等 ADD COLUMN IF NOT EXISTS）
+--    + 存量回填两条 UPDATE（只填空值：物料还在的按 id 直取；物料已删的从历史单据明细反查），修复"库存流水不显示物料编码"
+101_inventory_ledger_material_columns.sql
+-- 102：即时库存冗余列兜底 + 存量回填（同源问题；material_code/material_name/spec 幂等补列，
+--    并只对空值回填：物料还在的按 id 取、已删的从历史明细/台账反查），修复"即时库存物料编码空白"
+102_inventory_current_material_columns_backfill.sql
+-- 103：价格策略联动取价——补齐采购侧「价格策略启用 / 取价优先级」两项配置（幂等 ON CONFLICT DO NOTHING）；
+--    销售侧同 Key 兜底补齐（已有值不覆盖）。配套代码修复：设置中心这两个开关后端原本读错 Key，
+--    导致"策略录了不生效、取价优先级是摆设"，本次改为读正确 Key 并真正接入取价（详见 price 模块改造记录）。
+103_price_fetch_priority.sql
+-- 104：打样单 sample_order / 免费样品订单 free_sample_order 补附件列 attachment_urls（幂等 ADD COLUMN IF NOT EXISTS），
+--    打通 SampleEdit / FreeSampleEdit 的附件上传（production_receipt 列已存在，只补实体字段映射，不在本脚本内）。
+--    同内容文件另存 deploy/sql/62_attachment_urls_sample_tables.sql（守则04 编号体系）。
+104_attachment_urls_sample_tables.sql
+-- 105：高价值单据批量默认打印模板（12 张：销售出库/退货/发票、采购入库/退货/合同/申请、
+--    生产工单/入库、委外加工、生产领料、库存调拨）。全部 INSERT ... ON CONFLICT (template_code) DO NOTHING，
+--    唯一键为 print_template.template_code；取数 PrintDataFetcherService 已全覆盖，纯种子、不改后端。
+105_print_templates_batch1.sql
+-- 106：生产工单状态机对齐全站通用口径（金蝶/用友标准）——status 收敛为 草稿/待审核/已生效/已作废，
+--    退役「已下达/执行中/已完工」业务执行态（改由 close_status 独立表达闭环）。三条固定旧值 UPDATE，
+--    幂等可重复执行；配套代码改造见生产工单 submit/approve 端点与入库达标自动结案。
+--    同内容文件另存 deploy/sql/64_workorder_status_unify.sql（守则04 编号体系）。
+106_workorder_status_unify.sql
+-- 107：生产入库单附件列（2026-09-20 实测主库/模板库/租户库全缺 → 保存报“当前事务被终止”）。
+--    幂等 ADD COLUMN IF NOT EXISTS；同内容另由 SchemaUpgradeEnsurer.BUSINESS_COLUMN_SPECS 启动时对主库+每个租户库兜底。
+107_attachment_urls_production_receipt.sql
+-- 108：下线与「基础资料 → 仓库档案 / 货位档案」重复的两个库存菜单（702 仓库管理 /inventory/warehouses、
+--    703 储位管理 /inventory/locations）——原页面字段与实体整体错配，点进去整页空白。
+--    幂等：按 menu_code/route_path 定位，清理 sys_menu 及 sys_role_permission / sys_role_menu 授权；不存在则无副作用。
+--    同内容文件另存 deploy/sql/65_drop_duplicate_warehouse_bin_menu.sql（守则04 编号体系）。
+108_drop_duplicate_warehouse_bin_menu.sql
+-- 109：落地「业务执行态」独立字段 bus_status（金蝶/用友三字段模型的第三个字段）。
+--    覆盖当前会把执行态写进 status 的 **10 张**单据表（调拨/盘点/其他出入库/领料/生产入库/销售报价/销售合同
+--    + 采购申请单/采购订单，后两张用 UpdateWrapper 写 status="已关闭"）；
+--    可空 + 存量留 NULL → 前端显示仍取 status，升级后行为与旧版完全一致（守则04 · 2.7.2-6）。
+--    幂等 ADD COLUMN IF NOT EXISTS；同内容文件另存 deploy/sql/66_bus_status_columns.sql（守则04 编号体系）。
+109_bus_status_columns.sql
+-- 110：修复「采购申请单关闭」接口一直 500 的既有缺陷 —— purchase_request 缺 close_date 列
+--    （PurchaseRequestServiceImpl.close() 的 UpdateWrapper 写该列；建表脚本 db/12_purchase_modules_fix.sql:22
+--     本就有这条 ALTER，但本环境未应用）。幂等 ADD COLUMN IF NOT EXISTS。
+--    同内容文件另存 deploy/sql/67_purchase_request_close_date.sql（守则04 编号体系）。
+110_purchase_request_close_date.sql
+
+-- 111：销售订单明细报表 —— 菜单初始化 + 角色自动授权（销售管理 → 报表 下新增「销售订单明细报表」入口）。
+--    父级取 /sale/report/analysis 的 parent_menu_id（实库核对：库中并无独立「报表」菜单行，「报表」只是
+--    前端 menuConfig 的分组壳）；route_path=/sale/report/sale-order-detail、sort_order=9。
+--    授权 ADMIN / SALES_MANAGER / SALES，与同组「分析报表」「客户对账单」的授权口径一致
+--    （实库无「系统管理员」角色，故不臆造角色码）。幂等 NOT EXISTS；menu_id 走序列。
+--    执行后无需重启后端，但用户需重新登录（menuRoutePaths 在登录时缓存）。
+--    同内容文件另存 deploy/sql/68_sale_order_detail_report_menu.sql（守则04 编号体系）。
+111_sale_order_detail_report_menu.sql
+
+-- 112：销售单据明细报表（三个）—— 菜单初始化 + 角色自动授权。
+--    补齐「销售出库明细报表」「销售发票明细报表」，并顺带 guard 一次「销售订单明细报表」
+--    （NOT EXISTS 幂等，本脚本自身即可独立执行，不依赖 111 是否跑过）。
+--    父级 = 销售管理（取 /sale/report/analysis 的 parent_menu_id）；sort_order 9/10/11；
+--    permission_code = sale:report-order-detail / sale:report-delivery-detail / sale:report-invoice-detail
+--    （对象名 = 前端 menuConfig 的 itemKey，与设置中心「按钮权限」对象码一致），
+--    并把 111 写下的 sale:report:order-detail 口径统一过来。
+--    授权 ADMIN / SALES_MANAGER / SALES（与同组「分析报表」一致）。执行后用户需重新登录。
+--    同内容文件另存 deploy/sql/69_sale_detail_reports_menu.sql（守则04 编号体系）。
+112_sale_detail_reports_menu.sql
+
+-- 113：采购模块 6 个单据明细报表 —— 菜单初始化 + 角色自动授权。
+--    申请单/合同/订单/入库单/退货单/发票，父级 = 采购管理（取 /purchase/report/analysis 的 parent_menu_id）；
+--    sort_order 8~13（分析报表为 7），并把 供应商对账单/操作手册 依次后移到 14/15 保持顺序；
+--    permission_code = purchase:report-*-detail（对象名 = 前端 menuConfig 的 itemKey）；
+--    授权 ADMIN / PURCHASE_MANAGER / PURCHASE / SALES（实库核对：采购菜单历史上已授权 SALES，
+--    加上它避免"原来能看现在看不到"）。幂等 NOT EXISTS；执行后用户需重新登录。
+--    同内容文件另存 deploy/sql/70_purchase_detail_reports_menu.sql（守则04 编号体系）。
+113_purchase_detail_reports_menu.sql
+
+-- 114：库存模块 5 个单据明细报表 —— 菜单初始化 + 角色自动授权。
+--    其他入库单/其他出库单/库存调拨单/库存盘点单/生产领料单，父级 = 库存管理
+--    （取 /inventory/report/analysis 的 parent_menu_id）；sort_order 10~14（分析报表实库为 9、
+--    操作手册为 15，正好插在中间，无需移动既有菜单）；
+--    permission_code = inventory:report-*-detail（对象名 = 前端 menuConfig 的 itemKey）；
+--    授权 ADMIN/SUPER_ADMIN/仓库/采购/销售/生产/财务 共 12 个角色 —— 刻意比同组「分析报表」
+--    （实库仅 ADMIN+SALES）宽：库存单据明细是仓管员日常报表，只授 ADMIN+SALES 会让他们看不到；
+--    数据行仍由 DataScopeResolver 按角色数据范围过滤。幂等 NOT EXISTS；执行后用户需重新登录。
+--    同内容文件另存 deploy/sql/71_inventory_detail_reports_menu.sql（守则04 编号体系）。
+114_inventory_detail_reports_menu.sql
+
+-- 115：车间工序可视化 第 1 期 —— 工艺路线主档化（状态 2 值）+ 工序类型/计件单价 + 工单工序扩展字段
+--    （operation_type/assignee_*/input_quantity/output_quantity/piece_rate）+ 工序编号规则(ROUTING_OP)
+--    默认费率参数已于 2026-11-09 移除（费率只认工作中心档案）。
+--    全部 ADD COLUMN IF NOT EXISTS / INSERT ... WHERE NOT EXISTS；三条固定旧值 UPDATE 属基线收敛（允许）。
+--    【补登记】2026-09-27：本期原先只靠 SchemaUpgradeEnsurer 启动自愈，未进本清单 → 本次补登记，
+--    保证客户库升级时也会应用（守则 04 2.7.1-7 / manifest 铁律 3）。
+--    同内容文件另存 deploy/sql/115_work_operation_visual.sql（守则04 编号体系）。
+115_work_operation_visual.sql
+
+-- 116：车间工序可视化 第 2 期 —— 工序操作日志表 work_operation_log（只增不改不删）
+--    + 工序状态收敛为 8 值（待派工/已派工/已开工/进行中/暂停/完工待检/已完工/已取消）。
+--    CREATE TABLE IF NOT EXISTS + 固定旧值 UPDATE（基线收敛，允许）。【补登记】同 115。
+--    同内容文件另存 deploy/sql/116_work_operation_log.sql（守则04 编号体系）。
+116_work_operation_log.sql
+
+-- 117：第 4 期 —— 工序回退确认 / 判废确认 / 一键下推补料 所需的工单工序列：
+--    rework_quantity（回退数）/ scrap_quantity（判废数）/ scrap_pushed_quantity（已下推判废数）
+--    / supplement_bill_no（补料单号）。全部 ADD COLUMN IF NOT EXISTS + 只对 NULL 回填 0。
+--    同内容文件另存 deploy/sql/117_work_operation_rework_scrap.sql（守则04 编号体系）。
+117_work_operation_rework_scrap.sql
+
+-- 118：财务管理 → 工序工资核算 —— 新建 wage_settlement / wage_settlement_item 两表
+--    + 员工工时费率列 employee.hourly_rate + 菜单初始化与角色自动授权。
+--    计件工资 = 合格数量 × 工序计件单价（work_order_operation.piece_rate 优先，回落 routing_operation.piece_rate）；
+--    计时工资 = (工时+加班工时) × employee.hourly_rate。全部 CREATE/ADD IF NOT EXISTS + INSERT ... WHERE NOT EXISTS，
+--    幂等可重复执行。同内容文件另存 deploy/sql/118_wage_settlement.sql（守则04 编号体系）。
+118_wage_settlement.sql
+
+-- 119：二维码打印默认模板 —— 商品标签（含二维码）/ 单据二维码（通用）/ 工序卡（含二维码）
+--    幂等：按 template_code 判重（NOT EXISTS），重复执行不产生重复行。
+--    依赖打印模板渲染的 {{qr:...}} 占位能力（后端 PrintTemplateServiceImpl.renderQrCodes）。
+--    同内容文件另存 deploy/sql/119_qrcode_print_templates.sql（守则04 编号体系）。
+119_qrcode_print_templates.sql
+
+-- 120：扫码审计日志表 qr_scan_log（P1 对外发码安全：谁 / 何时 / 扫了什么 / 结果）
+--    幂等：CREATE TABLE IF NOT EXISTS，重复执行无副作用。
+--    同内容文件另存 deploy/sql/120_qr_scan_log.sql（守则04 编号体系）。
+120_qr_scan_log.sql
+
+-- 121：第 10 期 —— 工序按「成品明细行」绑定（支持一张工单多个商品）：
+--    work_order_product 加 routing_id/routing_version（每个成品行自己的工艺路线）；
+--    work_order_operation 加 order_product_id（该工序属于哪个成品行）；
+--    并对存量做兜底回填（老工序按工单第一个成品行归属、成品行回填整单路线）。
+--    全部 ADD COLUMN IF NOT EXISTS / UPDATE ... WHERE IS NULL。幂等可重复执行。
+--    同内容文件另存 deploy/sql/121_work_order_product_routing.sql（守则04 编号体系）。
+121_work_order_product_routing.sql
+
+-- 122：第 11 期 —— 生产入库单补「来源工序行」列 source_operation_id（+ 索引）。
+--    支撑「入库类型工序 → 一键发起入库单」：来源记录该工序，按"剩余可入库量 = 工序合格产出 − 已下推入库量"防重复。
+--    幂等 ADD COLUMN IF NOT EXISTS / CREATE INDEX IF NOT EXISTS；同由 SchemaUpgradeEnsurer 启动逐租户兜底。
+--    同内容文件另存 deploy/sql/122_source_operation_id.sql（守则04 编号体系）。
+122_source_operation_id.sql
+
+-- 123：第 12 期 —— 质检模块（质检模板设计 + 工序检验记录 + 质检数量驱动下道工序）：
+--    qc_template / qc_template_item（质检模板头 + 检验项，按物料或工序绑定，默认不绑定）；
+--    qc_record / qc_record_item（工序检验记录：首检/抽检/全检三种判定 + 不合格处理方式 + 实测明细）；
+--    work_order_operation 加 qc_template_id / approve_qty（质检判定合格数=下道可开工数）/ can_start_qty；
+--    菜单「质检模板」挂「基础资料」下 + ADMIN/SUPER_ADMIN 及基础资料相关角色自动授权。
+--    全部 CREATE TABLE IF NOT EXISTS / ADD COLUMN IF NOT EXISTS / INSERT ... WHERE NOT EXISTS。幂等可重复执行。
+--    同内容文件另存 deploy/sql/123_qc.sql（守则04 编号体系）。
+123_qc.sql
+
+-- 124：第 13 期 —— 父子工序（任意层级，限同一工艺路线/同一成品行内）。
+--    routing_operation 加 parent_line_no（父工序行号）；
+--    work_order_operation 加 parent_line_no（快照）+ parent_row_id（解析落地后的父工序行ID）+ 索引。
+--    幂等 ADD COLUMN IF NOT EXISTS / CREATE INDEX IF NOT EXISTS；同由 SchemaUpgradeEnsurer 启动逐租户兜底。
+--    同内容文件另存 deploy/sql/124_operation_parent.sql（守则04 编号体系）。
+124_operation_parent.sql
+
+-- 125：第 13 期 —— 金额类型工序的「计划金额 / 已确认金额」。
+--    routing_operation 加 plan_amount（仅金额类型工序可填）；
+--    work_order_operation 加 plan_amount（快照）+ confirmed_amount（登记金额时累加）。
+--    幂等 ADD COLUMN IF NOT EXISTS；同由 SchemaUpgradeEnsurer 启动逐租户兜底。
+--    同内容文件另存 deploy/sql/125_operation_amount.sql（守则04 编号体系）。
+125_operation_amount.sql
+
+-- 126：第 13 期 —— 生产工单接入自定义字段（补 ext_data JSONB 列）。
+--    配套代码：CustomFieldServiceImpl 实体→表映射增 production_order → production_order、
+--    resolveIdColumn 增 production_order → order_id（此前生产模块只挂了组装单/拆卸单 = 漏接线）。
+--    用途：车间排程看板「站点设置」候选项含「工单自定义字段」。
+--    幂等 ADD COLUMN IF NOT EXISTS；同由 SchemaUpgradeEnsurer 启动逐租户兜底。
+--    同内容文件另存 deploy/sql/126_custom_field_production_order.sql（守则04 编号体系）。
+126_custom_field_production_order.sql
+
+-- 127：第 13 期 —— 工序操作面板改造 + 工序通知 / 顺序控制。
+--    routing 加 auto_notify_next（本路线工序完工/检验通过时自动通知下道工序负责人）、
+--    enforce_sequence（前道未完工时后道不能开工）。两者默认 0 = 关，升级后老路线行为与升级前逐条一致。
+--    开关入口：生产管理 → 工艺路线 → 编辑 →「工序通知与顺序控制」分组。
+--    幂等 ADD COLUMN IF NOT EXISTS；同由 SchemaUpgradeEnsurer 启动逐租户兜底。
+--    同内容文件另存 deploy/sql/127_routing_notify_switch.sql（守则04 编号体系）。
+127_routing_notify_switch.sql
+
+-- 128：字段权限「页面键历史别名」归一（数据迁移，幂等）。
+--    早期字段权限按"单据类型"存页面键（purchase_inbound / sale_outbound），
+--    后来统一成"目标表名"（purchase_receipt / sale_delivery）；老配置留在旧键上 →
+--    页面读取与提交校验按新键查 → 用户"配了必填没有 * 号、也不拦提交"（线上实测 8 条）。
+--    本脚本把旧键行改写到新键（同角色同字段已存在则保留新键那条），执行后旧键 0 行。
+128_field_permission_page_key_alias.sql
+
+-- 130：付款条件改造（2026-09-28，幂等）。
+--    ① 客户/供应商新增「账期天数」列 → 应收/应付到期日按账期计算；
+--    ② 基础资料「付款条件」菜单改为隐藏（保留菜单行与权限码，便于以后恢复）。
+130_payment_term_credit_days.sql
+
+-- 129：字段落库补齐 第 3 批 —— 23 个「前端能填能选、后端实体与数据库都不存在」的字段补列
+--    （销售合同 is_consignment/picker_id；报价单 customer_short_name；出库 payment_term_id/price_level_id/freight；
+--    退货/发票 payment_term_id/price_level_id；采购申请 payment_term_id；采购入库 contact_person/contact_phone/
+--    payment_method/currency_id；采购退货、采购发票 contact_person/contact_phone/currency_id/discount_rate）。
+--    全部 ADD COLUMN IF NOT EXISTS，幂等；只增不改不删，仅用于记录、不参与业务判断。
+--    同由 SchemaUpgradeEnsurer.BUSINESS_COLUMN_SPECS 启动时对主库+每个租户库兜底。
+129_field_persistence_batch3.sql
+
+-- 130：小楷（AI 助手）设置项兜底 —— 设置中心「界面尺寸设置」6 个键（ui.size.*，config_group=ui）补齐种子。
+--    小楷的 setting_config_list / setting_config_set 只认 sys_config 里**已存在**的键；这批键此前仅由界面
+--    保存时动态 upsert 创建（84_ui_size_settings.sql 只种了 5 个数值键，2026-09-28 新增的界面密度 density
+--    键从未种过），全新库/从未保存过的库缺失 → 小楷查不到、改不了。本脚本幂等补齐
+--    （INSERT ... WHERE NOT EXISTS，已存在的键与值一律不覆盖）。默认值 = 前端 uiSize.js 默认（守则 2.7.2-6）。
+--    同内容文件另存 deploy/sql/130_kai_ui_size_seed.sql（守则04 编号体系）。
+130_kai_ui_size_seed.sql
+
+-- 131：小楷（AI 助手）工具开关兜底 —— 2026-09-28~30 新增三项能力（单据批量操作 / 工序操作 / 平台级数据查询）
+--    的开关此前只写进空库初始化脚本（sys_config_init.sql），存量库缺失 → 补幂等种子；
+--    默认值一律=关闭，仅补缺失键、已存在的值不覆盖，升级后行为与升级前完全一致（守则 2.7.2-6）。
+--    同内容文件另存 deploy/sql/131_ai_tool_switch_seed.sql（守则04 编号体系）。
+131_ai_tool_switch_seed.sql
+
+-- 132：工序操作面板重做（第 2 版）—— 新增 2 列（幂等 ADD COLUMN IF NOT EXISTS）。
+--    ① work_order_operation.attachments   工序附件（逗号分隔文件 URL，面板上传/删除，复用 /api/files）
+--    ② routing.auto_input_from_prev       「投入自动带出上道产出」开关（1=开 0=关，默认 1）
+--    存量不迁移（附件默认空、开关默认开）；同由 SchemaUpgradeEnsurer.BUSINESS_COLUMN_SPECS 逐租户兜底。
+--    同内容文件另存 deploy/sql/132_wo_op_panel.sql（守则04 编号体系）。
+132_wo_op_panel.sql
+ 
+ -- 133：销售过程动作量化（2026-10-07 · 第一步地基）—— 跟进记录加 3 列 + 新增 4 张表 + 菜单授权 + 配置种子（全部幂等）。
+--    ① crm_follow_up.call_duration_seconds / chat_message_count / is_deep_communication（回访与深入交流的判据）
+--    ② crm_promotion_record（推广记录主表）/ crm_promotion_target（推广明细，RFID 覆盖率按客户去重）
+--    ③ crm_sales_warning（销售预警：黄橙红三级 + 处理时限 + 闭环状态机）
+--    ④ sales_target_month（员工月度目标，仅手工覆盖过的月份落库，未覆盖由 季÷3 实时算）
+--    ⑤ 菜单：客户管理新增「销售过程」/crm/sales-activity、数据看板新增「经营看板」/databoard/operation；
+--       改名「跟进超期预警→销售预警」「CRM仪表盘→我的驾驶舱」（route_path 与权限码不动，避免收藏夹失效）
+--    ⑥ 配置种子：sales.process.* 共 16 个键（任务标准 / 等级阈值 / 处理时限 / 奖金规则 / 统计起算日）
+--    存量不迁移：3 个新列默认空，历史跟进记录不参与达标统计（起算日由 sales.process.stat_start_date 控制）。
+--    3 个新列同由 SchemaUpgradeEnsurer.BUSINESS_COLUMN_SPECS 逐租户兜底；菜单与授权另由 ensureSalesProcessMenus 启动自愈。
+--    同内容文件另存 deploy/sql/133_sales_process.sql（守则04 编号体系）。
+133_sales_process.sql
+
+-- 134：销售过程动作量化 · 「新增意向微信」口径补齐（2026-10-07）—— customer 加 2 列（幂等 ADD COLUMN IF NOT EXISTS）。
+--    ① wechat_set_at     「微信」字段首次由空变非空的时间（客户保存链路维护）
+--    存量回填：已有微信的客户把 wechat_set_at 回填为建档时间（只填空值，幂等），其余不动。
+--    2 列同由 SchemaUpgradeEnsurer.BUSINESS_COLUMN_SPECS 逐租户兜底。
+--    同内容文件另存 deploy/sql/134_customer_wechat_intent_fields.sql（守则04 编号体系）。
+134_customer_wechat_intent_fields.sql
+
+-- 135：质检模板绑定模型改造（2026-10-07）—— 新增 2 张关联表（全部幂等 CREATE TABLE IF NOT EXISTS）。
+--    背景：模板原来只能绑一个物料、工序名重复时靠"谁后建谁生效"→ 不同物料的同名工序互相串用。
+--    ① qc_template_material  模板↔适用物料（多选，一个模板可绑多个物料）
+--    ② qc_template_category  模板↔适用分类（多选，挂分类后该分类及其下级分类的物料自动适用）
+--    ③ 存量迁移：旧 qc_template.material_id 单值搬进 qc_template_material（INSERT ... WHERE NOT EXISTS，幂等）
+--    旧列 material_id 保留过渡（守则04 2.7.2-1）；同由 SchemaUpgradeEnsurer.ensureQcTables 启动逐租户兜底。
+--    同内容文件另存 deploy/sql/135_qc_template_binding.sql（守则04 编号体系）。
+135_qc_template_binding.sql
+
+-- 136：生产管理 → 「工序质检报表」菜单初始化 + 角色自动授权（2026-10-07）。
+--    背景：工序检验记录（qc_record）此前无查询接口、无页面 → 用户看不到质检记录、
+--    「经营看板 → 质量」块也没有目标路由无法穿透。
+--    父级 = 「生产管理」（menu_code='production'，实库 menu_id=40）；route_path=/production/qc-record；
+--    permission_code = production:report-qc-record（对象名 = 前端 menuConfig 的 itemKey）；
+--    sort_order = 101（紧随同组「分析报表」=100）；
+--    授权 ADMIN / SUPER_ADMIN / PRODUCTION_MANAGER / PRODUCTION / FINANCE_MANAGER / SALES
+--    （生产角色本职使用 + 经营看板授权角色要能穿透进来 + 与同组「分析报表」口径一致）。
+--    只插菜单与授权，不建表（qc_record / qc_record_item 已由 123_qc.sql 建好）。
+--    幂等 NOT EXISTS；menu_id 走序列；执行后用户需重新登录（menuRoutePaths 在登录时缓存）。
+--    同内容文件另存 deploy/sql/136_qc_record_report_menu.sql（守则04 编号体系）。
+136_qc_record_report_menu.sql
+
+-- 137：工时体系（2026-10-07）—— 新增 4 列（幂等 ADD COLUMN IF NOT EXISTS）。
+--    ① work_order_operation.actual_hours  工序实际工时（开工计时/暂停停表/恢复续表/完工结算，自动累加）
+--    ② work_order_operation.timing_since  本段计时起点（为空=未在计时）
+--    ③ material.standard_hours            单件标准加工工时
+--    ④ routing_operation.unit_hours       单件加工工时（工单下达时×计划数量）
+--    跨天/放假靠人工点「暂停」停表，不做班次自动扣减；存量不迁移（默认 0/空）；
+--    老路线未填单件工时时工单下达走老路径；同步 SchemaUpgradeEnsurer 逐租户兜底。
+--    同内容文件另存 deploy/sql/137_work_hours.sql（守则04 编号体系）。
+137_work_hours.sql
+
+-- 138：单据「计税方式」与含税/不含税价（2026-10-08 · 销售订单试点第一步）。
+--    ① sale_order_item 新增 2 列：price_with_tax（含税价）/ price_without_tax（不含税价），按表头「计税方式」由「单价」换算落库。
+--    ② 设置中心 sys.tax.method「默认计税方式」改为三选下拉（不含税价/含税价/不计税），作单据表头默认值。
+--    ③ 存量归一：sale_order.tax_calc_method 价内税→含税价、价外税/空→不含税价；明细两列按不含税口径回填。
+--    同步 SchemaUpgradeEnsurer 逐租户库兜底（sale_order_item 两列）。
+--    同内容文件另存 deploy/sql/138_price_tax_type.sql（守则04 编号体系）。
+138_price_tax_type.sql
+
+-- 139：工艺路线「谁可以改负责人」（2026-10-08 · 工序操作面板第 4 版）。
+--    ① routing.assign_scope     谁可以改工序负责人：全部人/当前负责人/指定角色/工单开单人，默认「全部人」= 升级前行为。
+--    ② routing.assign_role_ids  选「指定角色」时的角色编码清单（逗号分隔 sys_role.role_code）。
+--    幂等 ADD COLUMN IF NOT EXISTS；同步 SchemaUpgradeEnsurer 逐租户库兜底（routing 两列）。
+--    同内容文件另存 deploy/sql/139_routing_assign_scope.sql（守则04 编号体系）。
+139_routing_assign_scope.sql
+
+-- 140：清理历史遗留的「设置中心分组容器」伪按钮码（2026-10-08）。
+--    删除 sys_role_permission 里 menu_id LIKE 'system:sub-%' 的脏数据（sub-system/sub-business/sub-custom/sub-log/sub-ai
+--    五个分组容器被早期 UI 当成页面写满全部动作），它们不是真实页面，却会被"系统配置写权限"守卫误判为已授权。
+--    幂等（DELETE ... LIKE，删不到即 0 行）。配套口径：SysConfigController.canWriteSysConfig 现要求"必须显式勾选写按钮"。
+--    同内容文件另存 deploy/sql/140_cleanup_container_button_codes.sql（守则04 编号体系）。
+140_cleanup_container_button_codes.sql
+
+-- 141：第 19 期 —— 质检逐项留证：原检记录明细 qc_record_item 加「留证图片」列 images（逗号分隔 URL）。
+--    背景：用户口径「质检不能上传图片，我手机端要可以支持拍照」—— 一个检验项可留多张图，留证不强制。
+--    幂等 ADD COLUMN IF NOT EXISTS；同由 SchemaUpgradeEnsurer.BUSINESS_COLUMN_SPECS 启动逐租户兜底。
+--    同内容文件另存 deploy/sql/141_qc_item_images.sql（守则04 编号体系）。
+141_qc_item_images.sql
+
+-- 142：工序级「谁可以改负责人」（2026-10-09）—— 档位从工艺路线主表下沉到「工序明细」每一行。
+--    背景：用户口径「谁可以设置负责人现在整条路线是全部人，我要的是每个工序都可以调整」。
+--    routing_operation 加 assign_scope（全部人/当前负责人/指定角色/工单开单人，默认「全部人」）+ assign_role_ids。
+--    存量迁移（幂等）：把 routing.assign_scope / assign_role_ids 平移到该路线下每道工序 → 升级后行为不变；
+--    routing 两列保留过渡（仅作兜底，不再是主入口）。
+--    幂等 ADD COLUMN IF NOT EXISTS / UPDATE ... WHERE 空值；同由 SchemaUpgradeEnsurer.BUSINESS_COLUMN_SPECS 逐租户兜底。
+--    同内容文件另存 deploy/sql/142_operation_assign_scope.sql（守则04 编号体系）。
+142_operation_assign_scope.sql
+
+-- 143：采购三单（入库单/退货单/发票）税额·净额·折扣列补齐（2026-10-09）。
+--    背景（8cloud 测试租户实测）：三张单据的实体已映射 tax_amount / net_amount / tax_rate /
+--    discount_rate / discount_amount 等列，但这些列没有登记进启动自愈清单，租户库（模板库历史快照）
+--    永久缺列 → 保存时 PG 先报「字段不存在」，事务随即被中止，界面只能看到「当前事务被终止」。
+--    幂等 ADD COLUMN IF NOT EXISTS（14 列，类型与主库一致 NUMERIC(18,2)）；同由
+--    SchemaUpgradeEnsurer.BUSINESS_COLUMN_SPECS 启动逐租户库兜底。
+--    同内容文件另存 deploy/sql/143_purchase_tax_columns.sql（守则04 编号体系）。
+143_purchase_tax_columns.sql
+
+-- 146：销售 / 采购价格策略改造（2026-10-10 · 用户口径）。
+--    ① 适用范围由"客户等级+分类+品牌+数量同时生效"改为一处互斥单选：主表加 target_type
+--       （material 按物料 / category 按商品分类 / customer 按客户；采购侧第三档为 supplier 按供应商）；
+--    ② 取消表头统一价，改成明细行"每个对象各自设价"：明细表加 target_type / target_id
+--       （采购明细另补 price_type / gross_profit_rate 与销售对齐）；
+--    ③ 明细 material_id 与主表 strategy_name 放开非空（按分类/按客户行没有物料；策略名称已从界面去掉）；
+--    ④ 优先级默认 1 且不允许重复：存量按创建时间重排为 1..N（仅当检测到重复时才重排，幂等）+ 唯一索引；
+--    ⑤ 存量回填：老明细统一 target_type='material' / target_id=material_id。
+--    幂等 ADD COLUMN IF NOT EXISTS / 先判重再重排 / CREATE UNIQUE INDEX IF NOT EXISTS；
+--    同步 SchemaUpgradeEnsurer 启动时对主库 + 每个租户库兜底（含 DROP NOT NULL 与重排）。
+--    同内容文件另存 deploy/sql/146_price_strategy_target.sql（守则04 编号体系）。
+146_price_strategy_target.sql
+
+-- 147：销售报价单 / 销售合同「日晖风格」默认打印模板（2026-10-10 · 用户口径）。
+--    按用户提供的两份原件（报价单图片 / 销售合同 PDF）复刻：RHTAGS 抬头 + 大标题 + 信息表
+--    + 深绿(#0a5d4b)表头明细表 + 条款/右下角落款；并把两条设为对应单据类型的默认模板
+--    （先清同类型其它默认、再置本模板；旧模板保留可随时切换）。
+--    纯种子、不改后端；取数 PrintDataFetcherService 已覆盖 SALE_QUOTE / SALE_CONTRACT，
+--    占位符只用实体真实字段名（报价单有效期为 validFrom/validTo、合同明细序号列是 sortNo）。
+--    幂等 INSERT ... ON CONFLICT (template_code) DO NOTHING + 定向 UPDATE 设默认。
+--    同内容文件另存 deploy/sql/147_sale_quote_contract_rihui_print_templates.sql（守则04 编号体系）。
+147_sale_quote_contract_rihui_print_templates.sql
+
+-- 148：AI用量月表新增「缓存命中」统计列（2026-10-10 小楷模型能力接入整合）。
+--    ai_token_usage 加 prompt_cache_hit_tokens BIGINT NOT NULL DEFAULT 0：模型侧命中上下文缓存的
+--    输入 tokens（DeepSeek 取 usage.prompt_cache_hit_tokens，OpenAI 通用取 usage.prompt_tokens_details.cached_tokens）。
+--    AI用量管理「用户额度」页签新增「缓存命中」列；命中越多说明重复上下文计费越省。
+--    幂等 ADD COLUMN IF NOT EXISTS；SchemaUpgradeEnsurer.BUSINESS_COLUMN_SPECS 已同步登记
+--    （主库 + 每个租户库启动自愈全覆盖）；AiTokenUsageService.ensureTable 自身亦带同款兜底。
+--    同内容文件另存 deploy/sql/148_ai_token_cache_stats.sql（守则04 编号体系）。
+148_ai_token_cache_stats.sql
+
+-- 149：sys_config.config_value 放宽为 TEXT（2026-10-10 小楷模型能力接入整合 · 验证中暴露）。
+--    AI 自定义服务商整体 JSON（含加密 API Key）存配置表单值列 ai.providers，255 必超长 →
+--    保存服务商报「值太长了」。varchar(255)→TEXT 向上兼容、存量无损、幂等。
+--    SchemaUpgradeEnsurer.ensureSysConfigValueText 已同步（主库 + 每个租户独立库自愈全覆盖）。
+--    同内容文件另存 deploy/sql/149_sys_config_value_text.sql（守则04 编号体系）。
+149_sys_config_value_text.sql
+-- 150：电商平台第一期（亚马逊北美站）建表 + 菜单初始化 + 角色授权（2026-10-10）。
+--    4 张新表：ecom_shop（店铺授权）/ ecom_product_mapping（商品映射）/ ecom_platform_order（平台订单）/
+--    ecom_platform_order_item（平台订单明细）；一级菜单「电商平台」+ 3 子菜单；超管+系统管理员授权。
+--    幂等（CREATE TABLE IF NOT EXISTS / INSERT NOT EXISTS）；菜单同步亦由 Gen-MenuSync 每次收敛。
+--    同内容文件另存 deploy/sql/72_ecommerce_amazon.sql（守则04 编号体系）。
+150_ecommerce_amazon.sql
+
+-- 151：电商平台接入拼多多（国内站）加列 + 存量回填 + 菜单改名（2026-10-11）。
+--    ecom_shop 加 access_token/token_expire_at（访问令牌加密落库与到期时间）;
+--    ecom_platform_order 加 platform 列并回填 AMAZON；菜单「亚马逊订单」改名「平台订单」（权限码不变）。
+--    幂等 ADD COLUMN IF NOT EXISTS；SchemaUpgradeEnsurer.BUSINESS_COLUMN_SPECS 已同步登记（逐租户库自愈）。
+--    同内容文件另存 deploy/sql/73_ecommerce_pdd.sql（守则04 编号体系）。
+151_ecommerce_pdd.sql
+
+-- 152：开账引导（2026-10-11 新功能）——新客户初始管理员首登由小楷按行业自动预设系统。
+--    设置中心新增「字段名称设置」菜单（超管+系统管理员授权）；sys_field_label 字段显示名表；
+--    小楷"按行业初始化"开关 ai.tool.initialize.enabled（默认 true）；主库引导状态种子 done。
+--    各租户库同类种子由 SchemaUpgradeEnsurer.ensureOnboardingInfra 启动自愈逐库补齐；
+--    新租户建租户链路显式写 pending（首登弹向导），存量租户永不弹。
+--    幂等（CREATE TABLE IF NOT EXISTS / INSERT NOT EXISTS）。
+--    同内容文件另存 deploy/sql/149_onboarding_industry_init.sql（守则04 编号体系）。
+152_onboarding_industry_init.sql
+152_xiaokai_standalone.sql
+
+-- 153：销售订单收款情况（2026-10-12）—— 收款单两条路径回写订单 + 明细/汇总收款。
+--    ① sale_order_item 加 received_amount（订单明细行级已收金额，默认0，历史不追溯）；
+--    ② accounts_receivable 加 source_order_no（应收单来源订单号，发货收款回写订单的关联链路）；
+--    ③ bill_writeoff_detail 加 source_item_id/source_item_name（明细收款行落库）；
+--    ④ 存量应收单回填来源订单号（沿出库单追溯，幂等只填空值）。
+--    幂等 ADD COLUMN IF NOT EXISTS；SchemaUpgradeEnsurer.BUSINESS_COLUMN_SPECS 已同步登记（逐租户库自愈）。
+--    同内容文件另存 deploy/sql/151_receipt_writeback_to_order.sql（守则04 编号体系）。
+153_receipt_writeback.sql
+
+-- 154：收款单收款方式全局配置（2026-10-12 用户指正改版）——明细/汇总二选一固定生效。
+--    新增 sys_config 键 sale.receipt.receive.mode（设置中心 finance 组「收款发货管控」小节，select 控件）；
+--    默认 summary=汇总收款（升级前行为）；收款单编辑页移除来源单弹窗内的模式切换，改读该配置。
+--    幂等 NOT EXISTS；同内容文件另存 deploy/sql/152_receipt_receive_mode.sql（守则04 编号体系）。
+154_receipt_receive_mode.sql
+
+-- 155：销售发票新增「税票号码」列（2026-10-13）——税控开票软件的真实发票号码，登记字段，
+--    与系统自动编号 invoice_no（发票号）独立；发票金额仍由明细自动汇总不加手填框。
+--    ADD COLUMN IF NOT EXISTS 幂等；同内容文件另存 deploy/sql/153_sale_invoice_tax_invoice_no.sql（守则04 编号体系）。
+155_sale_invoice_tax_invoice_no.sql
+
+-- 156: sale-order-item unit_price/base_unit_price widen to numeric(18,6) + legacy order
+--    RHJLJ261007-001 price re-exact (2654.867257) so unit price x quantity reconciles back
+--    to stored net 9000.00; tax method and amounts untouched (ERP-conformant precision fix).
+--    Idempotent widening ALTER + guarded UPDATE; no-op on databases without the order.
+--    Same-content file saved as deploy/sql/154_legacy_price_rounding_fix.sql (rules-04 numbering).
+156_legacy_price_rounding_fix.sql
+
+-- 157: 设置中心 → 系统参数 → 基础设置 新增「列表默认视图」（汇总/明细，默认汇总）。
+--    列表页「汇总/明细」双视图二期的全局默认值开关；全局只作默认，个人在某页手动切换过则以个人为准。
+--    Idempotent INSERT ... WHERE NOT EXISTS（存在则不动管理员已改过的值）。
+--    Same-content file saved as deploy/sql/155_list_default_view_setting.sql (rules-04 numbering).
+--    等价启动自愈：SchemaUpgradeEnsurer.ensureListDefaultViewSetting（主库 + 逐租户库）。
+157_list_default_view_setting.sql
+158_sale_order_close_by_shipment.sql
+
+-- 159: 销售订单完结口径可配置（2026-10-14）：设置中心 → 系统参数 → 销售参数 →「销售订单状态设置」
+--    （sale 组「销售订单」小节，select 三选项：销售发货单=默认=旧行为 / 销售发票 / 销售发货+销售发票+收款单）；
+--    sale_order_item 加列 turned_invoice_amount（已开票金额，发票生效+/重置草稿- 双向维护）+ 存量回填
+--    （已生效发票两条链路聚合：订单直开 / 经出库明细；只回填列=0 的行，幂等）。
+--    代码侧：SaleOrderServiceImpl.recalcOrderCloseStatus 三模式统一重算 + 下推守卫（订单已结案不可下推）。
+--    Same-content file saved as deploy/sql/159_sale_order_close_mode_setting.sql (rules-04 numbering).
+--    启动自愈：BUSINESS_COLUMN_SPECS 补列（主库+逐租户库）+ ensureSaleOrderCloseModeSetting 补键 + backfillTurnedInvoiceAmount 回填。
+159_sale_order_close_mode_setting.sql
+
+-- 160: 小楷独立版能力扩展第一批（2026-10-15）：技能库 + 知识库（含文件上传）+ MCP 工具。
+--    五张新表（kai_skill / kai_kb_base / kai_kb_doc / kai_kb_chunk / kai_mcp_server），全部 IF NOT EXISTS 幂等，表落主库；
+--    MCP 凭据 AES-GCM 加密落库永不回显；知识库分块向量存 JSON 文本、向量不可用自动关键词兜底（不装向量库）。
+--    Same-content file saved as deploy/sql/160_kai_skills_knowledge_mcp.sql (rules-04 numbering).
+--    启动自愈：KaiSchemaService.DDL 追加同构五表 + 索引（存量库启动补齐）。
+160_kai_skills_knowledge_mcp.sql
+
+-- 161: 小楷独立版能力扩展第二批（2026-10-16）：MCP stdio 本地进程传输。
+--    kai_mcp_server 加四列（command/args_json/cwd/env_enc），全部 ADD COLUMN IF NOT EXISTS 幂等，表落主库；
+--    env 环境变量 JSON 加密落库永不回显。
+--    Same-content file saved as deploy/sql/161_kai_mcp_stdio.sql (rules-04 numbering).
+--    启动自愈：KaiSchemaService.DDL 追加同构四列（存量库启动补齐）。
+161_kai_mcp_stdio.sql
+
+-- 162: 收款单销售提成（2026-10-16）。
+--    cash_receipt 加四列（commission_rate/special_service_fee/tax_excluded_received_amount/sales_commission）
+--    + bill_writeoff_detail 加四列（saler_id/saler_name/tax_excluded_amount/commission），
+--    全部 ADD COLUMN IF NOT EXISTS 幂等；sys_config 两条参数（finance.commission.enabled 默认 true / finance.commission.default.rate 默认 3）。
+--    Same-content file saved as deploy/sql/162_receipt_commission.sql (rules-04 numbering).
+--    启动自愈：SchemaUpgradeEnsurer 收款单/核销明细列清单 + sys_config 财务参数兜底（主库+逐租户库+模板库）。
+162_receipt_commission.sql
+
+-- 163：设置中心财务参数（2026-10-16，2026-10-18 修订）。
+--    finance.ar.source_bill_type 显示名「收款单生成方式」+ 四项选项（不生成 / 销售订单审核 / 销售出库单审核 / 销售发票审核）；
+--    口径=业务单据审核后自动生成**收款单草稿**（不是应收单）；当前取值收敛为 none（不生成）。
+--    发货收款管控四项参数（模式 / 范围 / 容差 / 审批放行）说明末尾标注「仅作用于销售出库单，不影响收款单」。
+--    仅改 sys_config 元数据与默认取值，不动业务数据；幂等 UPDATE（C2 带 NOT LIKE 守卫）。
+--    同内容文件另存 deploy/sql/75_receipt_gen_and_detail_meta.sql（守则04 编号体系）。
+163_receipt_gen_and_detail_meta.sql
+
+-- 164：含税价单据 1 分尾差存量修复（2026-10-18）。
+--    仅修「含税价 + 无折扣 + 原值内部勾稽 + 与含税合计差 1 分」的销售订单/出库/发票明细与表头；
+--    不涉及应收单（系统口径不生成应收单）；带多重守卫、幂等（修完条件不再命中，重跑 0 行）。
+--    同内容文件另存 deploy/sql/74_fix_tax_rounding_drift.sql。
+164_fix_tax_rounding_drift.sql
+
+-- 165：小楷独立版积分体系（2026-10-18）。
+--    kai_user 加四列（credit_balance/credit_granted/credit_consumed/is_admin）；
+--    新增 kai_credit_ledger（积分流水）、kai_usage_log（每轮调用明细）、kai_config（全局配置）。
+--    全部幂等；同内容文件另存 deploy/sql/165_kai_credits.sql（守则04 编号体系）；
+--    启动自愈：KaiSchemaService 同构 DDL 兜底（主库）。
+--    口径：1 积分 = 1000 tokens；注册赠送 1000 积分；用户自带模型不扣积分；平台默认 DeepSeek。
+165_kai_credits.sql
+
+-- 166：收款单来源标识（2026-10-19，设计图 v3 第二批）。
+--    cash_receipt 加列 source_type（系统自动生成 / 手工新增），ADD COLUMN IF NOT EXISTS 幂等 + 存量回填「手工新增」；
+--    用途=收款单列表「来源」列区分自动生成草稿与手工单；同内容文件另存 deploy/sql/76_receipt_source_type.sql；
+--    启动自愈：SchemaUpgradeEnsurer.BUSINESS_COLUMN_SPECS 补列（主库 + 逐租户库）。
+166_receipt_source_type.sql
+
+-- 167：小楷独立版客户资料补充（2026-10-19）。
+--    kai_user 加 phone / email / remark 三列，ADD COLUMN IF NOT EXISTS 幂等；
+--    用于运营管理员在「用户管理」里识别客户、联系与跟进；一个账号 = 一个客户/租户，不改变账号隔离。
+--    同内容文件另存 deploy/sql/167_kai_customer_profile.sql（守则04 编号体系）；
+--    启动自愈：KaiSchemaService 同构 DDL 兜底。
+167_kai_customer_profile.sql
+
+-- 168：发货管控下放单据（2026-10-19）。
+--    sale_order 加 payment_control（发货收款管控模式，源头订单选定）+ overdue_block（超期账款管控开关）；
+--    sale_delivery 加 payment_control（随来源销售订单带出，单据上只读）；
+--    删除设置中心参数「发货收款管控范围」（做单人在源头订单直接选管控方式，按客户付款分类分流取消）。
+--    全部幂等；同内容文件另存 deploy/sql/168_delivery_control_on_bill.sql（守则04 编号体系）；
+--    启动自愈：SchemaUpgradeEnsurer.BUSINESS_COLUMN_SPECS 补列（主库 + 逐租户库）。
+168_delivery_control_on_bill.sql
+171_wx_openid.sql
+
+-- 194：微信小程序订阅消息（审批提醒）（2026-11-19）。
+--    sys_user 加 wx_subscribe_quota 列（授权一次+1，推送成功-1，拒收清零）；
+--    幂等 IF NOT EXISTS。同内容文件另存 deploy/sql/194_wx_subscribe.sql（守则04 编号体系）；
+--    启动自愈：SchemaUpgradeEnsurer.BUSINESS_COLUMN_SPECS 补列（含 wx_openid 补齐 171 遗漏）。
+194_wx_subscribe.sql
+
+-- 172：ERP 小楷助手积分制（2026-10-24）。
+--    新增 ai_credit_account（公司总积分/员工个人积分账户）、ai_credit_ledger（积分流水）；
+--    ai_token_usage 加 credits 列（本月消耗积分）。全部 IF NOT EXISTS 幂等。
+--    口径：1积分=1000tokens；公司总积分默认全员共用，管理员可给员工单独分配；
+--          对话按 tokens ÷ 每积分tokens × 模型倍率 ×（深度思考倍率）扣减。
+--    同内容文件另存 deploy/sql/172_ai_credit_system.sql（守则04 编号体系）；
+--    启动自愈：SchemaUpgradeEnsurer 调 AiCreditSchema.ensure（主库 + 每个租户库 + 模板库）。
+172_ai_credit_system.sql
+
+-- 173：工序扫码认领与按人报工（2026-10-25）：routing_operation.allow_scan_claim + work_order_operation_worker + operation_report_flow；全幂等；启动自愈 SchemaUpgradeEnsurer。
+173_operation_scan_claim.sql
+
+-- 174：审核人系统占位清理（2026-10-28 用户口径）：免审批单据不再写「系统(免审批)」，存量值统一置空；
+--      只清两种占位值（WHERE 精确匹配），真实审批人不动；全幂等；启动自愈 SchemaUpgradeEnsurer.clearSystemPlaceholderApprover。
+174_clear_system_approver.sql
+
+-- 176：销售模块「超过来源单数量」三态管控（2026-11-02）。
+--    设置中心 → 销售参数 → 超过来源单数量下单/出库/退货，下拉固定「不控制 / 预警提示 / 不允许」；
+--    历史值 警告提示→预警提示、不检测→不控制；管理员已选的合法值不覆盖。全幂等。
+--    前置 175 为销售订单超量发货比例列，本脚本不依赖它。
+--    同内容文件另存 deploy/sql/176_sale_over_qty_policy.sql（守则04 编号体系）；
+--    启动自愈：SchemaUpgradeEnsurer.ensureSaleOverQtyPolicySettings（主库 + 逐租户库）。
+176_sale_over_qty_policy.sql
+
+-- 180：SPC质量看板 + 卡片式自定义看板（2026-11-05）：新建 custom_board 表（board=自定义看板 / workbench=工作台自定义卡）+ 数据看板下两个新菜单 + 角色授权；全幂等；启动自愈 SchemaUpgradeEnsurer.ensureSpcCustomBoardOn（主库 + 逐租户库，含 sys_menu 序列对齐）。
+180_spc_custom_board.sql
+
+-- 183：批次号规则生效 + 批次溯源（2026-11-06）：补溯源查询索引；批次唯一口径改为「物料+批次号」；
+--      补齐「启用批次管理」「允许批次货品重复入库」两个参数；全幂等；
+--      启动自愈 SchemaUpgradeEnsurer.ensureBatchTraceSupportOn（主库 + 逐租户库）。
+183_batch_trace_and_rules.sql
+
+-- 187：小楷独立版支付宝充值（2026-11-07）：新建 kai_recharge_package（充值等级）+
+--      kai_recharge_order（充值订单），全部 IF NOT EXISTS 幂等；表落主库；
+--      同内容文件另存 deploy/sql/187_kai_recharge.sql（守则04 编号体系）。
+187_kai_recharge.sql
+
+-- 188：基础资料联动补字段与存量回填（2026-11-08）：客户/供应商默认税率、供应商默认付款方式、
+--      报价单客户编号；销售订单/报价/合同空白客户简称、报价客户编号、采购合同供应商编号与简称按档案回填。
+--      全部 IF NOT EXISTS / 只填空值，幂等；同内容文件另存 deploy/sql/188_master_linkage_fields.sql。
+188_master_linkage_fields.sql
+
+-- 189：自动下推单据（2026-11-08）：设置中心 → 业务 → 自动下推设置两个开关（默认关闭）+
+--      设置中心菜单 + 超级管理员/系统管理员授权；全幂等；
+--      启动自愈 SchemaUpgradeEnsurer.ensureSaleAutoPushSettings（主库 + 逐租户库，含菜单授权）。
+--      同内容文件另存 deploy/sql/189_sale_auto_push.sql（守则04 编号体系）。
+189_sale_auto_push.sql
+
+-- 190：单据统一状态机接入补列（2026-11-09）：为 10 张尚未接入统一状态机的单据
+--      补齐「审批状态/审核人/审核时间/结案四件套/作废四件套/作废前状态」等必需列。
+--      全部 ADD COLUMN IF NOT EXISTS，只加列不删列不改类型、不动存量数据，幂等；
+--      启动自愈 SchemaUpgradeEnsurer.ensureBillStatusColumns（主库 + 逐租户库 + 租户模板库）。
+--      同内容文件另存 deploy/sql/190_bill_status_unify.sql（守则04 编号体系）。
+190_bill_status_unify.sql
+
+
+-- 193：设置中心「弹窗设置」种子（2026-11-19）：7 个配置键（默认全关）+ 设置中心菜单行
+--      + ADMIN/SUPER_ADMIN 自动授权。全部 NOT EXISTS 守卫幂等；不动存量数据。
+--      同内容文件另存 deploy/sql/193_popup_notice.sql（守则04 编号体系）。
+193_popup_notice.sql
+
+-- 194：工作台待审批列表脏数据修复（2026-11-19）：11 张单据头表 status 与 approval_status
+--      冲突行按 status 回写 approval_status（幂等，只动冲突行）。代码侧 12 处待办查询已加双条件。
+--      同内容文件另存 deploy/sql/194_workbench_todo_dirty_fix.sql（守则04 编号体系）。
+194_workbench_todo_dirty_fix.sql
+
+-- 195：新增单据默认打印模板（2026-11-22）：为 11 类单据补专用默认模板
+--      （销售换货单 / 售后维修单 / 报工单 / MRP计划 / 委外发料·入库·退料·补料 / 成本核算单 /
+--       销售费用单 / 采购费用单），此前未配置会回退通用模板。
+--      商品标签、工序卡已有默认模板（119）不重复插入。
+--      占位符只用实体真实字段名；INSERT ... ON CONFLICT (template_code) DO NOTHING，幂等。
+--      同内容文件另存 deploy/sql/195_print_templates_new_bills.sql（守则04 编号体系）。
+195_print_templates_new_bills.sql
+-- 196: item/header net_amount columns (2026-11-23): sample_order/cost_calculation/production_receipt/material_requisition/stock_check/work_order_material/produce_assemble/produce_disassemble, 17 columns total; backfill only NULL rows.
+196_item_net_amount_columns.sql
+
+-- 197：生产工单进度对外分享（2026-11-25）：work_order_share 分享令牌表
+--      （过期时间 / 展示项开关 / 访问计数）；CREATE TABLE IF NOT EXISTS + CREATE INDEX IF NOT EXISTS，幂等。
+--      同内容文件另存 deploy/sql/197_work_order_share.sql（守则04 编号体系）。
+197_work_order_share.sql
+
+-- 199：工艺路线多物料/多分类绑定 + 工序自定义字段（2026-11-26）
+--      routing_material / routing_material_category / routing_operation_field 三张表；
+--      routing_operation 补 operation_key、work_order_operation 补 routing_operation_key；
+--      存量单物料自动迁入关联表、存量工序补稳定标识；全部 IF NOT EXISTS / 幂等。
+--      同内容文件另存 deploy/sql/199_routing_material_and_operation_fields.sql（守则04 编号体系）。
+199_routing_material_and_operation_fields.sql

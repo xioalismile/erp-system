@@ -35,6 +35,18 @@ dist-ssr/
 application-local.yml
 application-prod.yml
 
+# === License 授权相关（绝不提交到 Git）===
+# License 文件（含签名，每客户独立，不入版本库）
+license/license.lic
+# RSA 私钥（供应商独有，绝不能泄露）
+private_key_base64.txt
+*_key_base64.txt
+backend/private_key_base64.txt
+# JWT 自举密钥文件(2026-09-15)：后端首次启动自动生成，绝不入版本控制
+erp-jwt-secret.key
+**/erp-jwt-secret.key
+backend/license.lic
+
 # === Database ===
 *.db
 *.sqlite
@@ -67,3 +79,94 @@ coverage/
 
 # === Redis / other data ===
 dump.rdb
+
+# 构建版本号文件(由 Publish.ps1 生成,不入版本控制)
+build-info.properties
+build-version.txt
+
+# === 2026-09-21 Git 加固：密钥 / 凭据 / 隐私（绝不入库）===
+# 所有非示例的环境文件一律不入库（只保留 .env.example 供他人照抄变量名）
+.env.*
+!.env.example
+# RSA 私钥 / 证书 / 密钥库
+private_key*
+*_key_base64.txt
+public_key_base64.txt
+*.pem
+*.key
+*.pfx
+*.p12
+*.jks
+*.keystore
+id_rsa*
+*.ppk
+# 授权文件（每客户独立、含签名，不入库）
+*.lic
+license/license.lic
+backend/license.lic
+# 服务器清单 / 小程序凭据 / 令牌与登录响应样本
+servers.json
+auth_info.json
+_token.txt
+bearer_token.txt
+*_token.txt
+*.cookie
+*.har
+# 数据库备份与含明文密码的归档（db_backup 内 CSV/SQL 含连接命令与口令）
+db_backup/
+*.dump
+*.sql.gz
+# 重置密码等运维脚本（含明文口令与哈希，不入库）
+reset-password*.sql
+# 构建/测试产物与临时目录
+dist-*/
+_verify_customer/
+playwright-report/
+test-results/
+test-report-smoke/
+.vite/
+*.tsbuildinfo
+.eslintcache
+releases/
+.backend/
+# 备份与补丁残留
+*.bak
+*.bak-*
+*.orig
+*.rej
+*.tmp
+~$*
+*.swp
+
+# === 根目录分析脚本与中间输出（开发辅助，不入库，2026-11-27）===
+/analyze_*.py
+/format_output.py
+/save_full_output.py
+/test_scan.py
+/find-static.bat
+/analysis_output.json
+
+# === 临时工作目录与截图（不入库）===
+.tmp*/
+.screenshots/
+cdp-shots/
+_testshots/
+_testtools/
+dogfood-output/
+.playwright-mcp/
+.tmp-quark-cdp/
+frontend/login_video/
+
+# === 运行时数据与大体积二进制（不入库，2026-09-21）===
+# 获客采集服务的浏览器用户数据/缓存（含登录 Cookie，敏感且体积大）
+acquisition-service/storage/
+storage/browser-data/
+# ASR 语音模型权重（228MB，可重新下载，不入库）
+asr-service/models/
+*.onnx
+# 采集服务与其它运行时产物
+*.user-data
+*/browser-data/
+acquisition-service/screenshots/
+screenshots/
+

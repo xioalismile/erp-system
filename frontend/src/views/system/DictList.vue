@@ -6,14 +6,14 @@
         <div class="filter-bar">
           <el-input
             v-model="typeQuery.keyword"
-            placeholder="字典类型编码/名称"
+            :placeholder="$tt('字典类型编码/名称')"
             class="filter-input"
             clearable
             @keyup.enter="onTypeSearch"
           />
-          <el-button type="primary" @click="onTypeSearch">查询</el-button>
-          <el-button @click="onTypeReset">重置</el-button>
-          <el-button type="success" @click="onTypeAdd">新增</el-button>
+          <el-button v-permission="perm('query')" type="primary" @click="onTypeSearch">{{ $tt("查询") }}</el-button>
+          <el-button v-permission="perm('reset')" @click="onTypeReset">{{ $tt("重置") }}</el-button>
+          <el-button v-permission="perm('add')" type="success" @click="onTypeAdd">{{ $tt("新增") }}</el-button>
         </div>
 
         <el-table
@@ -24,23 +24,18 @@
           @row-click="onTypeRowClick"
           height="500"
         >
-          <el-table-column prop="dictTypeCode" label="类型编码" min-width="130" />
-          <el-table-column prop="dictTypeName" label="类型名称" min-width="140" />
-          <el-table-column prop="dictCategory" label="分类" width="100" />
-          <el-table-column prop="sortOrder" label="排序" width="80" align="right" />
-          <el-table-column label="状态" width="90" align="center">
+          <el-table-column prop="dictTypeCode" :label="$tf('类型编码')" min-width="130" />
+          <el-table-column prop="dictTypeName" :label="$tf('类型名称')" min-width="140" />
+          <el-table-column prop="dictCategory" :label="$tf('分类')" width="100" />
+          <el-table-column prop="sortOrder" :label="$tf('排序')" width="80" align="right" />
+          <el-table-column :label="$tf('状态')" width="90" align="center">
             <template #default="{ row }">
               <el-tag :type="row.status === '启用' ? 'success' : 'info'" size="small">
-                {{ row.status }}
+                {{ $dt(row.status) }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="140" fixed="right">
-            <template #default="{ row }">
-              <el-button size="small" @click.stop="onTypeEdit(row)">编辑</el-button>
-              <el-button size="small" type="danger" @click.stop="onTypeDelete(row)">删除</el-button>
-            </template>
-          </el-table-column>
+          <AuditColumns />
         </el-table>
 
         <el-pagination
@@ -61,38 +56,32 @@
           <span class="dict-right-title">
             {{ currentType.dictTypeName ? `字典数据 - ${currentType.dictTypeName}` : '请选择左侧字典类型' }}
           </span>
-          <el-button
+          <el-button v-permission="perm('addRow')"
             type="success"
             :disabled="!currentType.typeId"
             @click="onDataAdd"
-          >新增数据</el-button>
+          >{{ $tt("新增数据") }}</el-button>
         </div>
 
-        <el-table :data="dataTableData" border v-loading="dataLoading" height="500">
-          <el-table-column prop="dictLabel" label="字典标签" min-width="140" />
-          <el-table-column prop="dictValue" label="字典值" min-width="140" />
-          <el-table-column prop="dictSort" label="排序" width="80" align="right" />
-          <el-table-column label="默认" width="80" align="center">
+        <el-table :data="dataTableData" border v-loading="dataLoading" height="500" @sort-change="onSortChange">
+          <el-table-column prop="dictLabel" :label="$tf('字典标签')" min-width="140" sortable="custom" />
+          <el-table-column prop="dictValue" :label="$tf('字典值')" min-width="140" sortable="custom" />
+          <el-table-column prop="dictSort" :label="$tf('排序')" width="80" align="right" sortable="custom" />
+          <el-table-column :label="$tf('默认')" width="80" align="center">
             <template #default="{ row }">
-              <el-tag v-if="row.isDefault" type="success" size="small">默认</el-tag>
+              <el-tag v-if="row.isDefault" type="success" size="small">{{ $tt("默认") }}</el-tag>
               <span v-else>-</span>
             </template>
           </el-table-column>
-          <el-table-column label="启用" width="80" align="center">
+          <el-table-column :label="$tf('启用')" width="80" align="center">
             <template #default="{ row }">
               <el-tag :type="row.isEnabled ? 'success' : 'info'" size="small">
                 {{ row.isEnabled ? '启用' : '禁用' }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="140" fixed="right">
-            <template #default="{ row }">
-              <el-button size="small" @click="onDataEdit(row)">编辑</el-button>
-              <el-button size="small" type="danger" @click="onDataDelete(row)">删除</el-button>
-            </template>
-          </el-table-column>
           <template #empty>
-            <span>请先选择左侧字典类型</span>
+            <span>{{ $tt("请先选择左侧字典类型") }}</span>
           </template>
         </el-table>
       </div>
@@ -106,28 +95,28 @@
       @close="onTypeDialogClose"
     >
       <el-form :model="typeForm" :rules="typeRules" ref="typeFormRef" label-width="100px">
-        <el-form-item label="类型编码" prop="dictTypeCode">
+        <el-form-item :label="$tf('类型编码')" prop="dictTypeCode">
           <el-input v-model="typeForm.dictTypeCode" />
         </el-form-item>
-        <el-form-item label="类型名称" prop="dictTypeName">
+        <el-form-item :label="$tf('类型名称')" prop="dictTypeName">
           <el-input v-model="typeForm.dictTypeName" />
         </el-form-item>
-        <el-form-item label="分类" prop="dictCategory">
-          <el-input v-model="typeForm.dictCategory" placeholder="如 系统级、业务级" />
+        <el-form-item :label="$tf('分类')" prop="dictCategory">
+          <el-input v-model="typeForm.dictCategory" :placeholder="$tt('如 系统级、业务级')" />
         </el-form-item>
-        <el-form-item label="排序" prop="sortOrder">
+        <el-form-item :label="$tf('排序')" prop="sortOrder">
           <el-input-number v-model="typeForm.sortOrder" :min="0" controls-position="right" />
         </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-select v-model="typeForm.status" placeholder="请选择" style="width:100%">
-            <el-option label="启用" value="启用" />
-            <el-option label="停用" value="停用" />
+        <el-form-item :label="$tf('状态')" prop="status">
+          <el-select v-model="typeForm.status" :placeholder="$tt('请选择')" style="width:100%">
+            <el-option :label="$tf('启用')" value="启用" />
+            <el-option :label="$tf('停用')" value="停用" />
           </el-select>
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="typeDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="onTypeSubmit">保存</el-button>
+        <el-button v-permission="perm('dlgCancel')" @click="typeDialogVisible = false">{{ $tt("取消") }}</el-button>
+        <el-button v-permission="perm('save')" type="primary" @click="onTypeSubmit">{{ $tt("保存") }}</el-button>
       </template>
     </el-dialog>
 
@@ -139,47 +128,54 @@
       @close="onDataDialogClose"
     >
       <el-form :model="dataForm" :rules="dataRules" ref="dataFormRef" label-width="100px">
-        <el-form-item label="字典标签" prop="dictLabel">
+        <el-form-item :label="$tf('字典标签')" prop="dictLabel">
           <el-input v-model="dataForm.dictLabel" />
         </el-form-item>
-        <el-form-item label="字典值" prop="dictValue">
+        <el-form-item :label="$tf('字典值')" prop="dictValue">
           <el-input v-model="dataForm.dictValue" />
         </el-form-item>
-        <el-form-item label="排序" prop="dictSort">
+        <el-form-item :label="$tf('排序')" prop="dictSort">
           <el-input-number v-model="dataForm.dictSort" :min="0" controls-position="right" />
         </el-form-item>
-        <el-form-item label="是否默认" prop="isDefault">
+        <el-form-item :label="$tf('是否默认')" prop="isDefault">
           <el-switch v-model="dataForm.isDefault" :active-value="1" :inactive-value="0" />
         </el-form-item>
-        <el-form-item label="是否启用" prop="isEnabled">
+        <el-form-item :label="$tf('是否启用')" prop="isEnabled">
           <el-switch v-model="dataForm.isEnabled" :active-value="1" :inactive-value="0" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dataDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="onDataSubmit">保存</el-button>
+        <el-button v-permission="perm('dlgCancel')" @click="dataDialogVisible = false">{{ $tt("取消") }}</el-button>
+        <el-button v-permission="perm('save')" type="primary" @click="onDataSubmit">{{ $tt("保存") }}</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup>
+import { usePagePerm } from '@/utils/pagePerm'
+const perm = usePagePerm('system:sys-param')
+import { useAutoRefresh } from '@/composables/useAutoRefresh'
 import { ref, reactive, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import {
-  pageDictType, getDictType, createDictType, updateDictType, deleteDictType,
-  listDictData, createDictData, updateDictData, deleteDictData
+  pageDictType, createDictType, updateDictType,
+  listDictData, createDictData, updateDictData
 } from '@/api/system/dict'
+import AuditColumns from '@/components/AuditColumns.vue'
+import { useTableSort } from '@/composables/useTableSort'
+import { tt } from '@/i18n'
+const { handleSortChange, getSortParams } = useTableSort()
 
-// ===== 字典类型 =====
+
+const onSortChange = (e) => { handleSortChange(e); loadTypeData() }// ===== 字典类型 =====
 const typeLoading = ref(false)
 const typeTableData = ref([])
 const typeTotal = ref(0)
 const typeQuery = reactive({
   current: 1,
   size: 20,
-  keyword: ''
-})
+  keyword: ''})
 
 const typeDialogVisible = ref(false)
 const typeIsEdit = ref(false)
@@ -195,14 +191,14 @@ const typeDefaultForm = {
 const typeForm = reactive({ ...typeDefaultForm })
 
 const typeRules = {
-  dictTypeCode: [{ required: true, message: '请输入类型编码', trigger: 'blur' }],
-  dictTypeName: [{ required: true, message: '请输入类型名称', trigger: 'blur' }]
+  dictTypeCode: [{ required: true, message: tt('请输入类型编码'), trigger: 'blur' }],
+  dictTypeName: [{ required: true, message: tt('请输入类型名称'), trigger: 'blur' }]
 }
 
 async function loadTypeData() {
   typeLoading.value = true
   try {
-    const res = await pageDictType(typeQuery)
+    const res = await pageDictType({ ...typeQuery, ...getSortParams() })
     typeTableData.value = res.records || []
     typeTotal.value = res.total || 0
   } finally {
@@ -227,18 +223,6 @@ function onTypeAdd() {
   typeDialogVisible.value = true
 }
 
-async function onTypeEdit(row) {
-  typeIsEdit.value = true
-  Object.assign(typeForm, typeDefaultForm)
-  try {
-    const detail = await getDictType(row.typeId)
-    Object.assign(typeForm, detail)
-  } catch (e) {
-    Object.assign(typeForm, row)
-  }
-  typeDialogVisible.value = true
-}
-
 function onTypeDialogClose() {
   typeFormRef.value && typeFormRef.value.resetFields()
   Object.assign(typeForm, typeDefaultForm)
@@ -250,28 +234,14 @@ async function onTypeSubmit() {
     if (!valid) return
     if (typeIsEdit.value) {
       await updateDictType(typeForm.typeId, typeForm)
-      ElMessage.success('编辑成功')
+      ElMessage.success(tt('编辑成功'))
     } else {
       await createDictType(typeForm)
-      ElMessage.success('新增成功')
+      ElMessage.success(tt('新增成功'))
     }
     typeDialogVisible.value = false
     loadTypeData()
   })
-}
-
-async function onTypeDelete(row) {
-  await ElMessageBox.confirm(`确定删除字典类型 [${row.dictTypeName}] 及其所有数据吗？`, '提示', {
-    type: 'warning'
-  })
-  await deleteDictType(row.typeId)
-  ElMessage.success('删除成功')
-  // 若删除的是当前选中的类型，清空右侧
-  if (currentType.typeId === row.typeId) {
-    Object.assign(currentType, { typeId: null, dictTypeName: '' })
-    dataTableData.value = []
-  }
-  loadTypeData()
 }
 
 // ===== 字典数据 =====
@@ -294,8 +264,8 @@ const dataDefaultForm = {
 const dataForm = reactive({ ...dataDefaultForm })
 
 const dataRules = {
-  dictLabel: [{ required: true, message: '请输入字典标签', trigger: 'blur' }],
-  dictValue: [{ required: true, message: '请输入字典值', trigger: 'blur' }]
+  dictLabel: [{ required: true, message: tt('请输入字典标签'), trigger: 'blur' }],
+  dictValue: [{ required: true, message: tt('请输入字典值'), trigger: 'blur' }]
 }
 
 async function loadDictData(typeId) {
@@ -309,23 +279,17 @@ async function loadDictData(typeId) {
 }
 
 function onTypeRowClick(row) {
-  Object.assign(currentType, { typeId: row.typeId, dictTypeName: row.dictTypeName })
-  loadDictData(row.typeId)
+  Object.assign(currentType, { typeId: row.dictTypeId, dictTypeName: row.dictTypeName })
+  loadDictData(row.dictTypeId)
 }
 
 function onDataAdd() {
   if (!currentType.typeId) {
-    ElMessage.warning('请先选择字典类型')
+    ElMessage.warning(tt('请先选择字典类型'))
     return
   }
   dataIsEdit.value = false
   Object.assign(dataForm, dataDefaultForm, { typeId: currentType.typeId })
-  dataDialogVisible.value = true
-}
-
-async function onDataEdit(row) {
-  dataIsEdit.value = true
-  Object.assign(dataForm, dataDefaultForm, row)
   dataDialogVisible.value = true
 }
 
@@ -340,26 +304,18 @@ async function onDataSubmit() {
     if (!valid) return
     if (dataIsEdit.value) {
       await updateDictData(dataForm.dataId, dataForm)
-      ElMessage.success('编辑成功')
+      ElMessage.success(tt('编辑成功'))
     } else {
       await createDictData(dataForm)
-      ElMessage.success('新增成功')
+      ElMessage.success(tt('新增成功'))
     }
     dataDialogVisible.value = false
     loadDictData(currentType.typeId)
   })
 }
 
-async function onDataDelete(row) {
-  await ElMessageBox.confirm(`确定删除字典数据 [${row.dictLabel}] 吗？`, '提示', {
-    type: 'warning'
-  })
-  await deleteDictData(row.dataId)
-  ElMessage.success('删除成功')
-  loadDictData(currentType.typeId)
-}
-
 onMounted(loadTypeData)
+useAutoRefresh(loadTypeData)
 </script>
 
 <style scoped>

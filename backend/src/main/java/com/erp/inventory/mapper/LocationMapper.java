@@ -5,9 +5,11 @@ import com.erp.inventory.entity.Location;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component("inventoryLocationMapper")
 @Mapper
 public interface LocationMapper extends BaseMapper<Location> {
     @Select("SELECT l.* FROM location l JOIN warehouse w ON l.stock_id = w.stock_id WHERE w.stock_code = #{warehouseCode} ORDER BY l.bin_code")

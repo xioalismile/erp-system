@@ -356,108 +356,6 @@ CREATE TABLE cash_payment_refund (
 
 COMMENT ON TABLE cash_payment_refund IS '付款退款单主表';
 
--- 11. 凭证模板表 (voucher_template)
-CREATE TABLE voucher_template (
-    template_id BIGSERIAL PRIMARY KEY,
-    template_code VARCHAR(50) NOT NULL UNIQUE,
-    template_name VARCHAR(200) NOT NULL,
-    source_bill_type VARCHAR(50) NOT NULL,
-    voucher_type VARCHAR(20) NOT NULL DEFAULT '记账凭证',
-    is_auto_create SMALLINT NOT NULL DEFAULT 0,
-    template_content TEXT NOT NULL,
-    sort_order INT NOT NULL DEFAULT 0,
-    status VARCHAR(10) NOT NULL DEFAULT '启用',
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
-    created_by VARCHAR(50) NOT NULL,
-    updated_by VARCHAR(50)
-);
-
-COMMENT ON TABLE voucher_template IS '凭证模板';
-
--- 12. 会计凭证主表 (voucher)
-CREATE TABLE voucher (
-    voucher_id BIGSERIAL PRIMARY KEY,
-    voucher_no VARCHAR(50) NOT NULL UNIQUE,
-    voucher_date DATE NOT NULL,
-    voucher_type VARCHAR(20) NOT NULL DEFAULT '记账凭证',
-    period_year INT NOT NULL,
-    period_month INT NOT NULL,
-    total_debit NUMERIC(18,2) NOT NULL DEFAULT 0.00,
-    total_credit NUMERIC(18,2) NOT NULL DEFAULT 0.00,
-    attachment_count INT DEFAULT 0,
-    source_bill_type VARCHAR(50),
-    source_bill_no VARCHAR(50),
-    maker_id BIGINT NOT NULL,
-    maker_name VARCHAR(100) NOT NULL,
-    poster_id BIGINT,
-    poster_name VARCHAR(100),
-    checker_id BIGINT,
-    checker_name VARCHAR(100),
-    cashier_id BIGINT,
-    cashier_name VARCHAR(100),
-    is_reversed SMALLINT NOT NULL DEFAULT 0,
-    reversed_voucher_id BIGINT,
-    reversed_voucher_no VARCHAR(50),
-    reverse_voucher_id BIGINT,
-    reverse_voucher_no VARCHAR(50),
-    remark VARCHAR(2000),
-    attachment_urls VARCHAR(1000),
-    status VARCHAR(10) NOT NULL DEFAULT '待记账',
-    approval_status VARCHAR(10) NOT NULL DEFAULT '待审核',
-    approved_by VARCHAR(50),
-    approved_at TIMESTAMP,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
-    created_by VARCHAR(50) NOT NULL,
-    updated_by VARCHAR(50),
-    org_code VARCHAR(50),
-    FOREIGN KEY (maker_id) REFERENCES employee(employee_id),
-    FOREIGN KEY (poster_id) REFERENCES employee(employee_id),
-    FOREIGN KEY (checker_id) REFERENCES employee(employee_id),
-    FOREIGN KEY (cashier_id) REFERENCES employee(employee_id)
-);
-
-COMMENT ON TABLE voucher IS '会计凭证主表';
-
--- 13. 会计凭证分录表 (voucher_entry)
-CREATE TABLE voucher_entry (
-    entry_id BIGSERIAL PRIMARY KEY,
-    voucher_id BIGINT NOT NULL,
-    line_no INT NOT NULL,
-    account_id BIGINT NOT NULL,
-    account_code VARCHAR(50) NOT NULL,
-    account_name VARCHAR(200) NOT NULL,
-    account_direction VARCHAR(2) NOT NULL,
-    debit_amount NUMERIC(18,2) DEFAULT 0.00,
-    credit_amount NUMERIC(18,2) DEFAULT 0.00,
-    quantity NUMERIC(18,4) DEFAULT 0.0000,
-    unit_price NUMERIC(18,4) DEFAULT 0.0000,
-    currency_id BIGINT,
-    exchange_rate NUMERIC(18,8) DEFAULT 1.00000000,
-    foreign_amount NUMERIC(18,2) DEFAULT 0.00,
-    auxiliary_type VARCHAR(50),
-    auxiliary_id BIGINT,
-    auxiliary_name VARCHAR(200),
-    settlement_no VARCHAR(50),
-    person_name VARCHAR(100),
-    department_name VARCHAR(100),
-    project_name VARCHAR(200),
-    customer_name VARCHAR(200),
-    supplier_name VARCHAR(200),
-    summary VARCHAR(500),
-    remark VARCHAR(500),
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
-    created_by VARCHAR(50),
-    updated_by VARCHAR(50),
-    FOREIGN KEY (voucher_id) REFERENCES voucher(voucher_id) ON DELETE CASCADE,
-    FOREIGN KEY (account_id) REFERENCES account(account_id),
-    FOREIGN KEY (currency_id) REFERENCES currency(currency_id)
-);
-
-COMMENT ON TABLE voucher_entry IS '会计凭证分录表';
-
 -- 14. 成本计算单主表 (cost_calculation)
 CREATE TABLE cost_calculation (
     calc_id BIGSERIAL PRIMARY KEY,
@@ -625,7 +523,7 @@ CREATE TABLE budget (
     effective_date DATE,
     expiry_date DATE,
     remark VARCHAR(2000),
-    status VARCHAR(10) NOT NULL DEFAULT '已审核',
+    status VARCHAR(10) NOT NULL DEFAULT '已生效',
     approval_status VARCHAR(10) NOT NULL DEFAULT '待审核',
     approved_by VARCHAR(50),
     approved_at TIMESTAMP,
@@ -714,29 +612,6 @@ CREATE TABLE writeoff_record (
 
 COMMENT ON TABLE writeoff_record IS '往来核销记录表';
 
--- 23. 科目余额表 (account_balance)
-CREATE TABLE account_balance (
-    balance_id BIGSERIAL PRIMARY KEY,
-    period_year INT NOT NULL,
-    period_month INT NOT NULL,
-    account_id BIGINT NOT NULL,
-    account_code VARCHAR(50) NOT NULL,
-    account_name VARCHAR(200) NOT NULL,
-    account_direction VARCHAR(2) NOT NULL,
-    begin_debit_balance NUMERIC(18,2) NOT NULL DEFAULT 0.00,
-    begin_credit_balance NUMERIC(18,2) NOT NULL DEFAULT 0.00,
-    current_debit NUMERIC(18,2) NOT NULL DEFAULT 0.00,
-    current_credit NUMERIC(18,2) NOT NULL DEFAULT 0.00,
-    end_debit_balance NUMERIC(18,2) NOT NULL DEFAULT 0.00,
-    end_credit_balance NUMERIC(18,2) NOT NULL DEFAULT 0.00,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
-    UNIQUE (period_year, period_month, account_id),
-    FOREIGN KEY (account_id) REFERENCES account(account_id)
-);
-
-COMMENT ON TABLE account_balance IS '科目余额表';
-
 -- 24. 银行账户表 (bank_account)
 CREATE TABLE bank_account (
     account_id BIGSERIAL PRIMARY KEY,
@@ -779,10 +654,6 @@ CREATE INDEX idx_cash_payment_supplier ON cash_payment(supplier_id);
 CREATE INDEX idx_cash_payment_writeoff ON cash_payment_writeoff(payment_id);
 CREATE INDEX idx_cash_receipt_refund_no ON cash_receipt_refund(refund_no);
 CREATE INDEX idx_cash_payment_refund_no ON cash_payment_refund(refund_no);
-CREATE INDEX idx_voucher_template_code ON voucher_template(template_code);
-CREATE INDEX idx_voucher_no ON voucher(voucher_no);
-CREATE INDEX idx_voucher_date ON voucher(voucher_date);
-CREATE INDEX idx_voucher_entry ON voucher_entry(voucher_id);
 CREATE INDEX idx_cost_calculation_no ON cost_calculation(calc_no);
 CREATE INDEX idx_cost_calculation_date ON cost_calculation(calc_date);
 CREATE INDEX idx_cost_calculation_item ON cost_calculation_item(calc_id);
@@ -796,7 +667,6 @@ CREATE INDEX idx_budget_item ON budget_item(budget_id);
 CREATE INDEX idx_fund_transfer_no ON fund_transfer(transfer_no);
 CREATE INDEX idx_fund_transfer_date ON fund_transfer(transfer_date);
 CREATE INDEX idx_writeoff_record_date ON writeoff_record(writeoff_date);
-CREATE INDEX idx_account_balance_period ON account_balance(period_year, period_month);
 CREATE INDEX idx_bank_account_no ON bank_account(account_no);
 
 -- ============================================================================

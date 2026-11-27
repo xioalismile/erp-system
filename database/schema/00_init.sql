@@ -2,17 +2,18 @@
 -- 智能ERP系统 - PostgreSQL 数据库完整初始化脚本
 -- 版本：V1.0
 -- 日期：2026-06-22
--- 说明：整合所有模块建表脚本，执行顺序按照依赖关系排列
+-- 说明：初始化数据脚本，需在建表脚本执行完毕后运行
 -- ============================================================================
 
--- 执行所有模块的建表脚本
-\i schema/01_basics.sql
-\i schema/02_sales.sql
-\i schema/03_purchase.sql
-\i schema/04_inventory.sql
-\i schema/05_production.sql
-\i schema/06_finance.sql
-\i schema/07_system.sql
+-- 注意：\i 引用已移至 SCHEMA_SCRIPTS 数组中按顺序独立执行
+-- 如果需要单独使用本脚本，请先执行 01_basics.sql ~ 07_system.sql 建表脚本
+-- \i schema/01_basics.sql
+-- \i schema/02_sales.sql
+-- \i schema/03_purchase.sql
+-- \i schema/04_inventory.sql
+-- \i schema/05_production.sql
+-- \i schema/06_finance.sql
+-- \i schema/07_system.sql
 
 -- ============================================================================
 -- 初始化数据
@@ -101,13 +102,13 @@ VALUES
 -- 用户初始化数据（密码为 admin123，需要加密）
 INSERT INTO sys_user (user_code, username, password, real_name, user_type, is_admin, is_enabled, status)
 VALUES
-('U001', 'admin', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE/TU8XaJLOqCW', '系统管理员', '系统用户', 1, 1, '启用'),
-('U002', 'manager', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE/TU8XaJLOqCW', '张总', '普通用户', 0, 1, '启用'),
-('U003', 'sale01', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE/TU8XaJLOqCW', '李销售', '普通用户', 0, 1, '启用'),
-('U004', 'purchase01', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE/TU8XaJLOqCW', '王采购', '普通用户', 0, 1, '启用'),
-('U005', 'warehouse01', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE/TU8XaJLOqCW', '赵仓管', '普通用户', 0, 1, '启用'),
-('U006', 'production01', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE/TU8XaJLOqCW', '钱生产', '普通用户', 0, 1, '启用'),
-('U007', 'finance01', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE/TU8XaJLOqCW', '孙财务', '普通用户', 0, 1, '启用');
+('U001', 'admin', '$2a$10$n9rf.LQ2Yv7NFIEKjU/SfuQzDbOEvK6TRgSbrv50ugK6gwC8JcYYK', '系统管理员', '系统用户', 1, 1, '启用'),
+('U002', 'manager', '$2a$10$n9rf.LQ2Yv7NFIEKjU/SfuQzDbOEvK6TRgSbrv50ugK6gwC8JcYYK', '张总', '普通用户', 0, 1, '启用'),
+('U003', 'sale01', '$2a$10$n9rf.LQ2Yv7NFIEKjU/SfuQzDbOEvK6TRgSbrv50ugK6gwC8JcYYK', '李销售', '普通用户', 0, 1, '启用'),
+('U004', 'purchase01', '$2a$10$n9rf.LQ2Yv7NFIEKjU/SfuQzDbOEvK6TRgSbrv50ugK6gwC8JcYYK', '王采购', '普通用户', 0, 1, '启用'),
+('U005', 'warehouse01', '$2a$10$n9rf.LQ2Yv7NFIEKjU/SfuQzDbOEvK6TRgSbrv50ugK6gwC8JcYYK', '赵仓管', '普通用户', 0, 1, '启用'),
+('U006', 'production01', '$2a$10$n9rf.LQ2Yv7NFIEKjU/SfuQzDbOEvK6TRgSbrv50ugK6gwC8JcYYK', '钱生产', '普通用户', 0, 1, '启用'),
+('U007', 'finance01', '$2a$10$n9rf.LQ2Yv7NFIEKjU/SfuQzDbOEvK6TRgSbrv50ugK6gwC8JcYYK', '孙财务', '普通用户', 0, 1, '启用');
 
 -- 用户角色关联
 INSERT INTO sys_user_role (user_id, role_id)
@@ -140,12 +141,12 @@ VALUES
 -- 单据状态
 ((SELECT dict_type_id FROM sys_dict_type WHERE dict_type_code = 'bill_status'), '草稿', '草稿', 1, 0, '启用'),
 ((SELECT dict_type_id FROM sys_dict_type WHERE dict_type_code = 'bill_status'), '已提交', '已提交', 2, 0, '启用'),
-((SELECT dict_type_id FROM sys_dict_type WHERE dict_type_code = 'bill_status'), '已审核', '已审核', 3, 0, '启用'),
+((SELECT dict_type_id FROM sys_dict_type WHERE dict_type_code = 'bill_status'), '已生效', '已生效', 3, 0, '启用'),
 ((SELECT dict_type_id FROM sys_dict_type WHERE dict_type_code = 'bill_status'), '已关闭', '已关闭', 4, 0, '启用'),
 -- 审核状态
 ((SELECT dict_type_id FROM sys_dict_type WHERE dict_type_code = 'approval_status'), '待审核', '待审核', 1, 0, '启用'),
 ((SELECT dict_type_id FROM sys_dict_type WHERE dict_type_code = 'approval_status'), '审核中', '审核中', 2, 0, '启用'),
-((SELECT dict_type_id FROM sys_dict_type WHERE dict_type_code = 'approval_status'), '已审核', '已审核', 3, 0, '启用'),
+((SELECT dict_type_id FROM sys_dict_type WHERE dict_type_code = 'approval_status'), '已生效', '已生效', 3, 0, '启用'),
 ((SELECT dict_type_id FROM sys_dict_type WHERE dict_type_code = 'approval_status'), '已驳回', '已驳回', 4, 0, '启用'),
 -- 物料类型
 ((SELECT dict_type_id FROM sys_dict_type WHERE dict_type_code = 'material_type'), '原材料', '原材料', 1, 0, '启用'),
@@ -185,18 +186,74 @@ SELECT setval('sys_dict_type_dict_type_id_seq', (SELECT COALESCE(MAX(dict_type_i
 SELECT setval('sys_dict_data_dict_data_id_seq', (SELECT COALESCE(MAX(dict_data_id), 1) FROM sys_dict_data));
 
 -- ============================================================================
--- 数据库初始化完成
+-- 默认角色菜单权限初始化 (sys_role_permission)
+-- 说明: menu_id 存的是前端菜单 path(如 /sale/orders) 或整组标识(如 group_basedata)
 -- ============================================================================
 
--- 显示统计信息
-SELECT '数据库建表完成！' AS message;
-SELECT '总表数：' || (
-    SELECT COUNT(*) FROM information_schema.tables
-    WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
-) AS total_tables;
+-- 超级管理员/系统管理员 通配 * 全部可见
+INSERT INTO sys_role_permission (role_id, menu_id, permission_type, permission_value, is_inherited, created_at)
+SELECT r.role_id, '*', '菜单', 1, 0, CURRENT_TIMESTAMP
+FROM sys_role r WHERE r.role_code IN ('SUPER_ADMIN','ADMIN');
 
--- 显示所有表
-SELECT table_name, table_type
-FROM information_schema.tables
-WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
-ORDER BY table_name;
+-- 销售 / 销售主管
+INSERT INTO sys_role_permission (role_id, menu_id, permission_type, permission_value, is_inherited, created_at)
+SELECT r.role_id, ids.menu_id, '菜单', 1, 0, CURRENT_TIMESTAMP
+FROM sys_role r CROSS JOIN (VALUES
+    ('group_dashboard'),('/dashboard/index'),
+    ('group_basedata'),('group_acquisition'),('group_crm'),('group_quote'),
+    ('group_sale'),('group_logistics'),('group_inventory'),('group_price'),
+    ('group_report'),('group_system'),('/system/settings')
+) AS ids(menu_id) WHERE r.role_code IN ('SALES','SALES_MANAGER');
+
+-- 采购 / 采购主管
+INSERT INTO sys_role_permission (role_id, menu_id, permission_type, permission_value, is_inherited, created_at)
+SELECT r.role_id, ids.menu_id, '菜单', 1, 0, CURRENT_TIMESTAMP
+FROM sys_role r CROSS JOIN (VALUES
+    ('group_dashboard'),('/dashboard/index'),
+    ('group_basedata'),('group_purchase'),('group_inventory'),('group_price'),
+    ('group_report'),('group_system'),('/system/settings')
+) AS ids(menu_id) WHERE r.role_code IN ('PURCHASE','PURCHASE_MANAGER');
+
+-- 仓库 / 仓库主管
+INSERT INTO sys_role_permission (role_id, menu_id, permission_type, permission_value, is_inherited, created_at)
+SELECT r.role_id, ids.menu_id, '菜单', 1, 0, CURRENT_TIMESTAMP
+FROM sys_role r CROSS JOIN (VALUES
+    ('group_dashboard'),('/dashboard/index'),
+    ('group_basedata'),('group_inventory'),('group_report'),
+    ('group_system'),('/system/settings')
+) AS ids(menu_id) WHERE r.role_code IN ('WAREHOUSE','WAREHOUSE_MANAGER');
+
+-- 生产 / 生产主管
+INSERT INTO sys_role_permission (role_id, menu_id, permission_type, permission_value, is_inherited, created_at)
+SELECT r.role_id, ids.menu_id, '菜单', 1, 0, CURRENT_TIMESTAMP
+FROM sys_role r CROSS JOIN (VALUES
+    ('group_dashboard'),('/dashboard/index'),
+    ('group_basedata'),('group_masterdata'),('/masterdata/bom'),
+    ('group_production'),('group_subcontract'),('group_sample'),('group_freesample'),
+    ('group_inventory'),('group_report'),('group_system'),('/system/settings')
+) AS ids(menu_id) WHERE r.role_code IN ('PRODUCTION','PRODUCTION_MANAGER');
+
+-- 财务 / 财务主管
+INSERT INTO sys_role_permission (role_id, menu_id, permission_type, permission_value, is_inherited, created_at)
+SELECT r.role_id, ids.menu_id, '菜单', 1, 0, CURRENT_TIMESTAMP
+FROM sys_role r CROSS JOIN (VALUES
+    ('group_dashboard'),('/dashboard/index'),
+    ('group_basedata'),('group_sale'),('group_purchase'),('group_inventory'),('group_finance'),
+    ('group_report'),('group_system'),('/system/settings')
+) AS ids(menu_id) WHERE r.role_code IN ('FINANCE','FINANCE_MANAGER');
+
+-- 查看者
+INSERT INTO sys_role_permission (role_id, menu_id, permission_type, permission_value, is_inherited, created_at)
+SELECT r.role_id, ids.menu_id, '菜单', 1, 0, CURRENT_TIMESTAMP
+FROM sys_role r CROSS JOIN (VALUES
+    ('group_dashboard'),('/dashboard/index'),
+    ('group_basedata'),('group_report'),('group_system'),('/system/settings')
+) AS ids(menu_id) WHERE r.role_code = 'VIEWER';
+
+-- 重置序列
+SELECT setval('sys_role_permission_permission_id_seq',
+    COALESCE((SELECT MAX(permission_id) FROM sys_role_permission),1), true);
+
+-- ============================================================================
+-- 数据库初始化完成
+-- ============================================================================

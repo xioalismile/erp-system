@@ -5,6 +5,94 @@
 - 最低配置：2核CPU / 4G内存 / 40G磁盘
 - 已安装：Docker 24+ 和 Docker Compose 2.20+
 
+## ★ 重要：License 授权部署（新增）
+
+本系统采用 **License 离线授权** 控制使用期限，部署前必须先完成 License 配置。
+
+### L1. 供应商签发 License（供应商内部操作，不交付客户）
+
+```bash
+# 1. 生成 RSA 密钥对（仅一次，永不交付客户）
+docker run --rm -v $(pwd):/work -w /work maven:3.9-eclipse-temurin-17 \
+  bash -c "mvn -q compile -DskipTests && java -cp target/classes com.erp.license.generator.LicenseKeyGenerator"
+# 输出私钥和公钥，分别保存到 private_key_base64.txt 和 public_key_base64.txt
+
+# 2. 为客户生成 License 文件
+docker run --rm -v $(pwd):/work -w /work maven:3.9-eclipse-temurin-17 \
+  java -cp target/classes com.erp.license.generator.LicenseGenerator \
+  --customer "客户A公司" \
+  --project "智能ERP" \
+  --mac "客户服务器MAC地址(可选)" \
+  --expire 2027-12-31 \
+  --maxUsers 50 \
+  --features "sale,purchase,inventory,production,finance" \
+  --privateKeyFile private_key_base64.txt \
+  --output license.lic
+# 生成 license.lic 文件，交付给客户
+# 同时把 public_key_base64.txt 内容告知客户（作为环境变量 ERP_LICENSE_PUBLIC_KEY）
+```
+
+### L2. 客户部署 License（客户服务器操作）
+
+```bash
+# 1. 上传 license.lic 到项目根目录的 license/ 文件夹下
+mkdir -p license
+# 把供应商给的 license.lic 上传到 license/ 目录
+
+# 2. 创建 .env 配置文件
+cp .env.example .env
+vi .env
+
+# .env 文件内容（关键配置项）：
+# ERP_LICENSE_PUBLIC_KEY=<供应商提供的公钥Base64>
+# ERP_JWT_SECRET=<openssl rand -base64 32 生成的随机字符串>
+
+# 3. 启动系统（详见下一节）
+docker compose up -d --build
+
+# 4. 验证 License 是否生效
+curl http://localhost:8080/api/license/status
+# 返回 {"valid":true,"customer":"客户A",...} 表示校验通过
+# 返回 {"valid":false,"failureReason":"..."} 表示校验失败，需排查
+```
+
+### L3. License 续期 / 更换客户
+
+License 文件通过 docker-compose 挂载（不打入镜像），续期只需替换文件并重启：
+
+```bash
+# 1. 把新的 license.lic 覆盖到 license/ 目录
+cp 新license.lic license/license.lic
+
+# 2. 重启 backend 容器（重新加载 License）
+docker compose restart backend
+
+# 3. 验证
+curl http://localhost:8080/api/license/status
+```
+
+### L4. License 失效行为
+
+| 失败场景 | 系统行为 |
+|---------|---------|
+| license.lic 文件缺失 | Spring Boot 启动失败，容器退出（restart: always 会持续重试，需修复 License 后 `docker compose up -d`） |
+| 签名校验失败（被篡改） | 启动失败 + 日志报"License 签名校验失败" |
+| 已过期 | 启动失败 + 日志报"License 已过期" |
+| MAC 不匹配 | 启动失败 + 日志报"MAC 地址不在授权范围" |
+| 运行中 24h 心跳校验失败 | 日志报错，所有 /api/** 请求返回 403（容器仍运行，用户可见提示） |
+| License 文件运行中被替换 | 24h 心跳校验检测到，返回 403 |
+
+排查 License 失败：
+```bash
+# 查看 backend 启动日志
+docker compose logs --tail 50 backend | grep -A 5 License
+# 常见错误：
+#   "License 文件不存在" → 检查 license/license.lic 是否上传
+#   "RSA 公钥未配置" → 检查 .env 的 ERP_LICENSE_PUBLIC_KEY
+#   "License 签名校验失败" → license.lic 被篡改或与公钥不匹配
+#   "License 已过期" → 需联系供应商续期
+```
+
 ## 一、服务器环境准备
 
 ### 1.1 安装Docker（如未安装）
@@ -51,7 +139,21 @@ unzip smart-erp.zip
 cd smart-erp
 ```
 
-### 2.2 一键构建并启动
+### 2.2 配置 License 和环境变量（**部署前必做**）
+```bash
+# 1. 配置 License 文件（参考 L2 章节）
+mkdir -p license
+# 上传 license.lic 到 license/ 目录
+
+# 2. 配置环境变量
+cp .env.example .env
+vi .env
+# 填入：
+#   ERP_LICENSE_PUBLIC_KEY=<供应商提供的公钥>
+#   ERP_JWT_SECRET=<openssl rand -base64 32>
+```
+
+### 2.3 一键构建并启动
 ```bash
 # 在项目根目录执行(包含docker-compose.yml的目录)
 docker compose up -d --build
@@ -63,10 +165,11 @@ docker compose up -d --build
 3. npm 构建前端静态文件
 4. 启动4个容器：postgres / redis / backend / frontend
 5. 首次启动时自动执行 `full_schema.sql` 初始化102张表
+6. **backend 启动时校验 License，失败则容器退出**
 
 **首次构建约需10-15分钟**（依赖下载+编译），后续重建只需1-2分钟。
 
-### 2.3 查看启动状态
+### 2.4 查看启动状态
 ```bash
 # 查看容器状态(应全部为Up/healthy)
 docker compose ps
@@ -79,7 +182,7 @@ docker compose ps
 # erp-frontend    Up                       0.0.0.0:80->80/tcp
 ```
 
-### 2.4 验证部署
+### 2.5 验证部署
 ```bash
 # 1. 验证前端页面
 curl http://localhost

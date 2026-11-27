@@ -43,10 +43,10 @@ public class SysDictType {
     @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updatedAt;
 
-    @TableField("created_by")
+    @TableField(value = "created_by", fill = FieldFill.INSERT)
     private String createdBy;
 
-    @TableField("updated_by")
+    @TableField(value = "updated_by", fill = FieldFill.INSERT_UPDATE)
     private String updatedBy;
 
     /** 字典数据列表(非数据库字段) */

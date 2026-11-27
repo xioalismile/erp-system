@@ -9,7 +9,7 @@ import java.util.List;
 public interface SysUserService extends IService<SysUser> {
 
     /** 分页查询: keyword模糊搜用户名/真实姓名/编码, status过滤 */
-    PageResult<SysUser> pageQuery(int current, int size, String keyword, String status);
+    PageResult<SysUser> pageQuery(int current, int size, String keyword, String status, String sortBy, String sortOrder);
 
     /** 详情: 含roleIds */
     SysUser getDetail(Long id);

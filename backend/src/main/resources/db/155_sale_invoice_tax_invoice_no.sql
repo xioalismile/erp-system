@@ -1,0 +1,13 @@
+-- ============================================================
+-- 155_sale_invoice_tax_invoice_no.sql
+-- 用途：销售发票新增「税票号码」列（2026-10-13）。
+--       税控开票软件开出的真实发票号码，与系统自动编号 invoice_no（发票号）相互独立；
+--       发票金额仍由明细自动汇总，本列只做登记（用户 2026-10-13 口径：金额不加手填框）。
+-- 口径：复制单不继承（复制=开新票，由前端复制通用件清空）；下推不携带（每张税票号唯一）。
+-- 幂等：ADD COLUMN IF NOT EXISTS，重复执行 0 副作用；存量行默认 NULL=未登记，不影响老单据。
+-- 同内容文件另存 deploy/sql/153_sale_invoice_tax_invoice_no.sql（守则04 编号体系）。
+-- ============================================================
+
+ALTER TABLE sale_invoice ADD COLUMN IF NOT EXISTS tax_invoice_no VARCHAR(255);
+
+COMMENT ON COLUMN sale_invoice.tax_invoice_no IS '税票号码：税控开票软件开出的真实发票号码（登记字段，与系统单号 invoice_no 独立）';

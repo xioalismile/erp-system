@@ -1,0 +1,184 @@
+{
+  "generatedAt": "2026-11-27T10:21:21.185Z",
+  "rows": [
+    {
+      "kind": "list",
+      "name": "销售订单",
+      "path": "/api/sale/orders",
+      "adminStatus": 200,
+      "qaStatus": 200,
+      "adminTotal": 56,
+      "qaTotal": 0,
+      "hiddenChecks": [
+        {
+          "field": "contactPhone",
+          "adminHas": true,
+          "qaHas": false
+        },
+        {
+          "field": "contactPerson",
+          "adminHas": true,
+          "qaHas": false
+        }
+      ],
+      "verdict": "数据权限生效（0 行）；隐藏字段无法判定（受限账号无数据）"
+    },
+    {
+      "kind": "list",
+      "name": "销售出库单",
+      "path": "/api/sale/deliveries",
+      "adminStatus": 200,
+      "qaStatus": 200,
+      "adminTotal": 46,
+      "qaTotal": 0,
+      "hiddenChecks": [
+        {
+          "field": "contactPhone",
+          "adminHas": true,
+          "qaHas": false
+        }
+      ],
+      "verdict": "数据权限生效（0 行）；隐藏字段无法判定（受限账号无数据）"
+    },
+    {
+      "kind": "list",
+      "name": "采购订单",
+      "path": "/api/purchase/orders",
+      "adminStatus": 200,
+      "qaStatus": 200,
+      "adminTotal": 7,
+      "qaTotal": 0,
+      "hiddenChecks": [
+        {
+          "field": "contactPhone",
+          "adminHas": true,
+          "qaHas": false
+        }
+      ],
+      "verdict": "数据权限生效（0 行）；隐藏字段无法判定（受限账号无数据）"
+    },
+    {
+      "kind": "list",
+      "name": "采购申请单",
+      "path": "/api/purchase/requests",
+      "adminStatus": 200,
+      "qaStatus": 200,
+      "adminTotal": 8,
+      "qaTotal": 0,
+      "hiddenChecks": [
+        {
+          "field": "remark",
+          "adminHas": true,
+          "qaHas": false
+        }
+      ],
+      "verdict": "数据权限生效（0 行）；隐藏字段无法判定（受限账号无数据）"
+    },
+    {
+      "kind": "list",
+      "name": "采购入库单",
+      "path": "/api/purchase/inbounds",
+      "adminStatus": 200,
+      "qaStatus": 200,
+      "adminTotal": 17,
+      "qaTotal": 0,
+      "hiddenChecks": [
+        {
+          "field": "contactPhone",
+          "adminHas": true,
+          "qaHas": false
+        }
+      ],
+      "verdict": "数据权限生效（0 行）；隐藏字段无法判定（受限账号无数据）"
+    },
+    {
+      "kind": "list",
+      "name": "其他入库单",
+      "path": "/api/inventory/other-receipts/page",
+      "adminStatus": 200,
+      "qaStatus": 200,
+      "adminTotal": 12,
+      "qaTotal": 0,
+      "hiddenChecks": [
+        {
+          "field": "remark",
+          "adminHas": true,
+          "qaHas": false
+        }
+      ],
+      "verdict": "数据权限生效（0 行）；隐藏字段无法判定（受限账号无数据）"
+    },
+    {
+      "kind": "list",
+      "name": "生产工单",
+      "path": "/api/production/workorders",
+      "adminStatus": 200,
+      "qaStatus": 200,
+      "adminTotal": 14,
+      "qaTotal": 0,
+      "hiddenChecks": [],
+      "verdict": "数据权限生效（0 行）"
+    },
+    {
+      "kind": "list",
+      "name": "收款单",
+      "path": "/api/finance/receipts",
+      "adminStatus": 200,
+      "qaStatus": 200,
+      "adminTotal": 20,
+      "qaTotal": 0,
+      "hiddenChecks": [],
+      "verdict": "数据权限生效（0 行）"
+    },
+    {
+      "kind": "list",
+      "name": "费用分摊",
+      "path": "/api/finance/operation-expense/page",
+      "adminStatus": 200,
+      "qaStatus": 200,
+      "adminTotal": 6,
+      "qaTotal": 0,
+      "hiddenChecks": [],
+      "verdict": "数据权限生效（0 行）"
+    },
+    {
+      "kind": "report",
+      "name": "销售订单明细报表（已登记字段权限）",
+      "path": "/api/report/sale/order-detail?page=1&size=3&cols=orderNo,contactPhone,contactPerson",
+      "adminStatus": 200,
+      "qaStatus": 200,
+      "adminTotal": 76,
+      "qaTotal": 0,
+      "hiddenChecks": [
+        {
+          "field": "contactPhone",
+          "adminHas": true,
+          "qaHas": false
+        },
+        {
+          "field": "contactPerson",
+          "adminHas": true,
+          "qaHas": false
+        }
+      ],
+      "verdict": "字段已剔除"
+    },
+    {
+      "kind": "report",
+      "name": "采购申请明细报表（未登记字段权限）",
+      "path": "/api/report/purchase/request-detail?page=1&size=3&cols=requestNo,remark",
+      "adminStatus": 200,
+      "qaStatus": 200,
+      "adminTotal": 33,
+      "qaTotal": 0,
+      "hiddenChecks": [
+        {
+          "field": "remark",
+          "adminHas": true,
+          "qaHas": false
+        }
+      ],
+      "verdict": "字段已剔除"
+    }
+  ]
+}

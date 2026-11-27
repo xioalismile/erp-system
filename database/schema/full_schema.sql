@@ -382,6 +382,7 @@ CREATE TABLE sys_menu (
     external_link VARCHAR(500),
     keepalive SMALLINT NOT NULL DEFAULT 1,
     status VARCHAR(10) NOT NULL DEFAULT '启用',
+    version VARCHAR(50),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
     created_by VARCHAR(50),
@@ -390,12 +391,13 @@ CREATE TABLE sys_menu (
 );
 
 -- 19. 角色权限表 (sys_role_permission)
+-- 注意: menu_id 存前端菜单 path(如 /sale/orders) 或整组标识(如 group_basedata), 不再是 sys_menu 的数字 menu_id
 CREATE TABLE sys_role_permission (
     permission_id BIGSERIAL PRIMARY KEY,
     role_id BIGINT NOT NULL,
-    menu_id BIGINT NOT NULL,
-    permission_type VARCHAR(20) NOT NULL,
-    permission_value INT NOT NULL DEFAULT 0,
+    menu_id VARCHAR(200) NOT NULL,
+    permission_type VARCHAR(20) NOT NULL DEFAULT '菜单',
+    permission_value INT NOT NULL DEFAULT 1,
     is_inherited SMALLINT NOT NULL DEFAULT 0,
     parent_role_id BIGINT,
     data_scope_type VARCHAR(20),
@@ -409,7 +411,6 @@ CREATE TABLE sys_role_permission (
     updated_by VARCHAR(50),
     UNIQUE (role_id, menu_id, permission_type),
     FOREIGN KEY (role_id) REFERENCES sys_role(role_id) ON DELETE CASCADE,
-    FOREIGN KEY (menu_id) REFERENCES sys_menu(menu_id) ON DELETE CASCADE,
     FOREIGN KEY (parent_role_id) REFERENCES sys_role(role_id)
 );
 
@@ -1392,4 +1393,4 @@ CREATE TABLE other_receipt_item (
     production_date DATE,
     expiry_date DATE,
     remark VARCHAR(500),
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);

@@ -43,6 +43,15 @@ public class SysUser {
     @TableField("employee_id")
     private Long employeeId;
 
+    @TableField("tenant_id")
+    private Long tenantId;
+
+    @TableField("tenant_name")
+    private String tenantName;
+
+    @TableField("tenant_version")
+    private String tenantVersion;
+
     @TableField("user_type")
     private String userType;
 
@@ -82,16 +91,40 @@ public class SysUser {
     @TableField("remark")
     private String remark;
 
+    @TableField("password_salt")
+    private String passwordSalt;
+
+    @TableField("position_code")
+    private String positionCode;
+
+    @TableField("position_name")
+    private String positionName;
+
+    @TableField("telephone")
+    private String telephone;
+
+    @TableField("gender")
+    private String gender;
+
+    @TableField("birthday")
+    private java.time.LocalDate birthday;
+
+    @TableField("entry_date")
+    private java.time.LocalDate entryDate;
+
+    @TableField("data_permission_level")
+    private String dataPermissionLevel;
+
     @TableField(value = "created_at", fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
 
     @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updatedAt;
 
-    @TableField("created_by")
+    @TableField(value = "created_by", fill = FieldFill.INSERT)
     private String createdBy;
 
-    @TableField("updated_by")
+    @TableField(value = "updated_by", fill = FieldFill.INSERT_UPDATE)
     private String updatedBy;
 
     /** 角色ID列表(非数据库字段, 用于分配角色) */

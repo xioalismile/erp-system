@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+import com.erp.common.util.SortHelper;
 
 /**
  * AI订单服务 - 处理AI创建/查询订单的业务逻辑
@@ -71,15 +72,29 @@ public class AiOrderService {
             for (Map<String, Object> item : items) {
                 String materialCode = (String) item.get("materialCode");
                 String materialName = (String) item.get("materialName");
-                BigDecimal quantity = new BigDecimal(item.get("quantity").toString());
-                BigDecimal unitPrice = new BigDecimal(item.get("unitPrice").toString());
+                // 数量必填、单价可选（工具说明里 unitPrice 为可选；此前直接 toString 会在"只给物料+数量"时
+                // 抛空指针导致整单失败，正是用户口述下单最常见的说法）
+                Object quantityObj = item.get("quantity");
+                Object unitPriceObj = item.get("unitPrice");
+                if (quantityObj == null || String.valueOf(quantityObj).isBlank()) {
+                    return Map.of("success", false, "message",
+                            "物料「" + (materialName != null ? materialName : materialCode) + "」缺少数量，无法下单");
+                }
+                BigDecimal quantity = new BigDecimal(quantityObj.toString());
+                BigDecimal unitPrice = (unitPriceObj == null || String.valueOf(unitPriceObj).isBlank())
+                        ? BigDecimal.ZERO : new BigDecimal(unitPriceObj.toString());
 
                 Material material = null;
                 if (materialCode != null) {
-                    material = materialService.getOne(new QueryWrapper<Material>().eq("material_code", materialCode));
+                    material = materialService.getOne(new QueryWrapper<Material>()
+                            .eq("material_code", materialCode)
+                            .ne("is_confidential", 1));
                 }
                 if (material == null && materialName != null) {
-                    material = materialService.getOne(new QueryWrapper<Material>().like("material_name", materialName).last("LIMIT 1"));
+                    material = materialService.getOne(new QueryWrapper<Material>()
+                            .like("material_name", materialName)
+                            .ne("is_confidential", 1)
+                            .last("LIMIT 1"));
                 }
                 if (material == null) {
                     return Map.of("success", false, "message", "未找到物料: " + (materialName != null ? materialName : materialCode));
@@ -94,7 +109,6 @@ public class AiOrderService {
                 orderItem.setUnitId(material.getBaseUnitId());
                 orderItem.setQuantity(quantity);
                 orderItem.setUnitPrice(unitPrice);
-                orderItem.setDiscountRate(BigDecimal.ZERO);
                 BigDecimal amount = unitPrice.multiply(quantity);
                 orderItem.setAmount(amount);
                 orderItem.setTaxRate(material.getTaxRate() != null ? material.getTaxRate() : new BigDecimal("13"));
@@ -126,16 +140,25 @@ public class AiOrderService {
 
     /**
      * AI查询订单(通过customer_id关联customer表获取客户名)
+     * 数据权限：销售员仅能查自己负责的订单（与销售订单列表页行为一致）
      */
     public Map<String, Object> queryOrders(Map<String, Object> params) {
+        return queryOrders(params, null);
+    }
+
+    public Map<String, Object> queryOrders(Map<String, Object> params, com.erp.ai.dto.AiDataScope scope) {
         String status = (String) params.get("status");
         String month = (String) params.get("month");
 
         QueryWrapper<SaleOrder> wrapper = new QueryWrapper<>();
-        wrapper.orderByDesc("created_at");
+        SortHelper.orderByNewest(wrapper, SaleOrder.class);
         wrapper.last("LIMIT 20");
         if (status != null) wrapper.eq("status", status);
         if (month != null) wrapper.like("order_date", month);
+        // 数据权限：仅销售员按 saler_id 过滤（管理员/主管看全部，同列表页）
+        if (scope != null && scope.isSalesOnly() && scope.getEmployeeId() != null) {
+            wrapper.eq("saler_id", scope.getEmployeeId());
+        }
 
         List<SaleOrder> orders = saleOrderService.list(wrapper);
         // 预加载客户名

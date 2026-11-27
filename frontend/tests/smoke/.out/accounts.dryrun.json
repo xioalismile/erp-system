@@ -1,0 +1,268 @@
+[
+  {
+    "moduleKey": "dashboard",
+    "moduleLabel": "工作台",
+    "roleCode": "SMOKE_DASHBOARD",
+    "username": "smoke_dashboard",
+    "roleId": 28,
+    "userId": null,
+    "granted": [
+      "/dashboard"
+    ],
+    "missing": [],
+    "verified": false
+  },
+  {
+    "moduleKey": "databoard",
+    "moduleLabel": "数据看板",
+    "roleCode": "SMOKE_DATABOARD",
+    "username": "smoke_databoard",
+    "roleId": 29,
+    "userId": null,
+    "granted": [
+      "/databoard/finance",
+      "/databoard/sale",
+      "/databoard/inventory"
+    ],
+    "missing": [],
+    "verified": false
+  },
+  {
+    "moduleKey": "basedata",
+    "moduleLabel": "基础资料",
+    "roleCode": "SMOKE_BASEDATA",
+    "username": "smoke_basedata",
+    "roleId": 30,
+    "userId": null,
+    "granted": [
+      "/basedata/unit",
+      "/basedata/currency",
+      "/basedata/settle",
+      "/basedata/bank-account",
+      "/basedata/price-level",
+      "/basedata/department",
+      "/basedata/employee",
+      "/basedata/warehouse",
+      "/basedata/location",
+      "/basedata/material-category",
+      "/basedata/material",
+      "/basedata/customer",
+      "/basedata/supplier",
+      "/masterdata/bom",
+      "/basedata/help"
+    ],
+    "missing": [],
+    "verified": false
+  },
+  {
+    "moduleKey": "crm",
+    "moduleLabel": "客户管理",
+    "roleCode": "SMOKE_CRM",
+    "username": "smoke_crm",
+    "roleId": 31,
+    "userId": null,
+    "granted": [
+      "/crm/dashboard",
+      "/crm/customer",
+      "/crm/pool",
+      "/crm/lead",
+      "/crm/opportunity",
+      "/crm/funnel",
+      "/crm/contact",
+      "/crm/follow-up",
+      "/crm/warning",
+      "/crm/complaint",
+      "/crm/survey",
+      "/crm/sales-target",
+      "/crm/report",
+      "/crm/help"
+    ],
+    "missing": [],
+    "verified": false
+  },
+  {
+    "moduleKey": "acquisition",
+    "moduleLabel": "获客管理",
+    "roleCode": "SMOKE_ACQUISITION",
+    "username": "smoke_acquisition",
+    "roleId": 32,
+    "userId": null,
+    "granted": [
+      "/acquisition/task",
+      "/acquisition/result",
+      "/acquisition/login",
+      "/acquisition/help"
+    ],
+    "missing": [],
+    "verified": false
+  },
+  {
+    "moduleKey": "sale",
+    "moduleLabel": "销售管理",
+    "roleCode": "SMOKE_SALE",
+    "username": "smoke_sale",
+    "roleId": 33,
+    "userId": null,
+    "granted": [
+      "/sale/orders",
+      "/sale/contracts",
+      "/sale/quotes",
+      "/sale/deliveries",
+      "/logistics/dashboard",
+      "/sale/returns",
+      "/sale/invoices",
+      "/sale/report/analysis",
+      "/sale/report/customer-statement",
+      "/sale/help"
+    ],
+    "missing": [],
+    "verified": false
+  },
+  {
+    "moduleKey": "purchase",
+    "moduleLabel": "采购管理",
+    "roleCode": "SMOKE_PURCHASE",
+    "username": "smoke_purchase",
+    "roleId": 34,
+    "userId": null,
+    "granted": [
+      "/purchase/requests",
+      "/purchase/contracts",
+      "/purchase/orders",
+      "/purchase/inbounds",
+      "/purchase/returns",
+      "/purchase/invoices",
+      "/purchase/report/analysis",
+      "/purchase/report/supplier-statement",
+      "/purchase/help"
+    ],
+    "missing": [],
+    "verified": false
+  },
+  {
+    "moduleKey": "inventory",
+    "moduleLabel": "库存管理",
+    "roleCode": "SMOKE_INVENTORY",
+    "username": "smoke_inventory",
+    "roleId": 35,
+    "userId": null,
+    "granted": [
+      "/inventory/current",
+      "/inventory/batches",
+      "/inventory/ledger",
+      "/inventory/other-receipts",
+      "/inventory/other-issues",
+      "/inventory/stock-transfers",
+      "/inventory/stock-checks",
+      "/inventory/material-requisitions",
+      "/inventory/report/analysis",
+      "/inventory/help"
+    ],
+    "missing": [],
+    "verified": false
+  },
+  {
+    "moduleKey": "production",
+    "moduleLabel": "生产管理",
+    "roleCode": "SMOKE_PRODUCTION",
+    "username": "smoke_production",
+    "roleId": 36,
+    "userId": null,
+    "granted": [
+      "/production/routings",
+      "/production/mrp",
+      "/production/workorders",
+      "/production/schedule-board",
+      "/production/assemble",
+      "/production/disassemble",
+      "/production/returns",
+      "/production/supplements",
+      "/production/receipts",
+      "/production/help",
+      "/production/report/analysis"
+    ],
+    "missing": [],
+    "verified": false
+  },
+  {
+    "moduleKey": "subcontract",
+    "moduleLabel": "委外管理",
+    "roleCode": "SMOKE_SUBCONTRACT",
+    "username": "smoke_subcontract",
+    "roleId": 37,
+    "userId": null,
+    "granted": [
+      "/subcontract/orders",
+      "/subcontract/picks",
+      "/subcontract/inbounds",
+      "/subcontract/supplements",
+      "/subcontract/returns",
+      "/subcontract/help"
+    ],
+    "missing": [],
+    "verified": false
+  },
+  {
+    "moduleKey": "sample",
+    "moduleLabel": "打样管理",
+    "roleCode": "SMOKE_SAMPLE",
+    "username": "smoke_sample",
+    "roleId": 38,
+    "userId": null,
+    "granted": [
+      "/sample/list",
+      "/freesample/list"
+    ],
+    "missing": [],
+    "verified": false
+  },
+  {
+    "moduleKey": "finance",
+    "moduleLabel": "财务管理",
+    "roleCode": "SMOKE_FINANCE",
+    "username": "smoke_finance",
+    "roleId": 39,
+    "userId": null,
+    "granted": [
+      "/finance/sale-pre-receipts",
+      "/finance/purchase-pre-payments",
+      "/finance/receipt",
+      "/finance/payment",
+      "/finance/operation-expense",
+      "/finance/cost-calculation",
+      "/finance/cost-config",
+      "/finance/help",
+      "/finance/report/analysis",
+      "/finance/report/ar-summary",
+      "/finance/report/ap-summary"
+    ],
+    "missing": [],
+    "verified": false
+  },
+  {
+    "moduleKey": "report",
+    "moduleLabel": "报表中心",
+    "roleCode": "SMOKE_REPORT",
+    "username": "smoke_report",
+    "roleId": 40,
+    "userId": null,
+    "granted": [
+      "/report/custom"
+    ],
+    "missing": [],
+    "verified": false
+  },
+  {
+    "moduleKey": "system",
+    "moduleLabel": "系统管理",
+    "roleCode": "SMOKE_SYSTEM",
+    "username": "smoke_system",
+    "roleId": 41,
+    "userId": null,
+    "granted": [
+      "/system/settings"
+    ],
+    "missing": [],
+    "verified": false
+  }
+]

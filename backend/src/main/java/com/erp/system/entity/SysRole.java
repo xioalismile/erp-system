@@ -40,6 +40,18 @@ public class SysRole {
     @TableField("remark")
     private String remark;
 
+    @TableField(exist = false)
+    private String parentRoleCode;
+
+    @TableField(exist = false)
+    private Integer userCount;
+
+    @TableField(exist = false)
+    private java.time.LocalDate effectiveDate;
+
+    @TableField(exist = false)
+    private java.time.LocalDate expiryDate;
+
     @TableField("status")
     private String status;
 
@@ -49,13 +61,13 @@ public class SysRole {
     @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updatedAt;
 
-    @TableField("created_by")
+    @TableField(value = "created_by", fill = FieldFill.INSERT)
     private String createdBy;
 
-    @TableField("updated_by")
+    @TableField(value = "updated_by", fill = FieldFill.INSERT_UPDATE)
     private String updatedBy;
 
-    /** 菜单ID列表(非数据库字段, 用于分配权限) */
+    /** 菜单ID列表(非数据库字段, 用于分配权限, 存储的是菜单path如 /sale/orders) */
     @TableField(exist = false)
-    private List<Long> menuIds;
+    private List<String> menuIds;
 }

@@ -1,0 +1,73 @@
+﻿[ERROR] COMPILATION ERROR : 
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/finance/cost/calculation/service/impl/CostCalculationServiceImpl.java:[71,14] �Ҳ�������
+  ����:   ���� SortHelper
+  λ��: �� com.erp.finance.cost.calculation.service.impl.CostCalculationServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/masterdata/service/BomServiceImpl.java:[375,16] ����pageQuery(int,int,java.lang.String,<nulltype>,java.lang.String,<nulltype>,<nulltype>,<nulltype>), �Ҳ������ʵķ���
+    ���� com.erp.masterdata.service.BomServiceImpl.pageQuery(int,int,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.time.LocalDate,java.time.LocalDate,java.lang.String,java.lang.String)������
+      (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+    ���� com.erp.masterdata.service.BomServiceImpl.pageQuery(int,int,java.lang.String,java.lang.String)������
+      (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/inventory/warning/service/InventoryWarningServiceImpl.java:[50,14] �Ҳ�������
+  ����:   ���� SortHelper
+  λ��: �� com.erp.inventory.warning.service.InventoryWarningServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/inventory/service/MaterialRequisitionServiceImpl.java:[181,68] �Ҳ�������
+  ����:   ���� SORTABLE_COLUMNS
+  λ��: �� com.erp.inventory.service.MaterialRequisitionServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/inventory/service/MaterialRequisitionServiceImpl.java:[199,49] �Ҳ�������
+  ����:   ���� sortBy
+  λ��: �� com.erp.inventory.service.MaterialRequisitionServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/inventory/service/MaterialRequisitionServiceImpl.java:[199,57] �Ҳ�������
+  ����:   ���� sortOrder
+  λ��: �� com.erp.inventory.service.MaterialRequisitionServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/inventory/service/MaterialRequisitionServiceImpl.java:[199,68] �Ҳ�������
+  ����:   ���� SORTABLE_COLUMNS
+  λ��: �� com.erp.inventory.service.MaterialRequisitionServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/subcontract/supplement/service/SubcontractSupplementServiceImpl.java:[112,68] �Ҳ�������
+  ����:   ���� SORTABLE_COLUMNS
+  λ��: �� com.erp.subcontract.supplement.service.SubcontractSupplementServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/finance/prepayment/purchase/service/PurchasePrePaymentServiceImpl.java:[52,68] �Ҳ�������
+  ����:   ���� SORTABLE_COLUMNS
+  λ��: �� com.erp.finance.prepayment.purchase.service.PurchasePrePaymentServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/subcontract/returnn/service/SubcontractReturnServiceImpl.java:[109,68] �Ҳ�������
+  ����:   ���� SORTABLE_COLUMNS
+  λ��: �� com.erp.subcontract.returnn.service.SubcontractReturnServiceImpl
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project smart-erp: Compilation failure: Compilation failure: 
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/finance/cost/calculation/service/impl/CostCalculationServiceImpl.java:[71,14] �Ҳ�������
+[ERROR]   ����:   ���� SortHelper
+[ERROR]   λ��: �� com.erp.finance.cost.calculation.service.impl.CostCalculationServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/masterdata/service/BomServiceImpl.java:[375,16] ����pageQuery(int,int,java.lang.String,<nulltype>,java.lang.String,<nulltype>,<nulltype>,<nulltype>), �Ҳ������ʵķ���
+[ERROR]     ���� com.erp.masterdata.service.BomServiceImpl.pageQuery(int,int,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.time.LocalDate,java.time.LocalDate,java.lang.String,java.lang.String)������
+[ERROR]       (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]     ���� com.erp.masterdata.service.BomServiceImpl.pageQuery(int,int,java.lang.String,java.lang.String)������
+[ERROR]       (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/inventory/warning/service/InventoryWarningServiceImpl.java:[50,14] �Ҳ�������
+[ERROR]   ����:   ���� SortHelper
+[ERROR]   λ��: �� com.erp.inventory.warning.service.InventoryWarningServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/inventory/service/MaterialRequisitionServiceImpl.java:[181,68] �Ҳ�������
+[ERROR]   ����:   ���� SORTABLE_COLUMNS
+[ERROR]   λ��: �� com.erp.inventory.service.MaterialRequisitionServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/inventory/service/MaterialRequisitionServiceImpl.java:[199,49] �Ҳ�������
+[ERROR]   ����:   ���� sortBy
+[ERROR]   λ��: �� com.erp.inventory.service.MaterialRequisitionServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/inventory/service/MaterialRequisitionServiceImpl.java:[199,57] �Ҳ�������
+[ERROR]   ����:   ���� sortOrder
+[ERROR]   λ��: �� com.erp.inventory.service.MaterialRequisitionServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/inventory/service/MaterialRequisitionServiceImpl.java:[199,68] �Ҳ�������
+[ERROR]   ����:   ���� SORTABLE_COLUMNS
+[ERROR]   λ��: �� com.erp.inventory.service.MaterialRequisitionServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/subcontract/supplement/service/SubcontractSupplementServiceImpl.java:[112,68] �Ҳ�������
+[ERROR]   ����:   ���� SORTABLE_COLUMNS
+[ERROR]   λ��: �� com.erp.subcontract.supplement.service.SubcontractSupplementServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/finance/prepayment/purchase/service/PurchasePrePaymentServiceImpl.java:[52,68] �Ҳ�������
+[ERROR]   ����:   ���� SORTABLE_COLUMNS
+[ERROR]   λ��: �� com.erp.finance.prepayment.purchase.service.PurchasePrePaymentServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/subcontract/returnn/service/SubcontractReturnServiceImpl.java:[109,68] �Ҳ�������
+[ERROR]   ����:   ���� SORTABLE_COLUMNS
+[ERROR]   λ��: �� com.erp.subcontract.returnn.service.SubcontractReturnServiceImpl
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

@@ -4,9 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.erp.config.BusinessException;
 import com.erp.system.entity.SysMenu;
+import com.erp.system.entity.SysRolePermission;
+import com.erp.system.entity.SysUserRole;
 import com.erp.system.mapper.SysMenuMapper;
+import com.erp.system.service.SysRolePermissionService;
+import com.erp.system.service.SysUserRoleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +23,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> implements SysMenuService {
+
+    @Autowired
+    private SysUserRoleService sysUserRoleService;
+
+    @Autowired
+    private SysRolePermissionService sysRolePermissionService;
 
     @Override
     public List<SysMenu> listAll() {
@@ -53,6 +64,55 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         } else {
             parent.setChildren(new ArrayList<>());
         }
+    }
+
+    /**
+     * 根据用户角色获取可见菜单树
+     * admin用户(is_admin=1)返回全部菜单，其他用户只返回角色权限内的菜单
+     */
+    @Override
+    public List<SysMenu> getTreeByUser(Long userId, boolean isAdmin) {
+        if (isAdmin) {
+            return getTree();
+        }
+
+        // 查询用户的角色ID列表
+        List<SysUserRole> userRoles = sysUserRoleService.list(
+                new QueryWrapper<SysUserRole>().eq("user_id", userId));
+        if (userRoles.isEmpty()) {
+            // 无角色，返回空树
+            return new ArrayList<>();
+        }
+
+        List<Long> roleIds = userRoles.stream()
+                .map(SysUserRole::getRoleId)
+                .collect(Collectors.toList());
+
+        // 查询角色的菜单权限
+        List<SysRolePermission> rolePerms = sysRolePermissionService.list(
+                new QueryWrapper<SysRolePermission>().in("role_id", roleIds));
+        if (rolePerms.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<String> menuIds = rolePerms.stream()
+                .map(SysRolePermission::getMenuId)
+                .distinct()
+                .collect(Collectors.toList());
+
+        // 查询这些菜单
+        List<SysMenu> menus = list(new QueryWrapper<SysMenu>()
+                .in("menu_id", menuIds)
+                .orderByAsc("sort_order"));
+
+        // 构建树
+        List<SysMenu> roots = menus.stream()
+                .filter(m -> m.getParentMenuId() == null)
+                .collect(Collectors.toList());
+        for (SysMenu root : roots) {
+            buildChildren(root, menus);
+        }
+        return roots;
     }
 
     @Override

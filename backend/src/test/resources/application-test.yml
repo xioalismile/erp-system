@@ -4,10 +4,13 @@ server:
 spring:
   application:
     name: smart-erp-test
+  # 数据源可用环境变量覆盖，默认值保持本地开发库不变（不引入新凭据）。
+  # 多租户说明：测试目标是 8cloud 租户时请设 ERP_TEST_DB_URL=...erp_tenant_sc_wudong，
+  # 否则会连到本机主库 erp_db（详见 test/java/com/erp/test/fulltest/DataCleaner.java 类注释）。
   datasource:
-    url: jdbc:postgresql://localhost:5432/erp_db
-    username: erp_user
-    password: Erp@2026
+    url: ${ERP_TEST_DB_URL:jdbc:postgresql://localhost:5432/erp_db}
+    username: ${ERP_TEST_DB_USER:erp_user}
+    password: ${ERP_TEST_DB_PASSWORD:Erp@2026}
     driver-class-name: org.postgresql.Driver
   redis:
     host: localhost
@@ -32,7 +35,7 @@ mybatis-plus:
 erp:
   jwt:
     secret: SmartErpSecretKey2026ForJwtTokenGenerationAndValidation
-    expiration: 86400000
+    expiration: 259200000
     header: Authorization
     prefix: "Bearer "
   upload:

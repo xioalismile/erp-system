@@ -1,0 +1,625 @@
+-- ============================================================
+-- 41_entity_columns_safety_net.sql
+-- SmartERP 全实体类字段 vs 数据库 兜底脚本
+-- 规则：全部 ADD COLUMN IF NOT EXISTS，已有列自动跳过，无任何副作用
+-- 用法：每次升级前手动 psql 执行一次，或放到 START-UPDATE.bat 自动执行
+-- 生成时间：2026-08-19
+-- ============================================================
+
+-- ---------- 1. basedata 基础资料 ----------
+-- material (物料档案) - 40号补丁有 image_url 兜底，其他常用列这里全覆盖
+ALTER TABLE material ADD COLUMN IF NOT EXISTS category_code VARCHAR(50);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS category_name VARCHAR(100);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS image_url VARCHAR(500);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS material_type VARCHAR(20);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS model_no VARCHAR(100);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS spec VARCHAR(200);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS brand VARCHAR(100);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS origin VARCHAR(100);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS unit_code VARCHAR(20);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS unit_name VARCHAR(50);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS price NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE material ADD COLUMN IF NOT EXISTS cost_price NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE material ADD COLUMN IF NOT EXISTS lowest_price NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE material ADD COLUMN IF NOT EXISTS safety_stock NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE material ADD COLUMN IF NOT EXISTS max_stock NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE material ADD COLUMN IF NOT EXISTS is_virtual SMALLINT DEFAULT 0;
+ALTER TABLE material ADD COLUMN IF NOT EXISTS is_bom SMALLINT DEFAULT 0;
+ALTER TABLE material ADD COLUMN IF NOT EXISTS is_batch SMALLINT DEFAULT 0;
+ALTER TABLE material ADD COLUMN IF NOT EXISTS is_serial SMALLINT DEFAULT 0;
+ALTER TABLE material ADD COLUMN IF NOT EXISTS expiry_days INT;
+ALTER TABLE material ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS attribute1 VARCHAR(255);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS attribute2 VARCHAR(255);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS attribute3 VARCHAR(255);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS attribute4 VARCHAR(255);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS attribute5 VARCHAR(255);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS attribute6 VARCHAR(255);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS attribute7 VARCHAR(255);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS attribute8 VARCHAR(255);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS attribute9 VARCHAR(255);
+ALTER TABLE material ADD COLUMN IF NOT EXISTS attribute10 VARCHAR(255);
+
+-- material_category (物料分类) - 4级分类体系用列
+ALTER TABLE material_category ADD COLUMN IF NOT EXISTS parent_code VARCHAR(50);
+ALTER TABLE material_category ADD COLUMN IF NOT EXISTS category_level INT DEFAULT 1;
+ALTER TABLE material_category ADD COLUMN IF NOT EXISTS category_path VARCHAR(500);
+ALTER TABLE material_category ADD COLUMN IF NOT EXISTS series_code VARCHAR(10);
+ALTER TABLE material_category ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
+
+-- material_code_rule (物料编码规则) - 40号补丁已补 include_category_code/include_date，这里加其他列
+ALTER TABLE material_code_rule ADD COLUMN IF NOT EXISTS prefix VARCHAR(20);
+ALTER TABLE material_code_rule ADD COLUMN IF NOT EXISTS seq_length INT DEFAULT 4;
+ALTER TABLE material_code_rule ADD COLUMN IF NOT EXISTS last_seq INT DEFAULT 0;
+ALTER TABLE material_code_rule ADD COLUMN IF NOT EXISTS date_format VARCHAR(20);
+ALTER TABLE material_code_rule ADD COLUMN IF NOT EXISTS category_id BIGINT;
+ALTER TABLE material_code_rule ADD COLUMN IF NOT EXISTS category_name VARCHAR(100);
+ALTER TABLE material_code_rule ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE material_code_rule ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+ALTER TABLE material_code_rule ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE material_code_rule ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+-- warehouse / location / unit / settlement / price_level / payment_term / employee / department / currency / account
+ALTER TABLE warehouse ADD COLUMN IF NOT EXISTS warehouse_type VARCHAR(20);
+ALTER TABLE warehouse ADD COLUMN IF NOT EXISTS address VARCHAR(500);
+ALTER TABLE warehouse ADD COLUMN IF NOT EXISTS manager_id BIGINT;
+ALTER TABLE warehouse ADD COLUMN IF NOT EXISTS manager_name VARCHAR(50);
+ALTER TABLE warehouse ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE warehouse ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
+
+ALTER TABLE location ADD COLUMN IF NOT EXISTS warehouse_code VARCHAR(50);
+ALTER TABLE location ADD COLUMN IF NOT EXISTS warehouse_name VARCHAR(100);
+ALTER TABLE location ADD COLUMN IF NOT EXISTS location_type VARCHAR(20);
+ALTER TABLE location ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+
+ALTER TABLE unit_of_measure ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE settlement_mode ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE price_level ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE payment_term ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE employee ADD COLUMN IF NOT EXISTS department_id BIGINT;
+ALTER TABLE employee ADD COLUMN IF NOT EXISTS department_name VARCHAR(100);
+ALTER TABLE employee ADD COLUMN IF NOT EXISTS position VARCHAR(50);
+ALTER TABLE employee ADD COLUMN IF NOT EXISTS phone VARCHAR(20);
+ALTER TABLE employee ADD COLUMN IF NOT EXISTS mobile VARCHAR(20);
+ALTER TABLE employee ADD COLUMN IF NOT EXISTS email VARCHAR(100);
+ALTER TABLE employee ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE department ADD COLUMN IF NOT EXISTS parent_code VARCHAR(50);
+ALTER TABLE department ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
+ALTER TABLE department ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE currency ADD COLUMN IF NOT EXISTS symbol VARCHAR(10);
+ALTER TABLE currency ADD COLUMN IF NOT EXISTS exchange_rate NUMERIC(18,6) DEFAULT 1;
+ALTER TABLE currency ADD COLUMN IF NOT EXISTS is_default SMALLINT DEFAULT 0;
+ALTER TABLE currency ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+
+-- ---------- 2. masterdata 客户/供应商/BOM ----------
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS customer_type VARCHAR(20);
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS category_code VARCHAR(50);
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS category_name VARCHAR(100);
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS level_code VARCHAR(20);
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS settlement_mode_code VARCHAR(20);
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS settlement_mode_name VARCHAR(100);
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS payment_term_code VARCHAR(20);
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS payment_term_name VARCHAR(100);
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS currency_code VARCHAR(20);
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS currency_name VARCHAR(50);
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS price_level_code VARCHAR(20);
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS price_level_name VARCHAR(100);
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS credit_limit NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS credit_used NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS is_pool SMALLINT DEFAULT 0;
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS owner_id BIGINT;
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS owner_name VARCHAR(50);
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS claim_time TIMESTAMP;
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS last_follow_time TIMESTAMP;
+ALTER TABLE customer ADD COLUMN IF NOT EXISTS last_order_time TIMESTAMP;
+
+ALTER TABLE supplier ADD COLUMN IF NOT EXISTS supplier_type VARCHAR(20);
+ALTER TABLE supplier ADD COLUMN IF NOT EXISTS category_code VARCHAR(50);
+ALTER TABLE supplier ADD COLUMN IF NOT EXISTS category_name VARCHAR(100);
+ALTER TABLE supplier ADD COLUMN IF NOT EXISTS settlement_mode_code VARCHAR(20);
+ALTER TABLE supplier ADD COLUMN IF NOT EXISTS settlement_mode_name VARCHAR(100);
+ALTER TABLE supplier ADD COLUMN IF NOT EXISTS payment_term_code VARCHAR(20);
+ALTER TABLE supplier ADD COLUMN IF NOT EXISTS payment_term_name VARCHAR(100);
+ALTER TABLE supplier ADD COLUMN IF NOT EXISTS currency_code VARCHAR(20);
+ALTER TABLE supplier ADD COLUMN IF NOT EXISTS currency_name VARCHAR(50);
+ALTER TABLE supplier ADD COLUMN IF NOT EXISTS credit_limit NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE supplier ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+
+-- BOM 列 - 40号补丁已补 is_default / bom_date / manager_id / manager_name / default_warehouse_id / default_warehouse_name
+ALTER TABLE bom ADD COLUMN IF NOT EXISTS version VARCHAR(50);
+ALTER TABLE bom ADD COLUMN IF NOT EXISTS material_id BIGINT;
+ALTER TABLE bom ADD COLUMN IF NOT EXISTS material_code VARCHAR(50);
+ALTER TABLE bom ADD COLUMN IF NOT EXISTS material_name VARCHAR(200);
+ALTER TABLE bom ADD COLUMN IF NOT EXISTS spec VARCHAR(200);
+ALTER TABLE bom ADD COLUMN IF NOT EXISTS unit_code VARCHAR(20);
+ALTER TABLE bom ADD COLUMN IF NOT EXISTS quantity NUMERIC(18,4) DEFAULT 1;
+ALTER TABLE bom ADD COLUMN IF NOT EXISTS output_quantity NUMERIC(18,4) DEFAULT 1;
+ALTER TABLE bom ADD COLUMN IF NOT EXISTS scrap_rate NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE bom ADD COLUMN IF NOT EXISTS is_primary SMALLINT DEFAULT 0;
+ALTER TABLE bom ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+ALTER TABLE bom ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT '已审核';
+
+-- bom_item - 40号补丁已补 model_no / image_url
+ALTER TABLE bom_item ADD COLUMN IF NOT EXISTS bom_id BIGINT;
+ALTER TABLE bom_item ADD COLUMN IF NOT EXISTS material_id BIGINT;
+ALTER TABLE bom_item ADD COLUMN IF NOT EXISTS material_code VARCHAR(50);
+ALTER TABLE bom_item ADD COLUMN IF NOT EXISTS material_name VARCHAR(200);
+ALTER TABLE bom_item ADD COLUMN IF NOT EXISTS unit_code VARCHAR(20);
+ALTER TABLE bom_item ADD COLUMN IF NOT EXISTS quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE bom_item ADD COLUMN IF NOT EXISTS scrap_rate NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE bom_item ADD COLUMN IF NOT EXISTS is_key SMALLINT DEFAULT 0;
+ALTER TABLE bom_item ADD COLUMN IF NOT EXISTS is_flush SMALLINT DEFAULT 0;
+ALTER TABLE bom_item ADD COLUMN IF NOT EXISTS warehouse_id BIGINT;
+ALTER TABLE bom_item ADD COLUMN IF NOT EXISTS warehouse_name VARCHAR(100);
+ALTER TABLE bom_item ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
+ALTER TABLE bom_item ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+
+-- ---------- 3. sale 销售单据 ----------
+-- sale_order - 40号补丁已补 close_status
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS order_type VARCHAR(20);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS source_type VARCHAR(20);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS source_bill_id BIGINT;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS source_bill_no VARCHAR(50);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS customer_id BIGINT;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS customer_code VARCHAR(50);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS customer_name VARCHAR(200);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS contact VARCHAR(50);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS phone VARCHAR(20);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS mobile VARCHAR(20);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS address VARCHAR(500);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS delivery_address VARCHAR(500);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS currency_code VARCHAR(20);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS exchange_rate NUMERIC(18,6) DEFAULT 1;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS settlement_mode_code VARCHAR(20);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS payment_term_code VARCHAR(20);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS price_level_code VARCHAR(20);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS warehouse_id BIGINT;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS warehouse_name VARCHAR(100);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS delivery_date DATE;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS salesman_id BIGINT;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS salesman_name VARCHAR(50);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS department_id BIGINT;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS department_name VARCHAR(100);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS total_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS total_amount NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS discount_rate NUMERIC(18,4) DEFAULT 100;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS discount_amount NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS tax_rate NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS tax_amount NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS total_amount_with_tax NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS prepayment_amount NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS freight NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS other_fee NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT '草稿';
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS approval_status VARCHAR(20);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS approver_id BIGINT;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS approver_name VARCHAR(50);
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS approval_time TIMESTAMP;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS audit_time TIMESTAMP;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS auditor_id BIGINT;
+ALTER TABLE sale_order ADD COLUMN IF NOT EXISTS auditor_name VARCHAR(50);
+UPDATE sale_order SET close_status = 0 WHERE close_status IS NULL;
+
+-- sale_order_item - 40号补丁已补 delivered_quantity
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS order_id BIGINT;
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS source_bill_item_id BIGINT;
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS material_id BIGINT;
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS material_code VARCHAR(50);
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS material_name VARCHAR(200);
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS model_no VARCHAR(100);
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS spec VARCHAR(200);
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS unit_code VARCHAR(20);
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS stock_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS unit_price NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS price NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS discount_rate NUMERIC(18,4) DEFAULT 100;
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS discount_amount NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS amount NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS tax_rate NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS tax_amount NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS amount_with_tax NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS warehouse_id BIGINT;
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS warehouse_name VARCHAR(100);
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS batch_no VARCHAR(50);
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+ALTER TABLE sale_order_item ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
+UPDATE sale_order_item SET delivered_quantity = 0 WHERE delivered_quantity IS NULL;
+
+-- sale_delivery / sale_return / sale_invoice / sale_quote / sale_contract
+ALTER TABLE sale_delivery ADD COLUMN IF NOT EXISTS close_status INT DEFAULT 0;
+ALTER TABLE sale_return ADD COLUMN IF NOT EXISTS close_status INT DEFAULT 0;
+ALTER TABLE sale_invoice ADD COLUMN IF NOT EXISTS close_status INT DEFAULT 0;
+ALTER TABLE sale_quote ADD COLUMN IF NOT EXISTS close_status INT DEFAULT 0;
+ALTER TABLE sale_contract ADD COLUMN IF NOT EXISTS close_status INT DEFAULT 0;
+
+-- ---------- 4. purchase 采购单据（与销售对称）----------
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS close_status INT DEFAULT 0;
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS order_type VARCHAR(20);
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS source_bill_id BIGINT;
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS source_bill_no VARCHAR(50);
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS supplier_id BIGINT;
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS supplier_code VARCHAR(50);
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS supplier_name VARCHAR(200);
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS currency_code VARCHAR(20);
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS exchange_rate NUMERIC(18,6) DEFAULT 1;
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS settlement_mode_code VARCHAR(20);
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS payment_term_code VARCHAR(20);
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS warehouse_id BIGINT;
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS warehouse_name VARCHAR(100);
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS delivery_date DATE;
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS purchaser_id BIGINT;
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS purchaser_name VARCHAR(50);
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS department_id BIGINT;
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS department_name VARCHAR(100);
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS total_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS total_amount NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS tax_amount NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS total_amount_with_tax NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT '草稿';
+ALTER TABLE purchase_order ADD COLUMN IF NOT EXISTS approval_status VARCHAR(20);
+UPDATE purchase_order SET close_status = 0 WHERE close_status IS NULL;
+
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS order_id BIGINT;
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS material_id BIGINT;
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS material_code VARCHAR(50);
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS material_name VARCHAR(200);
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS model_no VARCHAR(100);
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS spec VARCHAR(200);
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS unit_code VARCHAR(20);
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS received_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS returned_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS unit_price NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS amount NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS tax_rate NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS tax_amount NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS amount_with_tax NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS warehouse_id BIGINT;
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS warehouse_name VARCHAR(100);
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+ALTER TABLE purchase_order_item ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
+
+ALTER TABLE purchase_receipt ADD COLUMN IF NOT EXISTS close_status INT DEFAULT 0;
+ALTER TABLE purchase_return ADD COLUMN IF NOT EXISTS close_status INT DEFAULT 0;
+ALTER TABLE purchase_invoice ADD COLUMN IF NOT EXISTS close_status INT DEFAULT 0;
+ALTER TABLE purchase_request ADD COLUMN IF NOT EXISTS close_status INT DEFAULT 0;
+ALTER TABLE purchase_contract ADD COLUMN IF NOT EXISTS close_status INT DEFAULT 0;
+
+-- ---------- 5. inventory 库存单据 ----------
+ALTER TABLE inventory_current ADD COLUMN IF NOT EXISTS warehouse_code VARCHAR(50);
+ALTER TABLE inventory_current ADD COLUMN IF NOT EXISTS warehouse_name VARCHAR(100);
+ALTER TABLE inventory_current ADD COLUMN IF NOT EXISTS location_code VARCHAR(50);
+ALTER TABLE inventory_current ADD COLUMN IF NOT EXISTS location_name VARCHAR(100);
+ALTER TABLE inventory_current ADD COLUMN IF NOT EXISTS material_code VARCHAR(50);
+ALTER TABLE inventory_current ADD COLUMN IF NOT EXISTS material_name VARCHAR(200);
+ALTER TABLE inventory_current ADD COLUMN IF NOT EXISTS spec VARCHAR(200);
+ALTER TABLE inventory_current ADD COLUMN IF NOT EXISTS unit_code VARCHAR(20);
+ALTER TABLE inventory_current ADD COLUMN IF NOT EXISTS batch_no VARCHAR(50);
+ALTER TABLE inventory_current ADD COLUMN IF NOT EXISTS quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE inventory_current ADD COLUMN IF NOT EXISTS reserved_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE inventory_current ADD COLUMN IF NOT EXISTS unit_cost NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE inventory_current ADD COLUMN IF NOT EXISTS total_cost NUMERIC(18,4) DEFAULT 0;
+
+-- 库存单据 表头 close_status 兜底
+ALTER TABLE stock_transfer ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT '草稿';
+ALTER TABLE stock_transfer ADD COLUMN IF NOT EXISTS approval_status VARCHAR(20);
+ALTER TABLE stock_check ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT '草稿';
+ALTER TABLE stock_check ADD COLUMN IF NOT EXISTS approval_status VARCHAR(20);
+ALTER TABLE other_receipt ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT '草稿';
+ALTER TABLE other_receipt ADD COLUMN IF NOT EXISTS approval_status VARCHAR(20);
+ALTER TABLE other_issue ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT '草稿';
+ALTER TABLE other_issue ADD COLUMN IF NOT EXISTS approval_status VARCHAR(20);
+ALTER TABLE material_requisition ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT '草稿';
+ALTER TABLE material_requisition ADD COLUMN IF NOT EXISTS approval_status VARCHAR(20);
+
+-- ---------- 6. production / produce 生产 ----------
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS order_type VARCHAR(20);
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS source_bill_id BIGINT;
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS source_bill_no VARCHAR(50);
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS material_id BIGINT;
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS material_code VARCHAR(50);
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS material_name VARCHAR(200);
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS spec VARCHAR(200);
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS unit_code VARCHAR(20);
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS bom_id BIGINT;
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS bom_code VARCHAR(50);
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS produced_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS picked_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS qualified_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS scrap_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS work_center_id BIGINT;
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS work_center_name VARCHAR(100);
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS workstation_id BIGINT;
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS workstation_name VARCHAR(100);
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS routing_id BIGINT;
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS routing_code VARCHAR(50);
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS plan_start_date DATE;
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS plan_end_date DATE;
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS actual_start_date DATE;
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS actual_end_date DATE;
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS workshop_manager_id BIGINT;
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS workshop_manager_name VARCHAR(50);
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT '草稿';
+ALTER TABLE production_order ADD COLUMN IF NOT EXISTS approval_status VARCHAR(20);
+
+ALTER TABLE production_order_item ADD COLUMN IF NOT EXISTS order_id BIGINT;
+ALTER TABLE production_order_item ADD COLUMN IF NOT EXISTS material_id BIGINT;
+ALTER TABLE production_order_item ADD COLUMN IF NOT EXISTS material_code VARCHAR(50);
+ALTER TABLE production_order_item ADD COLUMN IF NOT EXISTS material_name VARCHAR(200);
+ALTER TABLE production_order_item ADD COLUMN IF NOT EXISTS model_no VARCHAR(100);
+ALTER TABLE production_order_item ADD COLUMN IF NOT EXISTS spec VARCHAR(200);
+ALTER TABLE production_order_item ADD COLUMN IF NOT EXISTS unit_code VARCHAR(20);
+ALTER TABLE production_order_item ADD COLUMN IF NOT EXISTS bom_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE production_order_item ADD COLUMN IF NOT EXISTS required_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE production_order_item ADD COLUMN IF NOT EXISTS picked_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE production_order_item ADD COLUMN IF NOT EXISTS returned_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE production_order_item ADD COLUMN IF NOT EXISTS supplementary_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE production_order_item ADD COLUMN IF NOT EXISTS warehouse_id BIGINT;
+ALTER TABLE production_order_item ADD COLUMN IF NOT EXISTS warehouse_name VARCHAR(100);
+ALTER TABLE production_order_item ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+ALTER TABLE production_order_item ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
+
+-- ---------- 7. subcontract 委外 ----------
+ALTER TABLE subcontract_order ADD COLUMN IF NOT EXISTS close_status INT DEFAULT 0;
+ALTER TABLE subcontract_order ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT '草稿';
+ALTER TABLE subcontract_order ADD COLUMN IF NOT EXISTS approval_status VARCHAR(20);
+ALTER TABLE subcontract_order ADD COLUMN IF NOT EXISTS supplier_id BIGINT;
+ALTER TABLE subcontract_order ADD COLUMN IF NOT EXISTS supplier_code VARCHAR(50);
+ALTER TABLE subcontract_order ADD COLUMN IF NOT EXISTS supplier_name VARCHAR(200);
+ALTER TABLE subcontract_order ADD COLUMN IF NOT EXISTS material_id BIGINT;
+ALTER TABLE subcontract_order ADD COLUMN IF NOT EXISTS material_code VARCHAR(50);
+ALTER TABLE subcontract_order ADD COLUMN IF NOT EXISTS material_name VARCHAR(200);
+ALTER TABLE subcontract_order ADD COLUMN IF NOT EXISTS quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE subcontract_order ADD COLUMN IF NOT EXISTS received_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE subcontract_order ADD COLUMN IF NOT EXISTS picked_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE subcontract_order ADD COLUMN IF NOT EXISTS processing_fee NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE subcontract_order ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+UPDATE subcontract_order SET close_status = 0 WHERE close_status IS NULL;
+
+ALTER TABLE subcontract_order_item ADD COLUMN IF NOT EXISTS order_id BIGINT;
+ALTER TABLE subcontract_order_item ADD COLUMN IF NOT EXISTS material_id BIGINT;
+ALTER TABLE subcontract_order_item ADD COLUMN IF NOT EXISTS material_code VARCHAR(50);
+ALTER TABLE subcontract_order_item ADD COLUMN IF NOT EXISTS material_name VARCHAR(200);
+ALTER TABLE subcontract_order_item ADD COLUMN IF NOT EXISTS unit_code VARCHAR(20);
+ALTER TABLE subcontract_order_item ADD COLUMN IF NOT EXISTS required_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE subcontract_order_item ADD COLUMN IF NOT EXISTS picked_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE subcontract_order_item ADD COLUMN IF NOT EXISTS returned_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE subcontract_order_item ADD COLUMN IF NOT EXISTS supplementary_quantity NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE subcontract_order_item ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+
+-- ---------- 8. finance 财务 ----------
+ALTER TABLE accounts_receivable ADD COLUMN IF NOT EXISTS close_status INT DEFAULT 0;
+ALTER TABLE accounts_payable ADD COLUMN IF NOT EXISTS close_status INT DEFAULT 0;
+ALTER TABLE payment_receipt ADD COLUMN IF NOT EXISTS close_status INT DEFAULT 0;
+ALTER TABLE fund_transfer ADD COLUMN IF NOT EXISTS close_status INT DEFAULT 0;
+UPDATE accounts_receivable SET close_status = 0 WHERE close_status IS NULL;
+UPDATE accounts_payable SET close_status = 0 WHERE close_status IS NULL;
+UPDATE payment_receipt SET close_status = 0 WHERE close_status IS NULL;
+UPDATE fund_transfer SET close_status = 0 WHERE close_status IS NULL;
+
+-- ---------- 9. crm ----------
+ALTER TABLE crm_lead ADD COLUMN IF NOT EXISTS source VARCHAR(50);
+ALTER TABLE crm_lead ADD COLUMN IF NOT EXISTS industry VARCHAR(100);
+ALTER TABLE crm_lead ADD COLUMN IF NOT EXISTS level VARCHAR(20);
+ALTER TABLE crm_lead ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'pending';
+ALTER TABLE crm_lead ADD COLUMN IF NOT EXISTS next_follow_time TIMESTAMP;
+ALTER TABLE crm_lead ADD COLUMN IF NOT EXISTS owner_id BIGINT;
+ALTER TABLE crm_lead ADD COLUMN IF NOT EXISTS owner_name VARCHAR(50);
+
+ALTER TABLE crm_contact ADD COLUMN IF NOT EXISTS customer_id BIGINT;
+ALTER TABLE crm_contact ADD COLUMN IF NOT EXISTS customer_name VARCHAR(200);
+ALTER TABLE crm_contact ADD COLUMN IF NOT EXISTS is_primary SMALLINT DEFAULT 0;
+ALTER TABLE crm_contact ADD COLUMN IF NOT EXISTS position VARCHAR(50);
+ALTER TABLE crm_contact ADD COLUMN IF NOT EXISTS department VARCHAR(100);
+ALTER TABLE crm_contact ADD COLUMN IF NOT EXISTS mobile VARCHAR(20);
+ALTER TABLE crm_contact ADD COLUMN IF NOT EXISTS phone VARCHAR(20);
+ALTER TABLE crm_contact ADD COLUMN IF NOT EXISTS email VARCHAR(100);
+ALTER TABLE crm_contact ADD COLUMN IF NOT EXISTS wechat VARCHAR(50);
+ALTER TABLE crm_contact ADD COLUMN IF NOT EXISTS qq VARCHAR(20);
+ALTER TABLE crm_contact ADD COLUMN IF NOT EXISTS address VARCHAR(500);
+ALTER TABLE crm_contact ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+
+ALTER TABLE crm_opportunity ADD COLUMN IF NOT EXISTS customer_id BIGINT;
+ALTER TABLE crm_opportunity ADD COLUMN IF NOT EXISTS customer_name VARCHAR(200);
+ALTER TABLE crm_opportunity ADD COLUMN IF NOT EXISTS contact_id BIGINT;
+ALTER TABLE crm_opportunity ADD COLUMN IF NOT EXISTS contact_name VARCHAR(50);
+ALTER TABLE crm_opportunity ADD COLUMN IF NOT EXISTS stage VARCHAR(50);
+ALTER TABLE crm_opportunity ADD COLUMN IF NOT EXISTS amount NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE crm_opportunity ADD COLUMN IF NOT EXISTS probability NUMERIC(18,4) DEFAULT 0;
+ALTER TABLE crm_opportunity ADD COLUMN IF NOT EXISTS expected_close_date DATE;
+ALTER TABLE crm_opportunity ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT '进行中';
+ALTER TABLE crm_opportunity ADD COLUMN IF NOT EXISTS owner_id BIGINT;
+ALTER TABLE crm_opportunity ADD COLUMN IF NOT EXISTS owner_name VARCHAR(50);
+ALTER TABLE crm_opportunity ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+
+-- ---------- 10. approval 审批 ----------
+ALTER TABLE approval_flow ADD COLUMN IF NOT EXISTS doc_type VARCHAR(50);
+ALTER TABLE approval_flow ADD COLUMN IF NOT EXISTS doc_type_name VARCHAR(100);
+ALTER TABLE approval_flow ADD COLUMN IF NOT EXISTS flow_name VARCHAR(200);
+ALTER TABLE approval_flow ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE approval_flow ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
+ALTER TABLE approval_flow ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+
+ALTER TABLE approval_node ADD COLUMN IF NOT EXISTS flow_id BIGINT;
+ALTER TABLE approval_node ADD COLUMN IF NOT EXISTS node_name VARCHAR(100);
+ALTER TABLE approval_node ADD COLUMN IF NOT EXISTS node_type VARCHAR(20) DEFAULT 'single';
+ALTER TABLE approval_node ADD COLUMN IF NOT EXISTS approve_mode VARCHAR(20) DEFAULT 'single';
+ALTER TABLE approval_node ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
+ALTER TABLE approval_node ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+
+ALTER TABLE approval_node_approver ADD COLUMN IF NOT EXISTS node_id BIGINT;
+ALTER TABLE approval_node ADD COLUMN IF NOT EXISTS approver_type VARCHAR(20);
+ALTER TABLE approval_node_approver ADD COLUMN IF NOT EXISTS approver_id BIGINT;
+ALTER TABLE approval_node_approver ADD COLUMN IF NOT EXISTS approver_name VARCHAR(50);
+ALTER TABLE approval_node_approver ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
+
+ALTER TABLE approval_task ADD COLUMN IF NOT EXISTS flow_id BIGINT;
+ALTER TABLE approval_task ADD COLUMN IF NOT EXISTS node_id BIGINT;
+ALTER TABLE approval_task ADD COLUMN IF NOT EXISTS doc_type VARCHAR(50);
+ALTER TABLE approval_task ADD COLUMN IF NOT EXISTS doc_id BIGINT;
+ALTER TABLE approval_task ADD COLUMN IF NOT EXISTS doc_no VARCHAR(50);
+ALTER TABLE approval_task ADD COLUMN IF NOT EXISTS approver_id BIGINT;
+ALTER TABLE approval_task ADD COLUMN IF NOT EXISTS approver_name VARCHAR(50);
+ALTER TABLE approval_task ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'pending';
+ALTER TABLE approval_task ADD COLUMN IF NOT EXISTS approve_time TIMESTAMP;
+ALTER TABLE approval_task ADD COLUMN IF NOT EXISTS approve_opinion VARCHAR(500);
+
+ALTER TABLE approval_log ADD COLUMN IF NOT EXISTS flow_id BIGINT;
+ALTER TABLE approval_log ADD COLUMN IF NOT EXISTS node_id BIGINT;
+ALTER TABLE approval_log ADD COLUMN IF NOT EXISTS doc_type VARCHAR(50);
+ALTER TABLE approval_log ADD COLUMN IF NOT EXISTS doc_id BIGINT;
+ALTER TABLE approval_log ADD COLUMN IF NOT EXISTS doc_no VARCHAR(50);
+ALTER TABLE approval_log ADD COLUMN IF NOT EXISTS operator_id BIGINT;
+ALTER TABLE approval_log ADD COLUMN IF NOT EXISTS operator_name VARCHAR(50);
+ALTER TABLE approval_log ADD COLUMN IF NOT EXISTS action VARCHAR(20);
+ALTER TABLE approval_log ADD COLUMN IF NOT EXISTS opinion VARCHAR(500);
+ALTER TABLE approval_log ADD COLUMN IF NOT EXISTS operate_time TIMESTAMP;
+
+-- ---------- 11. system 系统（权限/菜单/字典/用户/通知）----------
+ALTER TABLE sys_user ADD COLUMN IF NOT EXISTS user_type VARCHAR(20) DEFAULT 'employee';
+ALTER TABLE sys_user ADD COLUMN IF NOT EXISTS employee_id BIGINT;
+ALTER TABLE sys_user ADD COLUMN IF NOT EXISTS real_name VARCHAR(50);
+ALTER TABLE sys_user ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(500);
+ALTER TABLE sys_user ADD COLUMN IF NOT EXISTS mobile VARCHAR(20);
+ALTER TABLE sys_user ADD COLUMN IF NOT EXISTS email VARCHAR(100);
+ALTER TABLE sys_user ADD COLUMN IF NOT EXISTS tenant_id BIGINT;
+ALTER TABLE sys_user ADD COLUMN IF NOT EXISTS tenant_name VARCHAR(200);
+ALTER TABLE sys_user ADD COLUMN IF NOT EXISTS is_initial_pwd SMALLINT DEFAULT 1;
+ALTER TABLE sys_user ADD COLUMN IF NOT EXISTS last_login_time TIMESTAMP;
+ALTER TABLE sys_user ADD COLUMN IF NOT EXISTS last_login_ip VARCHAR(50);
+ALTER TABLE sys_user ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT '启用';
+ALTER TABLE sys_user ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+
+ALTER TABLE sys_role ADD COLUMN IF NOT EXISTS role_code VARCHAR(50);
+ALTER TABLE sys_role ADD COLUMN IF NOT EXISTS role_name VARCHAR(100);
+ALTER TABLE sys_role ADD COLUMN IF NOT EXISTS data_scope VARCHAR(20) DEFAULT 'all';
+ALTER TABLE sys_role ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE sys_role ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
+ALTER TABLE sys_role ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+
+ALTER TABLE sys_menu ADD COLUMN IF NOT EXISTS menu_code VARCHAR(50);
+ALTER TABLE sys_menu ADD COLUMN IF NOT EXISTS menu_name VARCHAR(100);
+ALTER TABLE sys_menu ADD COLUMN IF NOT EXISTS parent_menu_id BIGINT;
+ALTER TABLE sys_menu ADD COLUMN IF NOT EXISTS menu_type VARCHAR(20);
+ALTER TABLE sys_menu ADD COLUMN IF NOT EXISTS icon VARCHAR(50);
+ALTER TABLE sys_menu ADD COLUMN IF NOT EXISTS route_path VARCHAR(200);
+ALTER TABLE sys_menu ADD COLUMN IF NOT EXISTS component_path VARCHAR(200);
+ALTER TABLE sys_menu ADD COLUMN IF NOT EXISTS permission_code VARCHAR(200);
+ALTER TABLE sys_menu ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
+ALTER TABLE sys_menu ADD COLUMN IF NOT EXISTS is_visible SMALLINT DEFAULT 1;
+ALTER TABLE sys_menu ADD COLUMN IF NOT EXISTS is_cache SMALLINT DEFAULT 0;
+ALTER TABLE sys_menu ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE sys_menu ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT '启用';
+ALTER TABLE sys_menu ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+
+ALTER TABLE sys_dict_type ADD COLUMN IF NOT EXISTS dict_code VARCHAR(50);
+ALTER TABLE sys_dict_type ADD COLUMN IF NOT EXISTS dict_name VARCHAR(100);
+ALTER TABLE sys_dict_type ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE sys_dict_type ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+
+ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS dict_code VARCHAR(50);
+ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS dict_label VARCHAR(100);
+ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS dict_value VARCHAR(100);
+ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS css_class VARCHAR(100);
+ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS list_class VARCHAR(50);
+ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS is_default SMALLINT DEFAULT 0;
+ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
+ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+
+ALTER TABLE sys_notification ADD COLUMN IF NOT EXISTS user_id BIGINT;
+ALTER TABLE sys_notification ADD COLUMN IF NOT EXISTS user_name VARCHAR(50);
+ALTER TABLE sys_notification ADD COLUMN IF NOT EXISTS notification_type VARCHAR(50);
+ALTER TABLE sys_notification ADD COLUMN IF NOT EXISTS title VARCHAR(200);
+ALTER TABLE sys_notification ADD COLUMN IF NOT EXISTS content TEXT;
+ALTER TABLE sys_notification ADD COLUMN IF NOT EXISTS doc_type VARCHAR(50);
+ALTER TABLE sys_notification ADD COLUMN IF NOT EXISTS doc_id BIGINT;
+ALTER TABLE sys_notification ADD COLUMN IF NOT EXISTS doc_no VARCHAR(50);
+ALTER TABLE sys_notification ADD COLUMN IF NOT EXISTS is_read SMALLINT DEFAULT 0;
+ALTER TABLE sys_notification ADD COLUMN IF NOT EXISTS read_time TIMESTAMP;
+ALTER TABLE sys_notification ADD COLUMN IF NOT EXISTS deadline_time TIMESTAMP;
+ALTER TABLE sys_notification ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+-- ---------- 12. serial_no / batch / print 模板 ----------
+ALTER TABLE sys_serial_no_config ADD COLUMN IF NOT EXISTS config_code VARCHAR(50);
+ALTER TABLE sys_serial_no_config ADD COLUMN IF NOT EXISTS config_name VARCHAR(100);
+ALTER TABLE sys_serial_no_config ADD COLUMN IF NOT EXISTS doc_type VARCHAR(50);
+ALTER TABLE sys_serial_no_config ADD COLUMN IF NOT EXISTS prefix VARCHAR(20);
+ALTER TABLE sys_serial_no_config ADD COLUMN IF NOT EXISTS date_format VARCHAR(20);
+ALTER TABLE sys_serial_no_config ADD COLUMN IF NOT EXISTS seq_length INT DEFAULT 4;
+ALTER TABLE sys_serial_no_config ADD COLUMN IF NOT EXISTS current_seq BIGINT DEFAULT 0;
+ALTER TABLE sys_serial_no_config ADD COLUMN IF NOT EXISTS step INT DEFAULT 1;
+ALTER TABLE sys_serial_no_config ADD COLUMN IF NOT EXISTS is_auto_generate SMALLINT DEFAULT 1;
+ALTER TABLE sys_serial_no_config ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE sys_serial_no_config ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+ALTER TABLE sys_serial_no_config ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE sys_serial_no_config ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE batch_info ADD COLUMN IF NOT EXISTS batch_no VARCHAR(50);
+ALTER TABLE batch_info ADD COLUMN IF NOT EXISTS material_id BIGINT;
+ALTER TABLE batch_info ADD COLUMN IF NOT EXISTS material_code VARCHAR(50);
+ALTER TABLE batch_info ADD COLUMN IF NOT EXISTS material_name VARCHAR(200);
+ALTER TABLE batch_info ADD COLUMN IF NOT EXISTS produce_date DATE;
+ALTER TABLE batch_info ADD COLUMN IF NOT EXISTS expiry_date DATE;
+ALTER TABLE batch_info ADD COLUMN IF NOT EXISTS supplier_id BIGINT;
+ALTER TABLE batch_info ADD COLUMN IF NOT EXISTS supplier_name VARCHAR(200);
+ALTER TABLE batch_info ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+ALTER TABLE batch_info ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE print_template ADD COLUMN IF NOT EXISTS template_code VARCHAR(50);
+ALTER TABLE print_template ADD COLUMN IF NOT EXISTS template_name VARCHAR(100);
+ALTER TABLE print_template ADD COLUMN IF NOT EXISTS doc_type VARCHAR(50);
+ALTER TABLE print_template ADD COLUMN IF NOT EXISTS paper_size VARCHAR(20);
+ALTER TABLE print_template ADD COLUMN IF NOT EXISTS orientation VARCHAR(20);
+ALTER TABLE print_template ADD COLUMN IF NOT EXISTS template_content TEXT;
+ALTER TABLE print_template ADD COLUMN IF NOT EXISTS is_default SMALLINT DEFAULT 0;
+ALTER TABLE print_template ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE print_template ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
+ALTER TABLE print_template ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+ALTER TABLE print_template ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE print_template ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+-- ---------- 13. version / custom_field / data_version_record ----------
+ALTER TABLE data_version_record ADD COLUMN IF NOT EXISTS version_no VARCHAR(50);
+ALTER TABLE data_version_record ADD COLUMN IF NOT EXISTS patch_name VARCHAR(200);
+ALTER TABLE data_version_record ADD COLUMN IF NOT EXISTS patch_file VARCHAR(500);
+ALTER TABLE data_version_record ADD COLUMN IF NOT EXISTS patch_hash VARCHAR(100);
+ALTER TABLE data_version_record ADD COLUMN IF NOT EXISTS apply_time TIMESTAMP;
+ALTER TABLE data_version_record ADD COLUMN IF NOT EXISTS apply_status VARCHAR(20);
+ALTER TABLE data_version_record ADD COLUMN IF NOT EXISTS error_message TEXT;
+ALTER TABLE data_version_record ADD COLUMN IF NOT EXISTS rollback_sql TEXT;
+ALTER TABLE data_version_record ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+ALTER TABLE data_version_record ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE sys_custom_field ADD COLUMN IF NOT EXISTS entity_type VARCHAR(50);
+ALTER TABLE sys_custom_field ADD COLUMN IF NOT EXISTS entity_name VARCHAR(100);
+ALTER TABLE sys_custom_field ADD COLUMN IF NOT EXISTS field_code VARCHAR(50);
+ALTER TABLE sys_custom_field ADD COLUMN IF NOT EXISTS field_name VARCHAR(100);
+ALTER TABLE sys_custom_field ADD COLUMN IF NOT EXISTS field_type VARCHAR(20);
+ALTER TABLE sys_custom_field ADD COLUMN IF NOT EXISTS field_length INT;
+ALTER TABLE sys_custom_field ADD COLUMN IF NOT EXISTS field_scale INT DEFAULT 0;
+ALTER TABLE sys_custom_field ADD COLUMN IF NOT EXISTS default_value VARCHAR(255);
+ALTER TABLE sys_custom_field ADD COLUMN IF NOT EXISTS is_required SMALLINT DEFAULT 0;
+ALTER TABLE sys_custom_field ADD COLUMN IF NOT EXISTS is_enabled SMALLINT DEFAULT 1;
+ALTER TABLE sys_custom_field ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
+ALTER TABLE sys_custom_field ADD COLUMN IF NOT EXISTS options TEXT;
+ALTER TABLE sys_custom_field ADD COLUMN IF NOT EXISTS remark VARCHAR(500);
+ALTER TABLE sys_custom_field ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE sys_custom_field_value ADD COLUMN IF NOT EXISTS field_id BIGINT;
+ALTER TABLE sys_custom_field_value ADD COLUMN IF NOT EXISTS entity_type VARCHAR(50);
+ALTER TABLE sys_custom_field_value ADD COLUMN IF NOT EXISTS entity_id BIGINT;
+ALTER TABLE sys_custom_field_value ADD COLUMN IF NOT EXISTS field_value TEXT;
+ALTER TABLE sys_custom_field_value ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE sys_custom_field_value ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+-- ---------- 验证输出（可忽略）----------
+SELECT 'safety_net_ok' AS check_item, COUNT(*) AS col_count FROM (
+  SELECT 1 FROM material LIMIT 1
+) t;

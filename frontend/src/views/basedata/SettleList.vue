@@ -1,28 +1,37 @@
 <template>
   <div class="erp-page">
-    <CrudTable
-      title="结算方式"
+    <CrudTable ref="tableRef"
+      :hide-buttons="['print']"
+      :title="$tt('结算方式')"
+      custom-field-entity="settle"
       :columns="columns"
       :fetch-data="fetchData"
       :on-save="onSave"
       :on-delete="onDelete"
+      :on-batch-delete="onBatchDelete"
       :search-fields="searchFields"
-      :form-fields="formFields"
+      add-route="/basedata/settle/new"
+      edit-route="/basedata/settle/edit"
       id-field="settleModeId"
       perm-add="basedata:settle:add"
       perm-edit="basedata:settle:edit"
       perm-delete="basedata:settle:delete"
+      entity-name="settlementMode"
     >
       <template #statusSlot="{ row }">
-        <el-tag :type="row.status === '启用' ? 'success' : 'info'" size="small">{{ row.status }}</el-tag>
+        <el-tag :type="row.status === '启用' ? 'success' : 'info'" size="small">{{ $dt(row.status) }}</el-tag>
       </template>
     </CrudTable>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import { useAutoRefresh } from '@/composables/useAutoRefresh'
+const tableRef = ref(null)
+useAutoRefresh(() => tableRef.value?.loadData?.())
 import CrudTable from '@/components/CrudTable.vue'
-import { listSettle, saveSettle, updateSettle, deleteSettle } from '@/api/basedata/settle'
+import { listSettle, saveSettle, updateSettle, deleteSettle, batchDeleteSettle } from '@/api/basedata/settle'
 
 const searchFields = [
   { prop: 'keyword', label: '关键字', placeholder: '编码/名称' }
@@ -33,19 +42,8 @@ const columns = [
   { prop: 'settleModeName', label: '结算名称', minWidth: 120 },
   { prop: 'settleType', label: '结算类型', minWidth: 120 },
   { prop: 'sortOrder', label: '排序', minWidth: 100 },
-  { prop: 'status', label: '状态', width: 100, slot: 'statusSlot' }
-]
-
-const formFields = [
-  { prop: 'settleModeCode', label: '结算编码', required: true, placeholder: '如 CASH' },
-  { prop: 'settleModeName', label: '结算名称', required: true, placeholder: '如 现金' },
-  { prop: 'settleType', label: '结算类型', type: 'select', required: true, default: '通用', options: [
-    { value: '通用', label: '通用' }, { value: '收款', label: '收款' }, { value: '付款', label: '付款' }
-  ] },
-  { prop: 'sortOrder', label: '排序', type: 'number', default: 0 },
-  { prop: 'status', label: '状态', type: 'select', required: true, default: '启用', options: [
-    { value: '启用', label: '启用' }, { value: '停用', label: '停用' }
-  ] }
+  { prop: 'status', label: '状态', width: 100, slot: 'statusSlot' },
+  { prop: 'remark', label: '备注', minWidth: 150, showOverflowTooltip: true }
 ]
 
 async function fetchData(params) {
@@ -58,5 +56,9 @@ async function onSave(data, isEdit) {
 }
 async function onDelete(row) {
   await deleteSettle(row.settleModeId)
+}
+/** 批量删除（2026-09-20 接入：CrudTable 一次请求批量删，替代原先逐条循环） */
+async function onBatchDelete(rows) {
+  await batchDeleteSettle(rows.map(r => r.settleModeId))
 }
 </script>

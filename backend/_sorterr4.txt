@@ -1,0 +1,21 @@
+﻿[ERROR] COMPILATION ERROR : 
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/log/operation/service/OperationLogServiceImpl.java:[26,26] �Ҳ�������
+  ����:   �� Set
+  λ��: �� com.erp.log.operation.service.OperationLogServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/finance/credit/service/CreditLimitServiceImpl.java:[47,26] �Ҳ�������
+  ����:   �� Set
+  λ��: �� com.erp.finance.credit.service.CreditLimitServiceImpl
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project smart-erp: Compilation failure: Compilation failure: 
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/log/operation/service/OperationLogServiceImpl.java:[26,26] �Ҳ�������
+[ERROR]   ����:   �� Set
+[ERROR]   λ��: �� com.erp.log.operation.service.OperationLogServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/finance/credit/service/CreditLimitServiceImpl.java:[47,26] �Ҳ�������
+[ERROR]   ����:   �� Set
+[ERROR]   λ��: �� com.erp.finance.credit.service.CreditLimitServiceImpl
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

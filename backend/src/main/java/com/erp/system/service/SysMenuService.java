@@ -13,6 +13,9 @@ public interface SysMenuService extends IService<SysMenu> {
     /** 树形结构(递归构建children) */
     List<SysMenu> getTree();
 
+    /** 根据用户角色获取可见菜单树(admin返回全部菜单) */
+    List<SysMenu> getTreeByUser(Long userId, boolean isAdmin);
+
     /** 详情 */
     SysMenu getDetail(Long id);
 

@@ -61,6 +61,17 @@ public class SysOperateLog {
     @TableField("bill_no")
     private String billNo;
 
+    /**
+     * 单据跳转信息（非库字段，列表查询时按 bill_type + bill_no 反查填充）：
+     * 前端据此把「单据编号」渲染成可点链接（见 frontend/src/utils/billRoute.js）。
+     * 反查不到（单据已删/无独立编辑页）时留空 → 前端退化为纯文本。
+     */
+    @TableField(exist = false)
+    private String billDocType;
+
+    @TableField(exist = false)
+    private Long billId;
+
     @TableField("operate_content")
     private String operateContent;
 

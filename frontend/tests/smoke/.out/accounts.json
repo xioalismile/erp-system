@@ -1,0 +1,700 @@
+{
+  "generatedAt": "2026-11-11T14:38:05.813Z",
+  "baseUrl": "https://kaiyu.pro",
+  "tenant": {
+    "tenantId": 3,
+    "tenantCode": "sc_wudong",
+    "tenantName": "自动化测试租户",
+    "dbName": "erp_tenant_sc_wudong"
+  },
+  "testUserPassword": "admin123",
+  "dataPrefix": "SMOKE-",
+  "accounts": [
+    {
+      "moduleKey": "dashboard",
+      "moduleLabel": "工作台",
+      "roleCode": "SMOKE_DASHBOARD",
+      "username": "smoke_dashboard",
+      "roleId": 28,
+      "userId": 4,
+      "granted": [
+        "/dashboard"
+      ],
+      "missing": [],
+      "verified": true,
+      "actualPaths": [
+        "/dashboard"
+      ],
+      "roles": [
+        "SMOKE_DASHBOARD"
+      ],
+      "diff": {
+        "onlyActual": [],
+        "onlyExpect": []
+      },
+      "expectedSidebarGroups": [
+        "dashboard"
+      ],
+      "expectedSidebarItems": [
+        "/dashboard"
+      ]
+    },
+    {
+      "moduleKey": "databoard",
+      "moduleLabel": "数据看板",
+      "roleCode": "SMOKE_DATABOARD",
+      "username": "smoke_databoard",
+      "roleId": 29,
+      "userId": 5,
+      "granted": [
+        "/databoard/finance",
+        "/databoard/sale",
+        "/databoard/inventory",
+        "/databoard/spc"
+      ],
+      "missing": [
+        "/databoard/operation"
+      ],
+      "verified": true,
+      "actualPaths": [
+        "/databoard/finance",
+        "/databoard/inventory",
+        "/databoard/sale",
+        "/databoard/spc"
+      ],
+      "roles": [
+        "SMOKE_DATABOARD"
+      ],
+      "diff": {
+        "onlyActual": [],
+        "onlyExpect": []
+      },
+      "expectedSidebarGroups": [
+        "databoard"
+      ],
+      "expectedSidebarItems": [
+        "/databoard/finance",
+        "/databoard/sale",
+        "/databoard/inventory",
+        "/databoard/spc"
+      ]
+    },
+    {
+      "moduleKey": "basedata",
+      "moduleLabel": "基础资料",
+      "roleCode": "SMOKE_BASEDATA",
+      "username": "smoke_basedata",
+      "roleId": 30,
+      "userId": 6,
+      "granted": [
+        "/basedata/unit",
+        "/basedata/currency",
+        "/basedata/settle",
+        "/basedata/bank-account",
+        "/basedata/price-level",
+        "/basedata/department",
+        "/basedata/employee",
+        "/basedata/warehouse",
+        "/basedata/location",
+        "/basedata/material-category",
+        "/basedata/material",
+        "/basedata/customer",
+        "/basedata/supplier",
+        "/masterdata/bom",
+        "/basedata/help"
+      ],
+      "missing": [
+        "/masterdata/qc-template"
+      ],
+      "verified": true,
+      "actualPaths": [
+        "/basedata/bank-account",
+        "/basedata/currency",
+        "/basedata/customer",
+        "/basedata/department",
+        "/basedata/employee",
+        "/basedata/help",
+        "/basedata/location",
+        "/basedata/material",
+        "/basedata/material-category",
+        "/basedata/price-level",
+        "/basedata/settle",
+        "/basedata/supplier",
+        "/basedata/unit",
+        "/basedata/warehouse",
+        "/masterdata/bom"
+      ],
+      "roles": [
+        "SMOKE_BASEDATA"
+      ],
+      "diff": {
+        "onlyActual": [],
+        "onlyExpect": []
+      },
+      "expectedSidebarGroups": [
+        "basedata"
+      ],
+      "expectedSidebarItems": [
+        "/basedata/unit",
+        "/basedata/currency",
+        "/basedata/settle",
+        "/basedata/bank-account",
+        "/basedata/price-level",
+        "/basedata/department",
+        "/basedata/employee",
+        "/basedata/warehouse",
+        "/basedata/location",
+        "/basedata/material-category",
+        "/basedata/material",
+        "/basedata/customer",
+        "/basedata/supplier",
+        "/masterdata/bom",
+        "/basedata/help"
+      ]
+    },
+    {
+      "moduleKey": "crm",
+      "moduleLabel": "客户管理",
+      "roleCode": "SMOKE_CRM",
+      "username": "smoke_crm",
+      "roleId": 31,
+      "userId": 7,
+      "granted": [
+        "/crm/dashboard",
+        "/crm/sales-target",
+        "/crm/warning",
+        "/crm/customer",
+        "/crm/pool",
+        "/crm/lead",
+        "/crm/opportunity",
+        "/crm/funnel",
+        "/crm/contact",
+        "/crm/follow-up",
+        "/crm/complaint",
+        "/crm/survey",
+        "/crm/report",
+        "/crm/help"
+      ],
+      "missing": [
+        "/crm/sales-activity"
+      ],
+      "verified": true,
+      "actualPaths": [
+        "/crm/complaint",
+        "/crm/contact",
+        "/crm/customer",
+        "/crm/dashboard",
+        "/crm/follow-up",
+        "/crm/funnel",
+        "/crm/help",
+        "/crm/lead",
+        "/crm/opportunity",
+        "/crm/pool",
+        "/crm/report",
+        "/crm/sales-target",
+        "/crm/survey",
+        "/crm/warning"
+      ],
+      "roles": [
+        "SMOKE_CRM"
+      ],
+      "diff": {
+        "onlyActual": [],
+        "onlyExpect": []
+      },
+      "expectedSidebarGroups": [
+        "crm"
+      ],
+      "expectedSidebarItems": [
+        "/crm/dashboard",
+        "/crm/sales-target",
+        "/crm/warning",
+        "/crm/customer",
+        "/crm/pool",
+        "/crm/lead",
+        "/crm/opportunity",
+        "/crm/funnel",
+        "/crm/contact",
+        "/crm/follow-up",
+        "/crm/complaint",
+        "/crm/survey",
+        "/crm/report",
+        "/crm/help"
+      ]
+    },
+    {
+      "moduleKey": "acquisition",
+      "moduleLabel": "获客管理",
+      "roleCode": "SMOKE_ACQUISITION",
+      "username": "smoke_acquisition",
+      "roleId": 32,
+      "userId": 8,
+      "granted": [
+        "/acquisition/task",
+        "/acquisition/result",
+        "/acquisition/login",
+        "/acquisition/help"
+      ],
+      "missing": [],
+      "verified": true,
+      "actualPaths": [
+        "/acquisition/help",
+        "/acquisition/login",
+        "/acquisition/result",
+        "/acquisition/task"
+      ],
+      "roles": [
+        "SMOKE_ACQUISITION"
+      ],
+      "diff": {
+        "onlyActual": [],
+        "onlyExpect": []
+      },
+      "expectedSidebarGroups": [
+        "acquisition"
+      ],
+      "expectedSidebarItems": [
+        "/acquisition/task",
+        "/acquisition/result",
+        "/acquisition/login",
+        "/acquisition/help"
+      ]
+    },
+    {
+      "moduleKey": "sale",
+      "moduleLabel": "销售管理",
+      "roleCode": "SMOKE_SALE",
+      "username": "smoke_sale",
+      "roleId": 33,
+      "userId": 9,
+      "granted": [
+        "/sale/orders",
+        "/sale/contracts",
+        "/sale/quotes",
+        "/sale/deliveries",
+        "/logistics/dashboard",
+        "/sale/returns",
+        "/sale/invoices",
+        "/sale/report/analysis",
+        "/sale/report/customer-statement",
+        "/sale/help"
+      ],
+      "missing": [
+        "/sale/report/sale-order-detail",
+        "/sale/report/sale-delivery-detail",
+        "/sale/report/sale-invoice-detail"
+      ],
+      "verified": true,
+      "actualPaths": [
+        "/logistics/dashboard",
+        "/sale/contracts",
+        "/sale/deliveries",
+        "/sale/help",
+        "/sale/invoices",
+        "/sale/orders",
+        "/sale/quotes",
+        "/sale/report/analysis",
+        "/sale/report/customer-statement",
+        "/sale/returns"
+      ],
+      "roles": [
+        "SMOKE_SALE"
+      ],
+      "diff": {
+        "onlyActual": [],
+        "onlyExpect": []
+      },
+      "expectedSidebarGroups": [
+        "sale"
+      ],
+      "expectedSidebarItems": [
+        "/sale/orders",
+        "/sale/contracts",
+        "/sale/quotes",
+        "/sale/deliveries",
+        "/logistics/dashboard",
+        "/sale/returns",
+        "/sale/invoices",
+        "/sale/report/analysis",
+        "/sale/report/customer-statement",
+        "/sale/help"
+      ]
+    },
+    {
+      "moduleKey": "purchase",
+      "moduleLabel": "采购管理",
+      "roleCode": "SMOKE_PURCHASE",
+      "username": "smoke_purchase",
+      "roleId": 34,
+      "userId": 10,
+      "granted": [
+        "/purchase/requests",
+        "/purchase/contracts",
+        "/purchase/orders",
+        "/purchase/inbounds",
+        "/purchase/returns",
+        "/purchase/invoices",
+        "/purchase/report/analysis",
+        "/purchase/report/supplier-statement",
+        "/purchase/help"
+      ],
+      "missing": [
+        "/purchase/report/purchase-request-detail",
+        "/purchase/report/purchase-contract-detail",
+        "/purchase/report/purchase-order-detail",
+        "/purchase/report/purchase-inbound-detail",
+        "/purchase/report/purchase-return-detail",
+        "/purchase/report/purchase-invoice-detail"
+      ],
+      "verified": true,
+      "actualPaths": [
+        "/purchase/contracts",
+        "/purchase/help",
+        "/purchase/inbounds",
+        "/purchase/invoices",
+        "/purchase/orders",
+        "/purchase/report/analysis",
+        "/purchase/report/supplier-statement",
+        "/purchase/requests",
+        "/purchase/returns"
+      ],
+      "roles": [
+        "SMOKE_PURCHASE"
+      ],
+      "diff": {
+        "onlyActual": [],
+        "onlyExpect": []
+      },
+      "expectedSidebarGroups": [
+        "purchase"
+      ],
+      "expectedSidebarItems": [
+        "/purchase/requests",
+        "/purchase/contracts",
+        "/purchase/orders",
+        "/purchase/inbounds",
+        "/purchase/returns",
+        "/purchase/invoices",
+        "/purchase/report/analysis",
+        "/purchase/report/supplier-statement",
+        "/purchase/help"
+      ]
+    },
+    {
+      "moduleKey": "inventory",
+      "moduleLabel": "库存管理",
+      "roleCode": "SMOKE_INVENTORY",
+      "username": "smoke_inventory",
+      "roleId": 35,
+      "userId": 11,
+      "granted": [
+        "/inventory/current",
+        "/inventory/batches",
+        "/inventory/ledger",
+        "/inventory/other-receipts",
+        "/inventory/other-issues",
+        "/inventory/stock-transfers",
+        "/inventory/stock-checks",
+        "/inventory/material-requisitions",
+        "/inventory/report/analysis",
+        "/inventory/help"
+      ],
+      "missing": [
+        "/inventory/report/other-receipt-detail",
+        "/inventory/report/other-issue-detail",
+        "/inventory/report/stock-transfer-detail",
+        "/inventory/report/stock-check-detail",
+        "/inventory/report/material-requisition-detail"
+      ],
+      "verified": true,
+      "actualPaths": [
+        "/inventory/batches",
+        "/inventory/current",
+        "/inventory/help",
+        "/inventory/ledger",
+        "/inventory/material-requisitions",
+        "/inventory/other-issues",
+        "/inventory/other-receipts",
+        "/inventory/report/analysis",
+        "/inventory/stock-checks",
+        "/inventory/stock-transfers"
+      ],
+      "roles": [
+        "SMOKE_INVENTORY"
+      ],
+      "diff": {
+        "onlyActual": [],
+        "onlyExpect": []
+      },
+      "expectedSidebarGroups": [
+        "inventory"
+      ],
+      "expectedSidebarItems": [
+        "/inventory/current",
+        "/inventory/batches",
+        "/inventory/ledger",
+        "/inventory/other-receipts",
+        "/inventory/other-issues",
+        "/inventory/stock-transfers",
+        "/inventory/stock-checks",
+        "/inventory/material-requisitions",
+        "/inventory/report/analysis",
+        "/inventory/help"
+      ]
+    },
+    {
+      "moduleKey": "production",
+      "moduleLabel": "生产管理",
+      "roleCode": "SMOKE_PRODUCTION",
+      "username": "smoke_production",
+      "roleId": 36,
+      "userId": 12,
+      "granted": [
+        "/production/routings",
+        "/production/mrp",
+        "/production/workorders",
+        "/production/schedule-board",
+        "/production/assemble",
+        "/production/disassemble",
+        "/production/returns",
+        "/production/supplements",
+        "/production/receipts",
+        "/production/help",
+        "/production/report/analysis"
+      ],
+      "missing": [
+        "/production/progress-tracking",
+        "/production/batch-record-center",
+        "/production/qc-record"
+      ],
+      "verified": true,
+      "actualPaths": [
+        "/production/assemble",
+        "/production/disassemble",
+        "/production/help",
+        "/production/mrp",
+        "/production/receipts",
+        "/production/report/analysis",
+        "/production/returns",
+        "/production/routings",
+        "/production/schedule-board",
+        "/production/supplements",
+        "/production/workorders"
+      ],
+      "roles": [
+        "SMOKE_PRODUCTION"
+      ],
+      "diff": {
+        "onlyActual": [],
+        "onlyExpect": []
+      },
+      "expectedSidebarGroups": [
+        "production"
+      ],
+      "expectedSidebarItems": [
+        "/production/routings",
+        "/production/mrp",
+        "/production/workorders",
+        "/production/schedule-board",
+        "/production/assemble",
+        "/production/disassemble",
+        "/production/returns",
+        "/production/supplements",
+        "/production/receipts",
+        "/production/help",
+        "/production/report/analysis"
+      ]
+    },
+    {
+      "moduleKey": "subcontract",
+      "moduleLabel": "委外管理",
+      "roleCode": "SMOKE_SUBCONTRACT",
+      "username": "smoke_subcontract",
+      "roleId": 37,
+      "userId": 13,
+      "granted": [
+        "/subcontract/orders",
+        "/subcontract/picks",
+        "/subcontract/inbounds",
+        "/subcontract/supplements",
+        "/subcontract/returns",
+        "/subcontract/help"
+      ],
+      "missing": [],
+      "verified": true,
+      "actualPaths": [
+        "/subcontract/help",
+        "/subcontract/inbounds",
+        "/subcontract/orders",
+        "/subcontract/picks",
+        "/subcontract/returns",
+        "/subcontract/supplements"
+      ],
+      "roles": [
+        "SMOKE_SUBCONTRACT"
+      ],
+      "diff": {
+        "onlyActual": [],
+        "onlyExpect": []
+      },
+      "expectedSidebarGroups": [
+        "subcontract"
+      ],
+      "expectedSidebarItems": [
+        "/subcontract/orders",
+        "/subcontract/picks",
+        "/subcontract/inbounds",
+        "/subcontract/supplements",
+        "/subcontract/returns",
+        "/subcontract/help"
+      ]
+    },
+    {
+      "moduleKey": "sample",
+      "moduleLabel": "打样管理",
+      "roleCode": "SMOKE_SAMPLE",
+      "username": "smoke_sample",
+      "roleId": 38,
+      "userId": 14,
+      "granted": [
+        "/sample/list",
+        "/freesample/list"
+      ],
+      "missing": [],
+      "verified": true,
+      "actualPaths": [
+        "/freesample/list",
+        "/sample/list"
+      ],
+      "roles": [
+        "SMOKE_SAMPLE"
+      ],
+      "diff": {
+        "onlyActual": [],
+        "onlyExpect": []
+      },
+      "expectedSidebarGroups": [
+        "sample"
+      ],
+      "expectedSidebarItems": [
+        "/sample/list",
+        "/freesample/list"
+      ]
+    },
+    {
+      "moduleKey": "finance",
+      "moduleLabel": "财务管理",
+      "roleCode": "SMOKE_FINANCE",
+      "username": "smoke_finance",
+      "roleId": 39,
+      "userId": 15,
+      "granted": [
+        "/finance/sale-pre-receipts",
+        "/finance/purchase-pre-payments",
+        "/finance/receipt",
+        "/finance/payment",
+        "/finance/operation-expense",
+        "/finance/cost-calculation",
+        "/finance/cost-config",
+        "/finance/help",
+        "/finance/report/analysis",
+        "/finance/report/ar-summary",
+        "/finance/report/ap-summary"
+      ],
+      "missing": [
+        "/finance/wage-settlement"
+      ],
+      "verified": true,
+      "actualPaths": [
+        "/finance/cost-calculation",
+        "/finance/cost-config",
+        "/finance/help",
+        "/finance/operation-expense",
+        "/finance/payment",
+        "/finance/purchase-pre-payments",
+        "/finance/receipt",
+        "/finance/report/analysis",
+        "/finance/report/ap-summary",
+        "/finance/report/ar-summary",
+        "/finance/sale-pre-receipts"
+      ],
+      "roles": [
+        "SMOKE_FINANCE"
+      ],
+      "diff": {
+        "onlyActual": [],
+        "onlyExpect": []
+      },
+      "expectedSidebarGroups": [
+        "finance"
+      ],
+      "expectedSidebarItems": [
+        "/finance/sale-pre-receipts",
+        "/finance/purchase-pre-payments",
+        "/finance/receipt",
+        "/finance/payment",
+        "/finance/operation-expense",
+        "/finance/cost-calculation",
+        "/finance/cost-config",
+        "/finance/help",
+        "/finance/report/analysis",
+        "/finance/report/ar-summary",
+        "/finance/report/ap-summary"
+      ]
+    },
+    {
+      "moduleKey": "report",
+      "moduleLabel": "报表中心",
+      "roleCode": "SMOKE_REPORT",
+      "username": "smoke_report",
+      "roleId": 40,
+      "userId": 16,
+      "granted": [
+        "/report/custom"
+      ],
+      "missing": [],
+      "verified": true,
+      "actualPaths": [
+        "/report/custom"
+      ],
+      "roles": [
+        "SMOKE_REPORT"
+      ],
+      "diff": {
+        "onlyActual": [],
+        "onlyExpect": []
+      },
+      "expectedSidebarGroups": [
+        "report"
+      ],
+      "expectedSidebarItems": [
+        "/report/custom"
+      ]
+    },
+    {
+      "moduleKey": "system",
+      "moduleLabel": "系统管理",
+      "roleCode": "SMOKE_SYSTEM",
+      "username": "smoke_system",
+      "roleId": 41,
+      "userId": 17,
+      "granted": [
+        "/system/settings"
+      ],
+      "missing": [],
+      "verified": true,
+      "actualPaths": [
+        "/system/settings"
+      ],
+      "roles": [
+        "SMOKE_SYSTEM"
+      ],
+      "diff": {
+        "onlyActual": [],
+        "onlyExpect": []
+      },
+      "expectedSidebarGroups": [],
+      "expectedSidebarItems": []
+    }
+  ]
+}

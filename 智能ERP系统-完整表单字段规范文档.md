@@ -98,6 +98,9 @@
   - [5.6 工序汇报单](#56-工序汇报单)
   - [5.7 委外加工单](#57-委外加工单)
   - [5.8 MRP运算方案](#58-mrp运算方案)
+  - [5.9 打样单](#59-打样单)
+  - [5.10 生产组装单](#510-生产组装单)
+  - [5.11 生产拆卸单](#511-生产拆卸单)
 - [第六部分：财务管理模块](#第六部分财务管理模块)
   - [6.1 应收单](#61-应收单)
   - [6.2 应付单](#62-应付单)
@@ -1983,69 +1986,167 @@
 
 ### 5.1 BOM物料清单
 
-**业务说明**：BOM（Bill of Materials）物料清单定义了产品的组成结构，包括产品所需的所有原材料、零部件、半成品及其用量关系。BOM是MRP运算、生产领料、成本核算的基础，支持多版本管理和工程变更。
+**业务说明**：BOM（Bill of Materials）物料清单定义了产品的组成结构，包括产品所需的所有原材料、零部件、半成品及其用量关系。BOM是MRP运算、生产领料、成本核算的基础，支持多版本管理和工程变更。本章节字段已根据UI截图（生产管理 → BOM）完全对齐。
 
 **档案状态**：草稿 → 已审核 → 已停用
+**启用状态**：启用 / 禁用
+**单据编号格式**：BOM-yyyyMMdd-XXXX（系统自动生成）
 
 **关联关系**：物料档案 → BOM → 生产工单/领料单/MRP/成本计算
 
-#### 表头字段
+#### 5.1.1 列表查询区字段（顶部查询条件）
+
+| 序号 | 字段名 | 显示名 | 字段类型 | 长度 | 必填 | 默认值 | 说明 |
+|------|--------|--------|----------|------|------|--------|------|
+| 1 | FBOMNo | 单据编号 | NVARCHAR | 50 | 否 | - | 模糊匹配 |
+| 2 | FBOMDate | 单据日期 | DATERANGE | - | 否 | - | 起止日期范围 |
+| 3 | FBOMCategory | BOM分类 | NVARCHAR | 50 | 否 | - | 下拉：标准/工程/生产/成本/委外 |
+| 4 | FParentMaterialCode | 母件编号 | NVARCHAR | 50 | 否 | - | 模糊匹配 |
+| 5 | FParentMaterialName | 母件名称 | NVARCHAR | 200 | 否 | - | 模糊匹配（带"模..."下拉） |
+| 6 | FParentMaterialSpec | 母件规格 | NVARCHAR | 200 | 否 | - | 模糊匹配 |
+| 7 | FSpecProperty | 规格属性 | NVARCHAR | 200 | 否 | - | 多规格属性（颜色/尺码） |
+| 8 | FColorNo | 色号 | NVARCHAR | 50 | 否 | - | 模糊匹配 |
+| 9 | FOrigin | 产地 | NVARCHAR | 100 | 否 | - | 模糊匹配 |
+| 10 | FMaterialQuality | 材质 | NVARCHAR | 100 | 否 | - | 模糊匹配 |
+| 11 | FIsEnabled | 状态 | SMALLINT | - | 否 | - | 下拉：启用/禁用 |
+| 12 | FStatus | 单据状态 | NVARCHAR | 20 | 否 | - | 下拉：草稿/已审核/已停用 |
+
+#### 5.1.2 列表显示列（列设置可配置）
+
+| 序号 | 字段名 | 显示名 | 字段类型 | 长度 | 默认显示 | 说明 |
+|------|--------|--------|----------|------|----------|------|
+| 1 | FNo | 序号 | INT | - | 是 | 自动编号 |
+| 2 | FBOMNo | 单据编号 | NVARCHAR | 50 | 是 | 单据编号 |
+| 3 | FBOMDate | 单据日期 | DATE | - | 是 | 创建日期 |
+| 4 | FBOMCategory | BOM分类 | NVARCHAR | 50 | 是 | BOM分类 |
+| 5 | FParentMaterialCode | 母件编号 | NVARCHAR | 50 | 是 | 母件编号 |
+| 6 | FParentMaterialName | 母件名称 | NVARCHAR | 200 | 是 | 母件名称 |
+| 7 | FParentMaterialSpec | 母件规格 | NVARCHAR | 200 | 是 | 母件规格 |
+| 8 | FSpecProperty | 规格属性 | NVARCHAR | 200 | 是 | 规格属性 |
+| 9 | FColorNo | 色号 | NVARCHAR | 50 | 是 | 色号 |
+| 10 | FOrigin | 产地 | NVARCHAR | 100 | 是 | 产地 |
+| 11 | FMaterialQuality | 材质 | NVARCHAR | 100 | 是 | 材质 |
+| 12 | FBaseUnitName | 基本单位 | NVARCHAR | 50 | 是 | 基本单位名称 |
+| 13 | FIsEnabled | 状态 | SMALLINT | - | 是 | 1-启用，0-禁用 |
+| 14 | FStatus | 单据状态 | NVARCHAR | 20 | 是 | 草稿/已审核/已停用 |
+| 15 | FIsDefault | 默认BOM | SMALLINT | - | 是 | 1-默认，0-否 |
+| 16 | FManagerName | 负责人 | NVARCHAR | 50 | 是 | 负责人姓名 |
+| 17 | FBOMVersion | 版本号 | NVARCHAR | 20 | 是 | BOM版本 |
+
+**列表顶部统计**：启用数 / 禁用数 / 总数 + 百分比
+
+#### 5.1.3 详情页表头字段
 
 | 序号 | 字段名 | 显示名 | 字段类型 | 长度 | 必填 | 默认值 | 唯一 | 说明 |
 |------|--------|--------|----------|------|------|--------|------|------|
 | 1 | FBOMID | BOM ID | BIGINT | - | 是 | 自动生成 | 是 | 主键，自增 |
-| 2 | FBOMNo | BOM编号 | NVARCHAR | 50 | 是 | 自动生成 | 是 | 如 BOM-物料编码-版本 |
-| 3 | FParentMaterialID | 父项物料 | BIGINT | - | 是 | - | 否 | 关联物料档案（产成品/半成品） |
-| 4 | FParentMaterialCode | 父项物料编码 | NVARCHAR | 50 | 否 | - | 否 | 自动带出 |
-| 5 | FParentMaterialName | 父项物料名称 | NVARCHAR | 200 | 否 | - | 否 | 自动带出 |
-| 6 | FBOMVersion | BOM版本 | NVARCHAR | 20 | 是 | V1.0 | 否 | BOM版本号 |
-| 7 | FBOMType | BOM类型 | NVARCHAR | 20 | 是 | 标准BOM | 否 | 标准BOM/工程BOM/生产BOM/成本BOM |
-| 8 | FDefaultQty | 基本用量 | DECIMAL | 18,4 | 是 | 1.0000 | 否 | BOM展开的基本生产数量 |
-| 9 | FUnitID | 单位 | BIGINT | - | 是 | 物料主单位 | 否 | 父项物料的基本单位 |
-| 10 | FIsActive | 是否启用 | BIT | - | 是 | 1 | 否 | 0-未启用，1-已启用 |
-| 11 | FEffectiveDate | 生效日期 | DATE | - | 是 | 当前日期 | 否 | BOM版本生效日期 |
-| 12 | FExpiryDate | 失效日期 | DATE | - | 否 | - | 否 | BOM版本失效日期 |
-| 13 | FStatus | 状态 | NVARCHAR | 10 | 是 | 草稿 | 否 | 草稿/已审核/已停用 |
-| 14 | FAuditorID | 审核人 | BIGINT | - | 否 | - | 否 | 审核人 |
-| 15 | FAuditDate | 审核日期 | DATETIME | - | 否 | - | 否 | 审核时间 |
-| 16 | FCreatorID | 制单人 | BIGINT | - | 是 | 当前用户 | 否 | 制单人 |
-| 17 | FCreateDate | 制单日期 | DATETIME | - | 是 | 系统时间 | 否 | 制单时间 |
-| 18 | FRemark | 备注 | NVARCHAR | 500 | 否 | - | 否 | 表头备注 |
+| 2 | FBOMNo | 单据编号 | NVARCHAR | 50 | 是 | 系统自动生成 | 是 | 格式：BOM-yyyyMMdd-XXXX |
+| 3 | FBOMDate | 单据日期 | DATE | - | 是 | 当前日期 | 否 | 单据日期 |
+| 4 | FBOMCategory | BOM分类 | NVARCHAR | 50 | 否 | - | 否 | 下拉：标准/工程/生产/成本/委外 |
+| 5 | FBOMName | BOM名称 | NVARCHAR | 200 | 否 | 自动=母件名称-版本 | 否 | 用于显示 |
+| 6 | FBOMVersion | 版本号 | NVARCHAR | 20 | 是 | V1.0 | 否 | BOM版本号 |
+| 7 | FParentMaterialID | 母件ID | BIGINT | - | 是 | - | 否 | 关联物料档案（产成品/半成品） |
+| 8 | FParentMaterialCode | 母件编号 | NVARCHAR | 50 | 是 | - | 否 | 选完物料自动带出 |
+| 9 | FParentMaterialName | 母件名称 | NVARCHAR | 200 | 是 | - | 否 | 选完物料自动带出 |
+| 10 | FParentMaterialSpec | 母件规格 | NVARCHAR | 200 | 否 | - | 否 | 选完物料自动带出 |
+| 11 | FSpecProperty | 规格属性 | NVARCHAR | 200 | 否 | - | 否 | 多规格属性 |
+| 12 | FColorNo | 色号 | NVARCHAR | 50 | 否 | - | 否 | 选完物料自动带出 |
+| 13 | FOrigin | 产地 | NVARCHAR | 100 | 否 | - | 否 | 选完物料自动带出 |
+| 14 | FMaterialQuality | 材质 | NVARCHAR | 100 | 否 | - | 否 | 选完物料自动带出 |
+| 15 | FUnitID | 基本单位ID | BIGINT | - | 是 | 物料主单位 | 否 | 父项物料的基本单位 |
+| 16 | FUnitName | 基本单位 | NVARCHAR | 50 | 否 | - | 否 | 单位名称（冗余） |
+| 17 | FDefaultQty | 数量 | DECIMAL | 18,4 | 是 | 1.0000 | 否 | BOM展开的基本生产数量 |
+| 18 | FBOMType | BOM类型 | NVARCHAR | 20 | 是 | 标准BOM | 否 | 标准BOM/工程BOM/生产BOM/成本BOM |
+| 19 | FIsDefault | 默认BOM | SMALLINT | - | 是 | 0 | 否 | 0-否，1-是（同一物料下唯一） |
+| 20 | FIsPrimary | 是否主BOM | SMALLINT | - | 是 | 1 | 否 | 0-否，1-是 |
+| 21 | FIsEnabled | 状态 | SMALLINT | - | 是 | 1 | 否 | 1-启用，0-禁用 |
+| 22 | FStatus | 单据状态 | NVARCHAR | 20 | 是 | 草稿 | 否 | 草稿/已审核/已停用 |
+| 23 | FApprovalStatus | 审核状态 | NVARCHAR | 20 | 否 | - | 否 | 待审核/已审核/已驳回 |
+| 24 | FApprovedBy | 审核人 | NVARCHAR | 50 | 否 | - | 否 | 审核人 |
+| 25 | FApprovedAt | 审核时间 | DATETIME | - | 否 | - | 否 | 审核时间 |
+| 26 | FManagerID | 负责人ID | BIGINT | - | 否 | - | 否 | 下拉选择员工 |
+| 27 | FManagerName | 负责人 | NVARCHAR | 50 | 否 | - | 否 | 负责人姓名（冗余） |
+| 28 | FDefaultWarehouseID | 默认仓库ID | BIGINT | - | 否 | - | 否 | 下拉选择仓库 |
+| 29 | FDefaultWarehouseName | 默认仓库 | NVARCHAR | 100 | 否 | - | 否 | 仓库名称（冗余） |
+| 30 | FEffectiveDate | 生效日期 | DATE | - | 否 | 当前日期 | 否 | BOM版本生效日期 |
+| 31 | FExpiryDate | 失效日期 | DATE | - | 否 | - | 否 | BOM版本失效日期 |
+| 32 | FSubstituteBOMCode | 替代BOM编号 | NVARCHAR | 50 | 否 | - | 否 | 替代BOM |
+| 33 | FScrapRate | 损耗率(%) | DECIMAL | 8,4 | 否 | 0.0000 | 否 | 表头级损耗率 |
+| 34 | FRemark | 备注 | NVARCHAR | 500 | 否 | - | 否 | 表头备注 |
+| 35 | FAttachmentURLs | 附件URL | NVARCHAR | 1000 | 否 | - | 否 | 附件地址（多张用逗号分隔） |
+| 36 | FCreatedAt | 制单时间 | DATETIME | - | 是 | 系统时间 | 否 | 自动填充 |
+| 37 | FUpdatedAt | 更新时间 | DATETIME | - | 是 | 系统时间 | 否 | 自动填充 |
+| 38 | FCreatedBy | 制单人 | NVARCHAR | 50 | 是 | 当前用户 | 否 | 自动填充 |
+| 39 | FUpdatedBy | 更新人 | NVARCHAR | 50 | 否 | 当前用户 | 否 | 自动填充 |
 
-#### 表体字段（BOM子项）
+#### 5.1.4 详情页表体字段（商品明细/BOM子项）
 
 | 序号 | 字段名 | 显示名 | 字段类型 | 长度 | 必填 | 默认值 | 说明 |
 |------|--------|--------|----------|------|------|--------|------|
-| 1 | FRowNo | 行号 | INT | - | 是 | 自动递增 | 表体行号 |
-| 2 | FChildMaterialID | 子项物料 | BIGINT | - | 是 | - | 关联物料档案（原材料/半成品） |
-| 3 | FChildMaterialCode | 子项物料编码 | NVARCHAR | 50 | 否 | - | 自动带出 |
-| 4 | FChildMaterialName | 子项物料名称 | NVARCHAR | 200 | 否 | - | 自动带出 |
-| 5 | FChildModel | 规格型号 | NVARCHAR | 100 | 否 | - | 自动带出 |
-| 6 | FUnitID | 单位 | BIGINT | - | 是 | 物料主单位 | 关联计量单位 |
-| 7 | FBaseQty | 基本用量 | DECIMAL | 18,6 | 是 | 0.000000 | 生产1个父项物料所需子项数量 |
-| 8 | FQtyType | 用量类型 | NVARCHAR | 10 | 是 | 固定 | 固定/变动（随生产数量线性变化） |
-| 9 | FScrapRate | 损耗率(%) | DECIMAL | 8,4 | 否 | 0.0000 | 生产过程中的材料损耗率 |
-| 10 | FEffectiveDate | 生效日期 | DATE | - | 否 | - | 子项生效日期 |
-| 11 | FExpiryDate | 失效日期 | DATE | - | 否 | - | 子项失效日期 |
-| 12 | FProcessNo | 工序号 | NVARCHAR | 10 | 否 | - | 该物料在哪个工序使用 |
-| 13 | FIsKeyPart | 是否关键件 | BIT | - | 是 | 0 | 0-否，1-是（关键物料标记） |
-| 14 | FSupplyType | 供应类型 | NVARCHAR | 10 | 是 | 领料 | 领料/倒冲/虚拟件/委外 |
-| 15 | FPosition | 位号 | NVARCHAR | 50 | 否 | - | 物料在组装图中的位置编号 |
-| 16 | FRowRemark | 备注 | NVARCHAR | 200 | 否 | - | 行备注 |
+| 1 | FBOMItemID | BOM子项ID | BIGINT | - | 是 | 自动生成 | 主键，自增 |
+| 2 | FBOMID | 所属BOM | BIGINT | - | 是 | - | 关联BOM主表 |
+| 3 | FRowNo | 行号 | INT | - | 是 | 自动递增 | 表体行号，从1开始步长1 |
+| 4 | FChildMaterialID | 子件物料ID | BIGINT | - | 是 | - | 关联物料档案（原材料/半成品） |
+| 5 | FChildMaterialCode | 子件编码 | NVARCHAR | 50 | 否 | - | 选完物料自动带出 |
+| 6 | FChildMaterialName | 子件名称 | NVARCHAR | 200 | 否 | - | 选完物料自动带出 |
+| 7 | FChildModel | 子件型号 | NVARCHAR | 100 | 否 | - | 选完物料自动带出 |
+| 8 | FSpecProperty | 规格属性 | NVARCHAR | 200 | 否 | - | 选完物料自动带出 |
+| 9 | FSpecification | 规格 | NVARCHAR | 200 | 否 | - | 选完物料自动带出 |
+| 10 | FImageURL | 图片 | NVARCHAR | 500 | 否 | - | 子件图片URL（带预览） |
+| 11 | FUnitID | 单位 | BIGINT | - | 是 | 物料主单位 | 关联计量单位 |
+| 12 | FBaseQty | 用量 | DECIMAL | 18,6 | 是 | 0.000000 | 生产1个父项物料所需子项数量 |
+| 13 | FQtyType | 用量类型 | NVARCHAR | 10 | 是 | 固定 | 固定/变动（随生产数量线性变化） |
+| 14 | FScrapRate | 损耗率(%) | DECIMAL | 8,4 | 否 | 0.0000 | 生产过程中的材料损耗率 |
+| 15 | FEffectiveDate | 生效日期 | DATE | - | 否 | - | 子项生效日期 |
+| 16 | FExpiryDate | 失效日期 | DATE | - | 否 | - | 子项失效日期 |
+| 17 | FProcessNo | 工序号 | NVARCHAR | 10 | 否 | - | 该物料在哪个工序使用 |
+| 18 | FIsKeyPart | 是否关键件 | SMALLINT | - | 是 | 0 | 0-否，1-是（关键物料标记） |
+| 19 | FSupplyType | 供应类型 | NVARCHAR | 10 | 是 | 领料 | 领料/倒冲/虚拟件/委外 |
+| 20 | FPosition | 位号 | NVARCHAR | 50 | 否 | - | 物料在组装图中的位置编号 |
+| 21 | FWorkstationID | 工位ID | BIGINT | - | 否 | - | 关联工位 |
+| 22 | FIsOptional | 是否可选件 | SMALLINT | - | 是 | 0 | 0-否，1-是 |
+| 23 | FParentRowNo | 父行号 | INT | - | 否 | - | 多级BOM时关联上一级行号 |
+| 24 | FSubstituteRowNo | 替代料行号 | INT | - | 否 | - | 替代料的行号 |
+| 25 | FRowRemark | 备注 | NVARCHAR | 200 | 否 | - | 行备注 |
 
-#### 业务规则
+#### 5.1.5 按钮与操作
 
-- 同一父项物料同一版本只能有一个启用状态的BOM
-- BOM必须通过审核后才能用于生产和MRP运算
+| 序号 | 按钮 | API端点 | 说明 |
+|------|------|---------|------|
+| 1 | 新建 | POST /api/masterdata/bom | 创建BOM |
+| 2 | 复制 | POST /api/masterdata/bom | 复制现有BOM作为新草稿 |
+| 3 | 批量提交 | POST /api/masterdata/bom/batch-approve | 批量审核 草稿→已审核 |
+| 4 | 批量更新 | POST /api/masterdata/bom/batch-update | 批量启用/禁用 |
+| 5 | 更新默认BOM编号 | POST /api/masterdata/bom/{id}/set-default | 设为默认BOM（同一物料唯一） |
+| 6 | 打印 | GET /api/masterdata/bom/{id}/print | 打印BOM |
+| 7 | 删除 | DELETE /api/masterdata/bom/{id} | 删除草稿BOM |
+| 8 | 更新损耗率 | POST /api/masterdata/bom/{id}/update-scrap-rate | 同步更新表头+所有子项的损耗率 |
+| 9 | 批量导入 | POST /api/masterdata/bom/batch-import | Excel批量导入BOM |
+| 10 | 导出Excel | GET /api/masterdata/bom/export | 导出BOM列表 |
+| 11 | 列设置 | - | 弹窗配置显示列（No/列名/显示勾选） |
+| 12 | 提交 | POST /api/masterdata/bom/{id}/submit | 详情页提交审核 |
+| 13 | 保存 | POST/PUT /api/masterdata/bom | 详情页保存 |
+| 14 | 刷新 | GET /api/masterdata/bom/{id} | 详情页刷新 |
+
+#### 5.1.6 业务规则
+
+- 同一父项物料同一版本只能有一个**启用+默认**状态的BOM
+- 同一父项物料可以有多个版本（V1.0, V2.0）共存，但默认BOM唯一
+- BOM必须通过审核后才能用于生产领料和MRP运算
 - BOM子项不能循环引用（不能包含自身或其父级）
 - 子项物料不能是父项物料本身（防止自循环）
 - 损耗率影响实际领料数量：实际用量 = 基本用量 × (1 + 损耗率)
+- "更新损耗率"按钮会同步更新表头+所有子项的损耗率
 - 倒冲物料（Backflush）在生产入库时自动扣减库存
 - 虚拟件不产生实际库存，直接展开到下一级
+- 启用状态下BOM的"默认BOM"复选框互斥（同物料下只能1个默认）
 - BOM变更需通过ECN（工程变更通知）流程
 - BOM版本切换需考虑在制品处理
+- 母件+...按钮调用物料选择器，支持搜索+回显全部规格属性/色号/产地/材质
+- 物料下拉选择时自动同步规格属性/色号/产地/材质（若当前BOM未填）
+- 子件"选择产品"按钮调用物料选择器，支持按商品编码/名称/规格型号搜索
 
-#### 影响单据
+#### 5.1.7 影响单据
 
 | 影响操作 | 目标单据 | 影响内容 |
 |----------|----------|----------|
@@ -2445,6 +2546,279 @@
 | 执行MRP | 计划生产工单 | 生成生产建议 |
 | 确认计划 | 采购申请单 | 生成采购申请单 |
 | 确认计划 | 生产工单 | 生成生产工单 |
+
+---
+## 第五部分补充：打样管理模块
+
+> **业务说明**：打样管理用于新产品开发阶段的样品试制全过程管理，涵盖客户/内部打样需求登记、打样单据制作、物料清单（样品BOM）维护、样品制作进度跟踪、样品检验确认及打样结果转化为正式BOM。参考金蝶K3 Cloud"开发样品管理"、用友U8+"样品开发"模块的设计，结合行业通用的"原样→初样→确认样→大货样"打样阶段流转规范，打通"打样→BOM→生产"链路。
+
+### 5.9 打样单
+
+**业务说明**：打样单是打样管理的核心单据，记录客户或内部提出的样品开发需求，包含样品基本信息、客户需求、交期、样品BOM（子件清单）、打样阶段、状态流转。打样完成后可一键推送生成正式BOM。
+
+**单据状态流转**：草稿 → 待审核 → 已审核 → 打样中 → 已完成 → 已确认 → 已转BOM；已确认前可取消
+
+**关联关系**：客户档案/物料档案 → 打样单 → BOM（打样完成后转化）→ 生产工单
+
+#### 表头字段（28字段）
+
+| 序号 | 字段名 | 显示名 | 字段类型 | 长度 | 必填 | 默认值 | 唯一 | 说明 |
+|------|--------|--------|----------|------|------|--------|------|------|
+| 1 | FSampleID | 打样单ID | BIGINT | - | 是 | 自动生成 | 是 | 主键，自增 |
+| 2 | FSampleNo | 打样单号 | NVARCHAR | 50 | 是 | 自动生成 | 是 | 如 SAM-yyyyMMdd-0001 |
+| 3 | FSampleName | 样品名称 | NVARCHAR | 200 | 是 | - | 否 | 样品名称 |
+| 4 | FSampleType | 样品类型 | NVARCHAR | 20 | 是 | 新产品 | 否 | 新产品/改进产品/来料打样/内部研发 |
+| 5 | FSampleStage | 打样阶段 | NVARCHAR | 20 | 是 | 原样 | 否 | 原样/初样/确认样/大货样 |
+| 6 | FCustomerID | 客户 | BIGINT | - | 否 | - | 否 | 关联客户档案（客户打样必填） |
+| 7 | FCustomerName | 客户名称 | NVARCHAR | 200 | 否 | - | 否 | 自动带出 |
+| 8 | FContactPerson | 联系人 | NVARCHAR | 50 | 否 | - | 否 | 客户联系人 |
+| 9 | FContactPhone | 联系电话 | NVARCHAR | 50 | 否 | - | 否 | 客户联系电话 |
+| 10 | FMaterialID | 物料 | BIGINT | - | 否 | - | 否 | 关联物料档案（已有物料改进时填写） |
+| 11 | FMaterialCode | 物料编码 | NVARCHAR | 50 | 否 | - | 否 | 自动带出 |
+| 12 | FMaterialName | 物料名称 | NVARCHAR | 200 | 否 | - | 否 | 自动带出 |
+| 13 | FSpecification | 规格型号 | NVARCHAR | 200 | 否 | - | 否 | 样品规格描述 |
+| 14 | FUnitID | 单位 | BIGINT | - | 是 | 件 | 否 | 关联计量单位 |
+| 15 | FSampleQty | 打样数量 | DECIMAL | 18,4 | 是 | 1.0000 | 否 | 本次打样数量 |
+| 16 | FDemandDate | 需求交期 | DATE | - | 是 | - | 否 | 客户要求交付日期 |
+| 17 | FPlanFinishDate | 计划完成日期 | DATE | - | 是 | - | 否 | 内部计划完成日期 |
+| 18 | FActualFinishDate | 实际完成日期 | DATE | - | 否 | - | 否 | 打样完成时填写 |
+| 19 | FDepartmentID | 责任部门 | BIGINT | - | 是 | - | 否 | 责任工程部门 |
+| 20 | FEngineerID | 责任工程师 | BIGINT | - | 是 | - | 否 | 责任工程师 |
+| 21 | FPriority | 优先级 | NVARCHAR | 10 | 是 | 普通 | 否 | 紧急/高/普通/低 |
+| 22 | FCostAmount | 成本金额 | DECIMAL | 18,2 | 否 | 0.00 | 否 | 样品成本（汇总自表体） |
+| 23 | FStatus | 状态 | NVARCHAR | 20 | 是 | 草稿 | 否 | 草稿/待审核/已审核/打样中/已完成/已确认/已转BOM/已取消 |
+| 24 | FBomGenerated | 是否已转BOM | BIT | - | 是 | 0 | 否 | 0-未转，1-已转 |
+| 25 | FGeneratedBomId | 转化的BOM ID | BIGINT | - | 否 | - | 否 | 转BOM后回写的BOM主键 |
+| 26 | FRemark | 备注 | NVARCHAR | 1000 | 否 | - | 否 | 表头备注 |
+| 27 | FCreatorID | 制单人 | NVARCHAR | 50 | 是 | 当前用户 | 否 | 制单人 |
+| 28 | FCreateDate | 制单日期 | DATETIME | - | 是 | 系统时间 | 否 | 制单时间 |
+
+#### 表体字段（打样子件清单/样品BOM，14字段）
+
+| 序号 | 字段名 | 显示名 | 字段类型 | 长度 | 必填 | 默认值 | 说明 |
+|------|--------|--------|----------|------|------|--------|------|
+| 1 | FRowNo | 行号 | INT | - | 是 | 自动递增 | 表体行号，从1开始 |
+| 2 | FChildMaterialID | 子件物料 | BIGINT | - | 是 | - | 关联物料档案 |
+| 3 | FChildMaterialCode | 子件物料编码 | NVARCHAR | 50 | 否 | - | 自动带出 |
+| 4 | FChildMaterialName | 子件物料名称 | NVARCHAR | 200 | 否 | - | 自动带出 |
+| 5 | FSpecification | 规格型号 | NVARCHAR | 200 | 否 | - | 子件规格 |
+| 6 | FUnitID | 单位 | BIGINT | - | 是 | 物料主单位 | 关联计量单位 |
+| 7 | FBaseQty | 基本用量 | DECIMAL | 18,6 | 是 | 0.000000 | 单个样品所需子件数量 |
+| 8 | FQtyType | 用量类型 | NVARCHAR | 10 | 是 | 固定 | 固定/变动 |
+| 9 | FScrapRate | 损耗率(%) | DECIMAL | 8,4 | 否 | 0.0000 | 子件损耗率 |
+| 10 | FSupplyType | 供应类型 | NVARCHAR | 10 | 是 | 领料 | 领料/倒冲/虚拟件/委外 |
+| 11 | FIsKeyPart | 是否关键件 | BIT | - | 是 | 0 | 0-否，1-是 |
+| 12 | FUnitPrice | 单价 | DECIMAL | 18,4 | 否 | 0.0000 | 子件单价（用于成本估算） |
+| 13 | FAmount | 金额 | DECIMAL | 18,2 | 否 | 0.00 | 金额 = 用量 × 单价 |
+| 14 | FRowRemark | 备注 | NVARCHAR | 200 | 否 | - | 行备注 |
+
+#### 业务规则
+
+- 打样单号按编码规则自动生成：`SAM-yyyyMMdd-0001`，连字符分隔
+- 表体行号从1开始，步长1
+- 客户打样必须填写客户，内部研发打样可不填客户
+- 打样数量必须 > 0
+- 需求交期 ≤ 计划完成日期（内部承诺不能晚于客户要求）
+- 状态流转规则：
+  - 草稿 → 待审核（提交审核）
+  - 待审核 → 已审核（审核通过）/ 草稿（反审核）
+  - 已审核 → 打样中（开始打样）
+  - 打样中 → 已完成（样品制作完成）
+  - 已完成 → 已确认（客户/内部确认样品合格）
+  - 已确认 → 已转BOM（一键推送生成BOM，回写 FBomGenerated=1, FGeneratedBomId）
+  - 已确认/已完成前可取消：→ 已取消
+- 已转BOM的打样单不可再转BOM（防重复）
+- 转BOM时：以打样单表头物料/样品名称为父项，表体子件清单为BOM子项，BOM版本默认V1.0
+- 若打样单未指定父项物料，转BOM时需先创建物料档案
+
+#### 影响单据
+
+| 影响操作 | 目标单据 | 影响内容 |
+|----------|----------|----------|
+| 打样确认 | BOM | 一键推送生成正式BOM（BOM状态=草稿） |
+| 打样确认 | 物料档案 | 若父项物料不存在则自动创建 |
+| 打样完成 | 生产工单 | 可基于打样单直接创建小批量试制工单 |
+
+---
+
+### 5.10 生产组装单
+
+**业务说明**：生产组装单用于将多个半成品或零部件组装成成品的业务场景。例如：将喇叭、功放板、外壳等零部件组装成音响成品。组装过程中，成品入库（库存增加），BOM原料出库（库存减少）。适用于套装组装、组合包装、成品组装等场景。
+
+**单据状态流转**：草稿(0) → 待审批(1) → 生效(6)；含作废(3)状态
+
+**库存影响**：
+- 成品明细（produce_assemble_detail）：成品仓库入库+1
+- BOM原料明细（produce_assemble_bom）：原料仓库出库-1
+
+**上下游关联**：销售订单/生产计划 → 生产组装单 → 库存（成品入库+BOM原料出库）
+
+#### 表头字段（18字段）
+
+| 序号 | 字段名 | 显示名 | 字段类型 | 长度 | 必填 | 默认值 | 唯一 | 说明 |
+|------|--------|--------|----------|------|------|--------|------|------|
+| 1 | id | 组装单ID | BIGINT | - | 是 | 自动生成 | 是 | 主键，自增 |
+| 2 | serial_no | 单据编号 | NVARCHAR | 50 | 是 | 自动生成 | 是 | 格式：AS-yyyyMMdd-0001 |
+| 3 | dateline | 单据日期 | DATETIME | - | 是 | 当前日期 | 否 | 业务发生日期 |
+| 4 | dept | 生产部门 | BIGINT | - | 是 | 当前用户部门 | 否 | 关联部门档案 |
+| 5 | wh_id | 成品仓库 | BIGINT | - | 是 | - | 否 | 成品入库目标仓库 |
+| 6 | wh_id_bom | 原料仓库 | BIGINT | - | 是 | - | 否 | BOM原料出库来源仓库 |
+| 7 | is_tax | 是否含税 | BIT | - | 是 | 系统配置 | 否 | 0-否，1-是 |
+| 8 | tax_type | 计税方式 | INT | - | 否 | 系统配置 | 否 | 0-不含税，1-应税内含，2-应税外加 |
+| 9 | currency_id | 交易币别 | BIGINT | - | 是 | 系统本位币 | 否 | 关联币种档案 |
+| 10 | currency_rate | 汇率 | DECIMAL | 18,6 | 是 | 1.000000 | 否 | 外币汇率 |
+| 11 | amount | 单据金额 | DECIMAL | 18,2 | 是 | 0.00 | 否 | 成品明细金额合计 |
+| 12 | tax_rate | 税率 | DECIMAL | 6,4 | 否 | 系统默认 | 否 | 如13.0000表示13% |
+| 13 | print_num | 打印次数 | INT | - | 否 | 0 | 否 | 打印次数统计 |
+| 14 | images | 图片 | TEXT | - | 否 | - | 否 | JSON格式图片列表 |
+| 15 | files | 附件 | TEXT | - | 否 | - | 否 | JSON格式附件列表 |
+| 16 | notes | 备注 | NVARCHAR | 500 | 否 | - | 否 | 表头备注 |
+| 17 | status | 状态 | INT | - | 是 | 0 | 否 | 0-草稿，1-待审批，3-作废，6-生效 |
+| 18 | etime | 生效时间 | DATETIME | - | 否 | - | 否 | 审批通过时间 |
+
+**审计字段**：creator(创建人)、createdAt(创建时间)、modifier(修改人)、updatedAt(修改时间)
+
+#### 表体字段 - 成品明细（produce_assemble_detail，入库+1）
+
+| 序号 | 字段名 | 显示名 | 字段类型 | 长度 | 必填 | 默认值 | 说明 |
+|------|--------|--------|----------|------|------|--------|------|
+| 1 | line_no | 行号 | INT | - | 是 | 自动递增 | 从1开始，步长1 |
+| 2 | product_id | 物料 | BIGINT | - | 是 | - | 关联物料档案 |
+| 3 | product_code | 物料编码 | NVARCHAR | 50 | 否 | 自动带出 | 根据物料自动填充 |
+| 4 | product_name | 物料名称 | NVARCHAR | 200 | 否 | 自动带出 | 根据物料自动填充 |
+| 5 | specification | 规格型号 | NVARCHAR | 200 | 否 | 自动带出 | 物料规格 |
+| 6 | unit | 单位 | NVARCHAR | 20 | 是 | 物料主单位 | 计量单位 |
+| 7 | quantity | 数量 | DECIMAL | 18,4 | 是 | 0.0000 | 组装数量 |
+| 8 | basic_quantity | 主单位数量 | DECIMAL | 18,4 | 是 | 0.0000 | 换算后的主单位数量 |
+| 9 | wh_id | 仓库 | BIGINT | - | 是 | 表头带出 | 成品入库仓库 |
+| 10 | price | 单价 | DECIMAL | 18,6 | 否 | 0.000000 | 成品单价 |
+| 11 | amount | 金额 | DECIMAL | 18,2 | 否 | 0.00 | 数量×单价 |
+| 12 | tax_rate | 税率 | DECIMAL | 6,4 | 否 | 表头税率 | 明细税率 |
+| 13 | tax_amount | 税额 | DECIMAL | 18,2 | 否 | 0.00 | 金额×税率 |
+| 14 | notes | 备注 | NVARCHAR | 200 | 否 | - | 行备注 |
+
+#### 表体字段 - BOM原料明细（produce_assemble_bom，出库-1）
+
+| 序号 | 字段名 | 显示名 | 字段类型 | 长度 | 必填 | 默认值 | 说明 |
+|------|--------|--------|----------|------|------|--------|------|
+| 1 | line_no | 行号 | INT | - | 是 | 自动递增 | 从1开始 |
+| 2 | parent_row_id | 关联成品行 | INT | - | 是 | - | 对应成品明细行的row_id |
+| 3 | product_id | 物料 | BIGINT | - | 是 | - | 关联物料档案（BOM子件） |
+| 4 | product_code | 物料编码 | NVARCHAR | 50 | 否 | 自动带出 | BOM子件编码 |
+| 5 | product_name | 物料名称 | NVARCHAR | 200 | 否 | 自动带出 | BOM子件名称 |
+| 6 | unit | 单位 | NVARCHAR | 20 | 是 | 物料主单位 | 计量单位 |
+| 7 | quantity | 数量 | DECIMAL | 18,4 | 是 | 0.0000 | 消耗数量 |
+| 8 | basic_quantity | 主单位数量 | DECIMAL | 18,4 | 是 | 0.0000 | 换算后的主单位数量 |
+| 9 | wh_id | 仓库 | BIGINT | - | 是 | 表头原料仓库 | BOM原料出库仓库 |
+| 10 | price | 单价 | DECIMAL | 18,6 | 否 | 0.000000 | 原料单价 |
+| 11 | amount | 金额 | DECIMAL | 18,2 | 否 | 0.00 | 数量×单价 |
+
+#### 业务规则
+
+1. 单据编号按编码规则自动生成：`AS-yyyyMMdd-0001`，连字符分隔
+2. 成品明细行号从1开始，步长1
+3. BOM原料明细通过parent_row_id关联对应的成品行
+4. 审批通过时：
+   - 成品明细：调用库存服务入库（仓库=wh_id，数量+quantity）
+   - BOM原料明细：调用库存服务出库（仓库=wh_id_bom，数量-quantity）
+5. 重置草稿时：逆向操作，撤销库存变动
+6. 成品金额合计自动计算为单据金额
+
+#### 影响单据
+
+| 影响操作 | 目标单据 | 影响内容 |
+|----------|----------|----------|
+| 审批通过 | 库存 | 成品入库+BOM原料出库 |
+| 重置草稿 | 库存 | 撤销入库出库记录 |
+
+---
+
+### 5.11 生产拆卸单
+
+**业务说明**：生产拆卸单用于将成品拆卸成半成品或原材料的业务场景。例如：不良品拆解返工、成品退换货拆解、废旧设备拆解回收等。拆卸过程中，成品出库（库存减少），BOM原料入库（库存增加）。与组装单互为逆向操作。
+
+**单据状态流转**：草稿(0) → 待审批(1) → 生效(6)；含作废(3)状态
+
+**库存影响**：
+- 成品明细（produce_disassemble_detail）：成品仓库出库-1
+- BOM原料明细（produce_disassemble_bom）：原料仓库入库+1
+
+**上下游关联**：退货单/返工申请 → 生产拆卸单 → 库存（成品出库+BOM原料入库）
+
+#### 表头字段（23字段）
+
+| 序号 | 字段名 | 显示名 | 字段类型 | 长度 | 必填 | 默认值 | 唯一 | 说明 |
+|------|--------|--------|----------|------|------|--------|------|------|
+| 1 | id | 拆卸单ID | BIGINT | - | 是 | 自动生成 | 是 | 主键，自增 |
+| 2 | serial_no | 单据编号 | NVARCHAR | 50 | 是 | 自动生成 | 是 | 格式：DS-yyyyMMdd-0001 |
+| 3 | dateline | 单据日期 | DATETIME | - | 是 | 当前日期 | 否 | 业务发生日期 |
+| 4 | dept | 生产部门 | BIGINT | - | 是 | 当前用户部门 | 否 | 关联部门档案 |
+| 5 | wh_id | 成品仓库 | BIGINT | - | 是 | - | 否 | 成品出库来源仓库 |
+| 6 | wh_id_bom | 原料仓库 | BIGINT | - | 是 | - | 否 | BOM原料入库目标仓库 |
+| 7 | is_tax | 是否含税 | BIT | - | 是 | 系统配置 | 否 | 0-否，1-是 |
+| 8 | tax_type | 计税方式 | INT | - | 否 | 系统配置 | 否 | 0-不含税，1-应税内含，2-应税外加 |
+| 9 | currency_id | 交易币别 | BIGINT | - | 是 | 系统本位币 | 否 | 关联币种档案 |
+| 10 | currency_rate | 汇率 | DECIMAL | 18,6 | 是 | 1.000000 | 否 | 外币汇率 |
+| 11 | amount | 单据金额 | DECIMAL | 18,2 | 是 | 0.00 | 否 | BOM原料金额合计 |
+| 12 | tax_rate | 税率 | DECIMAL | 6,4 | 否 | 系统默认 | 否 | 如13.0000表示13% |
+| 13 | print_num | 打印次数 | INT | - | 否 | 0 | 否 | 打印次数统计 |
+| 14 | images | 图片 | TEXT | - | 否 | - | 否 | JSON格式图片列表 |
+| 15 | files | 附件 | TEXT | - | 否 | - | 否 | JSON格式附件列表 |
+| 16 | notes | 备注 | NVARCHAR | 500 | 否 | - | 否 | 表头备注 |
+| 17 | status | 状态 | INT | - | 是 | 0 | 否 | 0-草稿，1-待审批，3-作废，6-生效 |
+| 18 | etime | 生效时间 | DATETIME | - | 否 | - | 否 | 审批通过时间 |
+| 19-23 | 查询条件字段 | - | - | - | 否 | - | 否 | 用于列表页查询过滤 |
+
+**审计字段**：creator(创建人)、createdAt(创建时间)、modifier(修改人)、updatedAt(修改时间)
+
+#### 表体字段 - 成品明细（produce_disassemble_detail，出库-1）
+
+| 序号 | 字段名 | 显示名 | 字段类型 | 长度 | 必填 | 默认值 | 说明 |
+|------|--------|--------|----------|------|------|--------|------|
+| 1 | line_no | 行号 | INT | - | 是 | 自动递增 | 从1开始，步长1 |
+| 2 | product_id | 物料 | BIGINT | - | 是 | - | 关联物料档案（待拆卸成品） |
+| 3 | product_code | 物料编码 | NVARCHAR | 50 | 否 | 自动带出 | 成品编码 |
+| 4 | product_name | 物料名称 | NVARCHAR | 200 | 否 | 自动带出 | 成品名称 |
+| 5 | specification | 规格型号 | NVARCHAR | 200 | 否 | 自动带出 | 物料规格 |
+| 6 | unit | 单位 | NVARCHAR | 20 | 是 | 物料主单位 | 计量单位 |
+| 7 | quantity | 数量 | DECIMAL | 18,4 | 是 | 0.0000 | 拆卸数量 |
+| 8 | basic_quantity | 主单位数量 | DECIMAL | 18,4 | 是 | 0.0000 | 换算后的主单位数量 |
+| 9 | wh_id | 仓库 | BIGINT | - | 是 | 表头带出 | 成品出库仓库 |
+| 10 | notes | 备注 | NVARCHAR | 200 | 否 | - | 行备注 |
+
+#### 表体字段 - BOM原料明细（produce_disassemble_bom，入库+1）
+
+| 序号 | 字段名 | 显示名 | 字段类型 | 长度 | 必填 | 默认值 | 说明 |
+|------|--------|--------|----------|------|------|--------|------|
+| 1 | line_no | 行号 | INT | - | 是 | 自动递增 | 从1开始 |
+| 2 | parent_row_id | 关联成品行 | INT | - | 是 | - | 对应成品明细行的row_id |
+| 3 | product_id | 物料 | BIGINT | - | 是 | - | 关联物料档案（拆解出的子件） |
+| 4 | product_code | 物料编码 | NVARCHAR | 50 | 否 | 自动带出 | 子件编码 |
+| 5 | product_name | 物料名称 | NVARCHAR | 200 | 否 | 自动带出 | 子件名称 |
+| 6 | unit | 单位 | NVARCHAR | 20 | 是 | 物料主单位 | 计量单位 |
+| 7 | quantity | 数量 | DECIMAL | 18,4 | 是 | 0.0000 | 拆解出库数量 |
+| 8 | basic_quantity | 主单位数量 | DECIMAL | 18,4 | 是 | 0.0000 | 换算后的主单位数量 |
+| 9 | wh_id | 仓库 | BIGINT | - | 是 | 表头原料仓库 | BOM原料入库仓库 |
+| 10 | price | 单价 | DECIMAL | 18,6 | 否 | 0.000000 | 子件单价 |
+| 11 | amount | 金额 | DECIMAL | 18,2 | 否 | 0.00 | 数量×单价 |
+
+#### 业务规则
+
+1. 单据编号按编码规则自动生成：`DS-yyyyMMdd-0001`，连字符分隔
+2. 成品明细行号从1开始，步长1
+3. BOM原料明细通过parent_row_id关联对应的成品行
+4. 审批通过时：
+   - 成品明细：调用库存服务出库（仓库=wh_id，数量-quantity）
+   - BOM原料明细：调用库存服务入库（仓库=wh_id_bom，数量+quantity）
+5. 重置草稿时：逆向操作，撤销库存变动
+6. 拆卸单与组装单互为逆向操作，库存影响相反
+
+#### 影响单据
+
+| 影响操作 | 目标单据 | 影响内容 |
+|----------|----------|----------|
+| 审批通过 | 库存 | 成品出库+BOM原料入库 |
+| 重置草稿 | 库存 | 撤销出库入库记录 |
 
 ---
 ## 第六部分：财务管理模块

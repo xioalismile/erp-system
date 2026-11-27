@@ -6,6 +6,8 @@ import com.erp.inventory.entity.Inventory;
 import com.erp.inventory.entity.InventoryTransaction;
 import com.erp.inventory.mapper.InventoryMapper;
 import com.erp.inventory.mapper.InventoryTransactionMapper;
+import com.erp.masterdata.entity.Material;
+import com.erp.masterdata.mapper.MaterialMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ public class InventoryTransactionServiceImpl extends ServiceImpl<InventoryTransa
         implements InventoryTransactionService {
 
     private final InventoryMapper inventoryMapper;
+    /** 台账写入时冗余物料编码/名称/规格用（物料主档日后被删，历史台账仍可读） */
+    private final MaterialMapper materialMapper;
 
     @Override
     @Transactional
@@ -40,6 +44,9 @@ public class InventoryTransactionServiceImpl extends ServiceImpl<InventoryTransa
         tx.setStockId(stockId);
         tx.setBinId(binId);
         tx.setMaterialId(materialId);
+        // 【2026-09-19】台账冗余物料编码/名称/规格：台账是历史账，物料主档被删除或整批换 id 后
+        // 列表接口的实时 join 永远补不回编码（本机库历史 231 行全空即此因），故写入时一并落库。
+        fillMaterialSnapshot(tx, materialId);
         tx.setBatchNo(batchNo);
 
         // null 处理为 ZERO
@@ -87,6 +94,31 @@ public class InventoryTransactionServiceImpl extends ServiceImpl<InventoryTransa
         return list(new QueryWrapper<InventoryTransaction>()
                 .eq("trans_no", transNo)
                 .orderByAsc("line_no"));
+    }
+
+    /**
+     * 台账冗余填充：物料编码 / 物料名称 / 规格型号（取物料主档快照）。
+     * <p>
+     * 2026-09-19 用户报障修复：库存流水页「物料编码」全空。根因是台账只存 material_id，
+     * 展示字段全靠列表接口实时 join material 表；物料主档被删除或整批换 id 后历史流水永久空白。
+     * 与 other_receipt_item / sale_order_item 等明细表保持一致：写入时把物料快照一起落库。
+     * <p>
+     * 取不到物料（id 为空 / 主档已删）时留空即可，绝不阻断过账；异常仅告警不抛出。
+     */
+    private void fillMaterialSnapshot(InventoryTransaction tx, Long materialId) {
+        if (tx == null || materialId == null) {
+            return;
+        }
+        try {
+            Material m = materialMapper.selectById(materialId);
+            if (m != null) {
+                tx.setMaterialCode(m.getMaterialCode());
+                tx.setMaterialName(m.getMaterialName());
+                tx.setSpecification(m.getModel());
+            }
+        } catch (Exception e) {
+            log.warn("库存台账物料快照填充失败 materialId={}: {}", materialId, e.getMessage());
+        }
     }
 
     /**

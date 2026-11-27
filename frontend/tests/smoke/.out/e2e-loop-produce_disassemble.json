@@ -1,0 +1,269 @@
+{
+  "generatedAt": "2026-11-11T15:10:14.615Z",
+  "baseUrl": "https://kaiyu.pro",
+  "bill": "produce_disassemble",
+  "name": "拆卸单",
+  "module": "production",
+  "steps": {
+    "detailAnchorResolved": true,
+    "header_成品仓库": "E2E-主仓",
+    "header_原料仓库": "E2E-主仓",
+    "header_单据日期": "2026-11-11",
+    "diagRowsOnEnter": 0,
+    "diagElTableCount": 2,
+    "diagAnchorCount": 1,
+    "diagAnchorCountFirst": 1,
+    "diagAddBtnCount": 1,
+    "diagAddBtnDisabled": false,
+    "diagRowsPerClick": [
+      {
+        "click": 1,
+        "rows": 1
+      },
+      {
+        "click": 2,
+        "rows": 2
+      }
+    ],
+    "detailRowsAfterAdd": 2,
+    "detailPreRows": 0,
+    "diagMatIdx": 1,
+    "diagQtyIdx": 8,
+    "diagHeaders": [
+      "#",
+      "物料编码",
+      "物料名称",
+      "规格型号",
+      "单位",
+      "副单位",
+      "副单位数量",
+      "辅助数量",
+      "数量",
+      "主单位数量",
+      "单价",
+      "含税价",
+      "不含税价",
+      "金额",
+      "仓库",
+      "备注",
+      "操作"
+    ],
+    "diagTdCount": 17,
+    "diagStructure": {
+      "thCount": 17,
+      "rowCount": 2,
+      "tdCount": 17,
+      "consistent": true
+    },
+    "diagRow0Cells": [
+      {
+        "i": 0,
+        "sel": 0,
+        "input": 0,
+        "text": "1"
+      },
+      {
+        "i": 1,
+        "sel": 1,
+        "input": 1,
+        "text": "选择物料"
+      },
+      {
+        "i": 2,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 3,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 4,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 5,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 6,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 7,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 8,
+        "sel": 0,
+        "input": 1,
+        "text": "1.0000"
+      },
+      {
+        "i": 9,
+        "sel": 0,
+        "input": 1,
+        "text": "0.0000"
+      },
+      {
+        "i": 10,
+        "sel": 0,
+        "input": 1,
+        "text": "0.0000"
+      },
+      {
+        "i": 11,
+        "sel": 0,
+        "input": 0,
+        "text": "0.0000"
+      },
+      {
+        "i": 12,
+        "sel": 0,
+        "input": 0,
+        "text": "0.0000"
+      },
+      {
+        "i": 13,
+        "sel": 0,
+        "input": 0,
+        "text": "0.00"
+      },
+      {
+        "i": 14,
+        "sel": 0,
+        "input": 0,
+        "text": "E2E-主仓"
+      },
+      {
+        "i": 15,
+        "sel": 0,
+        "input": 1,
+        "text": ""
+      },
+      {
+        "i": 16,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      }
+    ],
+    "filledRows": [
+      {
+        "row": 1,
+        "code": "MAT000001",
+        "label": "MAT000001E2E-成品A",
+        "qty": 2,
+        "qtyActual": "2.0000",
+        "l3MaterialCell": "MAT000001",
+        "l3QtyCell": "2.0000"
+      },
+      {
+        "row": 2,
+        "code": "MAT000001",
+        "label": "MAT000001E2E-成品A",
+        "qty": 3,
+        "qtyActual": "3.0000",
+        "l3MaterialCell": "MAT000001",
+        "l3QtyCell": "3.0000"
+      }
+    ],
+    "numbersFilled": [],
+    "textsFilled": [],
+    "saveFeedback": "toast",
+    "saveToasts": [
+      {
+        "kind": "success",
+        "text": "保存成功"
+      }
+    ],
+    "docCode": "DASM-20261111-0003",
+    "detailUrl": "https://kaiyu.pro/production/disassemble/9",
+    "docCodeAfterReload": "DASM-20261111-0003",
+    "listWait": {
+      "ok": true,
+      "waitedMs": 444
+    },
+    "listHasCode": true,
+    "listFirstRow": "1 DASM-20261111-0003 2026-11-11T00:00:00 E2E-主仓 E2E-主仓 0.00 草稿",
+    "l3EntrySelector": ".order-no-text:has-text(\"DASM-20261111-0003\")",
+    "statusAfterReopen": null,
+    "tagsAfterReopen": [
+      "草稿"
+    ],
+    "qtyInputDisabledAtL3": false,
+    "detailRowsAfterReopen": 2,
+    "detailRowsText": [
+      "1 MAT000001 E2E-成品A E2E-个 E2E-个 E2E-个 2.0000 0.0000 0.0000 0.00 E2E-主仓",
+      "2 MAT000001 E2E-成品A E2E-个 E2E-个 E2E-个 3.0000 0.0000 0.0000 0.00 E2E-主仓"
+    ],
+    "l3ColumnIdx": {
+      "material": 1,
+      "qty": 8
+    },
+    "l3HeaderBack": {
+      "成品仓库": "E2E-主仓",
+      "原料仓库": "E2E-主仓"
+    },
+    "l3CustomerItemHtml": "",
+    "l4QtyAfterFill": "7.0000",
+    "l4UrlBeforeSave": "https://kaiyu.pro/production/disassemble/9",
+    "l4RowsBeforeSave": 2,
+    "l4SaveBtnCount": 1,
+    "l4SaveFeedback": "toast",
+    "l4Toasts": [
+      {
+        "kind": "success",
+        "text": "保存成功"
+      }
+    ],
+    "l4UrlAfterSave": "https://kaiyu.pro/production/disassemble/9",
+    "l4UrlChangedBySave": false,
+    "l4RowsAfterSave": 2,
+    "l4UrlBeforeReload": "https://kaiyu.pro/production/disassemble/9",
+    "l4AnchorResolved": true,
+    "l4UrlAfterReload": "https://kaiyu.pro/production/disassemble/9",
+    "l4DetailTableVisible": true,
+    "l4DetailTableCount": 1,
+    "l4ElTableCount": 2,
+    "l4WaitDetailRows": {
+      "ok": true,
+      "rows": 2,
+      "waitedMs": 26
+    },
+    "l4HeaderAfterReload": {
+      "customer": null,
+      "saler": null,
+      "currency": null
+    },
+    "l4PageTextHead": "楷煜 生产管理 首页 / 拆卸单详情 简体中文 新手教程 冒 冒烟-生产管理 工作台 拆卸单详情 返回列表 生产拆卸单 DASM-20261111-0003 草稿 操作日志 保存 提交 作废 删除 打印 复制 单据码 手机扫码打开 基本信息 单据信息 单据编号 单据日期 生产部门 成品仓库 E2E-主仓 原料仓库 E2E-主仓 交易信息 计税方式 不含税价 交易币别 CUR001 汇率 单据金额 ",
+    "detailRowsAfterEdit": 2,
+    "detailUrlAfterEdit": "https://kaiyu.pro/production/disassemble/9",
+    "l4QtyCell": "7.0000",
+    "l4Row2MaterialCell": "MAT000001",
+    "l6SubmitBtnCount": 1,
+    "l6SubmitDisabled": false,
+    "l6SubmitFeedback": "toast",
+    "l6SubmitToasts": [
+      "info:提示 确认提交该生产拆卸单？提交后单据将直接生效 取消 确定"
+    ],
+    "apiBase": "/api/produce/disassemble",
+    "detailId": "9",
+    "effectiveStatus": "2",
+    "effective": false,
+    "effectiveNote": "提交=操作成功；审核=只有待审核状态可审核，当前状态: 已生效；回读状态=2"
+  },
+  "ok": true,
+  "problems": []
+}

@@ -24,3 +24,9 @@ export function deleteRole(id) {
 export function assignPermissions(id, menuIds) {
   return request.post(`${BASE}/${id}/permissions`, menuIds)
 }
+export function getButtonPermissions(id) {
+  return request.get(`${BASE}/${id}/button-permissions`)
+}
+export function assignButtonPermissions(id, buttonCodes) {
+  return request.post(`${BASE}/${id}/button-permissions`, buttonCodes)
+}

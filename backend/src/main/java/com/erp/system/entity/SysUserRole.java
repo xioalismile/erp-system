@@ -21,9 +21,30 @@ public class SysUserRole {
     @TableField("role_id")
     private Long roleId;
 
+    @TableField(value = "effective_date", exist = false)
+    private java.time.LocalDate effectiveDate;
+
+    @TableField(value = "expiry_date", exist = false)
+    private java.time.LocalDate expiryDate;
+
+    @TableField("is_primary_role")
+    private Short isPrimaryRole;
+
+    @TableField("assign_date")
+    private java.time.LocalDate assignDate;
+
+    @TableField("assign_by")
+    private String assignBy;
+
+    @TableField("data_scope_type")
+    private String dataScopeType;
+
+    @TableField("data_scope_value")
+    private String dataScopeValue;
+
     @TableField(value = "created_at", fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
 
-    @TableField("created_by")
+    @TableField(value = "created_by", fill = FieldFill.INSERT)
     private String createdBy;
 }

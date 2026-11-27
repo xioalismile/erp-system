@@ -1,356 +1,193 @@
 # =====================================================
-# Smart ERP Deploy Script for Windows Server
-# Usage: Right-click -> Run with PowerShell
-# Or: powershell -ExecutionPolicy Bypass -File deploy.ps1
+#  Smart ERP - Deploy to Cloud
 # =====================================================
 
 $ErrorActionPreference = "Stop"
-$ERP_HOME = "C:\erp"
-$ERP_APP = "$ERP_HOME\app"
+$ProjectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+$UpdateZip = Join-Path $ProjectRoot "update.zip"
+$Pscp = "C:\Program Files\PuTTY\pscp.exe"
+$Plink = "C:\Program Files\PuTTY\plink.exe"
+
+$Server = "8.148.229.2"
+$User = "Administrator"
 
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "  Smart ERP One-Click Deploy Script" -ForegroundColor Cyan
-Write-Host "  Target: Windows Server 2022 (4C8G)" -ForegroundColor Cyan
+Write-Host "  Smart ERP - Deploy to Cloud" -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
+Write-Host "  Server: $Server"
+Write-Host "  User: $User"
+Write-Host ""
 
-# --- Step 0: Check Admin ---
-$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-if (-not $isAdmin) {
-    Write-Host "[ERROR] Please run as Administrator!" -ForegroundColor Red
-    Write-Host "Right-click PowerShell -> Run as Administrator" -ForegroundColor Yellow
+# Input password
+$Password = Read-Host "Enter server password" -AsSecureString
+$PlainPassword = [System.Net.NetworkCredential]::new("", $Password).Password
+if ([string]::IsNullOrEmpty($PlainPassword)) {
+    Write-Host "[ERROR] Password cannot be empty" -ForegroundColor Red
     pause
     exit 1
 }
 
-# --- Create directories ---
-Write-Host "[1/9] Creating directories..." -ForegroundColor Yellow
-New-Item -ItemType Directory -Force -Path $ERP_HOME | Out-Null
-New-Item -ItemType Directory -Force -Path $ERP_APP | Out-Null
-New-Item -ItemType Directory -Force -Path "$ERP_HOME\logs" | Out-Null
-New-Item -ItemType Directory -Force -Path "$ERP_HOME\files" | Out-Null
-Write-Host "  Done. ERP home: $ERP_HOME" -ForegroundColor Green
-
-# --- Step 2: Install JDK 17 ---
-Write-Host "[2/9] Checking JDK 17..." -ForegroundColor Yellow
-$javaOk = $false
-try {
-    $javaVer = & java -version 2>&1 | Select-Object -First 1
-    if ($javaVer -match "17") { $javaOk = $true; Write-Host "  JDK 17 already installed." -ForegroundColor Green }
-} catch {}
-
-if (-not $javaOk) {
-    Write-Host "  Installing JDK 17 via winget..." -ForegroundColor Yellow
-    try {
-        winget install --id Microsoft.OpenJDK.17 --accept-package-agreements --accept-source-agreements 2>$null
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-        Write-Host "  JDK 17 installed." -ForegroundColor Green
-    } catch {
-        Write-Host "  winget failed, trying chocolatey..." -ForegroundColor Yellow
-        if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-            Set-ExecutionPolicy Bypass -Scope Process -Force
-            iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-        }
-        choco install temurin17 -y
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-    }
+# Check files
+if (-not (Test-Path $UpdateZip)) {
+    Write-Host "[ERROR] update.zip not found" -ForegroundColor Red
+    pause
+    exit 1
 }
-
-# --- Step 3: Install Node.js ---
-Write-Host "[3/9] Checking Node.js..." -ForegroundColor Yellow
-$nodeOk = $false
-try {
-    $nodeVer = & node --version 2>&1
-    if ($nodeVer -match "v1[89]|v2[0-9]") { $nodeOk = $true; Write-Host "  Node.js already installed ($nodeVer)." -ForegroundColor Green }
-} catch {}
-
-if (-not $nodeOk) {
-    Write-Host "  Installing Node.js 18..." -ForegroundColor Yellow
-    try {
-        winget install --id OpenJS.NodeJS.LTS --accept-package-agreements --accept-source-agreements 2>$null
-    } catch {
-        choco install nodejs-lts -y
-    }
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-    Write-Host "  Node.js installed." -ForegroundColor Green
+if (-not (Test-Path $Pscp)) {
+    Write-Host "[ERROR] pscp.exe not found: $Pscp" -ForegroundColor Red
+    pause
+    exit 1
 }
-
-# --- Step 4: Install PostgreSQL ---
-Write-Host "[4/9] Checking PostgreSQL..." -ForegroundColor Yellow
-$pgOk = $false
-try {
-    $psqlVer = & psql --version 2>&1
-    if ($psqlVer) { $pgOk = $true; Write-Host "  PostgreSQL already installed." -ForegroundColor Green }
-} catch {}
-
-if (-not $pgOk) {
-    Write-Host "  Installing PostgreSQL 15..." -ForegroundColor Yellow
-    try {
-        winget install --id PostgreSQL.PostgreSQL.15 --accept-package-agreements --accept-source-agreements 2>$null
-    } catch {
-        choco install postgresql15 -y --params '/Password:Erp@2026'
-    }
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-
-    # If installed via winget, need to set password and start service
-    $pgPath = Get-ChildItem "C:\Program Files\PostgreSQL" -ErrorAction SilentlyContinue | Select-Object -First 1
-    if ($pgPath) {
-        $env:Path += ";$($pgPath.FullName)\bin"
-    }
-    Write-Host "  PostgreSQL installed." -ForegroundColor Green
-
-    # Wait for PG to be ready
-    Start-Sleep -Seconds 5
-}
-
-# --- Step 5: Configure PostgreSQL ---
-Write-Host "[5/9] Configuring database..." -ForegroundColor Yellow
-$pgBin = $null
-$pgPaths = @("C:\Program Files\PostgreSQL\15\bin", "C:\Program Files\PostgreSQL\16\bin", "C:\Program Files\PostgreSQL\17\bin")
-foreach ($p in $pgPaths) {
-    if (Test-Path $p) { $pgBin = $p; break }
-}
-if (-not $pgBin) {
-    # Search for psql in PATH
-    $psqlLoc = Get-Command psql -ErrorAction SilentlyContinue
-    if ($psqlLoc) { $pgBin = Split-Path $psqlLoc.Source }
-}
-if (-not $pgBin) {
-    Write-Host "  [WARNING] Cannot find psql. Please configure database manually." -ForegroundColor Red
-    Write-Host "  You need to:" -ForegroundColor Yellow
-    Write-Host "  1. Set postgres password to: Erp@2026" -ForegroundColor Yellow
-    Write-Host "  2. Create database erp_db" -ForegroundColor Yellow
-    Write-Host "  3. Create user erp_user with password Erp@2026" -ForegroundColor Yellow
-    Write-Host "  4. Run init.sql" -ForegroundColor Yellow
-} else {
-    Write-Host "  PostgreSQL bin: $pgBin" -ForegroundColor Gray
-
-    # Try to connect with default password
-    $env:PGPASSWORD = "Erp@2026"
-    $pgReady = $false
-    try {
-        & "$pgBin\psql" -U postgres -h localhost -c "SELECT 1" 2>$null | Out-Null
-        $pgReady = $true
-    } catch {
-        # Try common passwords
-        foreach ($pwd in @("postgres", "Erp@2026", "")) {
-            $env:PGPASSWORD = $pwd
-            try {
-                & "$pgBin\psql" -U postgres -h localhost -c "SELECT 1" 2>$null | Out-Null
-                $pgReady = $true
-                break
-            } catch {}
-        }
-    }
-
-    if ($pgReady) {
-        Write-Host "  PostgreSQL connected. Setting up database..." -ForegroundColor Gray
-
-        # Set password
-        & "$pgBin\psql" -U postgres -h localhost -c "ALTER USER postgres WITH PASSWORD 'Erp@2026';" 2>$null
-        & "$pgBin\psql" -U postgres -h localhost -c "CREATE USER erp_user WITH PASSWORD 'Erp@2026';" 2>$null
-        & "$pgBin\psql" -U postgres -h localhost -c "CREATE DATABASE erp_db OWNER erp_user ENCODING 'UTF8';" 2>$null
-        & "$pgBin\psql" -U postgres -h localhost -c "GRANT ALL PRIVILEGES ON DATABASE erp_db TO erp_user;" 2>$null
-
-        # Run init SQL
-        $initSql = "$ERP_APP\backend\src\main\resources\db\init.sql"
-        if (Test-Path $initSql) {
-            & "$pgBin\psql" -U postgres -h localhost -d erp_db -f $initSql 2>$null
-            Write-Host "  Database initialized." -ForegroundColor Green
-        } else {
-            Write-Host "  [WARNING] init.sql not found at $initSql" -ForegroundColor Yellow
-            Write-Host "  Please copy your project to $ERP_APP first, then re-run this script." -ForegroundColor Yellow
-        }
-    } else {
-        Write-Host "  [WARNING] Cannot connect to PostgreSQL." -ForegroundColor Red
-        Write-Host "  Please set postgres password and run:" -ForegroundColor Yellow
-        Write-Host "  psql -U postgres -h localhost -f init.sql" -ForegroundColor Yellow
-    }
-}
-
-# --- Step 6: Install Redis ---
-Write-Host "[6/9] Checking Redis..." -ForegroundColor Yellow
-$redisOk = $false
-try {
-    $redisVer = & redis-cli --version 2>&1
-    if ($redisVer) { $redisOk = $true; Write-Host "  Redis already installed." -ForegroundColor Green }
-} catch {}
-
-if (-not $redisOk) {
-    Write-Host "  Downloading Redis for Windows..." -ForegroundColor Yellow
-    $redisZip = "$ERP_HOME\redis.zip"
-    $redisUrl = "https://github.com/tporadowski/redis/releases/download/v5.0.14.1/Redis-x64-5.0.14.1.zip"
-    try {
-        # Use TLS 1.2 for GitHub downloads
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        Invoke-WebRequest $redisUrl -OutFile $redisZip -UseBasicParsing
-        Expand-Archive $redisZip -DestinationPath "$ERP_HOME\redis" -Force
-        Remove-Item $redisZip
-
-        # Add to PATH
-        $env:Path += ";$ERP_HOME\redis"
-
-        # Start Redis
-        Start-Process "$ERP_HOME\redis\redis-server.exe" -WindowStyle Minimized
-        Start-Sleep -Seconds 2
-        Write-Host "  Redis installed and started." -ForegroundColor Green
-    } catch {
-        Write-Host "  [WARNING] Redis download failed: $_" -ForegroundColor Red
-        Write-Host "  ERP can still run, AI confirm feature will use memory fallback." -ForegroundColor Yellow
-    }
-}
-
-# --- Step 7: Build Backend ---
-Write-Host "[7/9] Building backend..." -ForegroundColor Yellow
-$backendDir = "$ERP_APP\backend"
-if (-not (Test-Path "$backendDir\pom.xml")) {
-    Write-Host "  [ERROR] Backend not found at $backendDir" -ForegroundColor Red
-    Write-Host "  Please copy your project files to $ERP_APP" -ForegroundColor Yellow
-    Write-Host "  Expected structure:" -ForegroundColor Yellow
-    Write-Host "    C:\erp\app\backend\pom.xml" -ForegroundColor Yellow
-    Write-Host "    C:\erp\app\frontend\package.json" -ForegroundColor Yellow
+if (-not (Test-Path $Plink)) {
+    Write-Host "[ERROR] plink.exe not found: $Plink" -ForegroundColor Red
     pause
     exit 1
 }
 
-# Check Maven
-$mvnOk = $false
-try { & mvn --version 2>&1 | Out-Null; $mvnOk = $true } catch {}
-if (-not $mvnOk) {
-    Write-Host "  Installing Maven..." -ForegroundColor Gray
-    try { winget install --id Apache.Maven --accept-package-agreements --accept-source-agreements 2>$null }
-    catch { choco install maven -y }
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+# Step 1: Connect
+Write-Host "[1/5] Connecting to server..." -ForegroundColor Yellow
+$psi = New-Object System.Diagnostics.ProcessStartInfo
+$psi.FileName = $Plink
+$psi.Arguments = "-ssh -l $User -pw $PlainPassword $Server `"echo OK`""
+$psi.UseShellExecute = $false
+$psi.RedirectStandardInput = $true
+$psi.RedirectStandardOutput = $true
+$psi.RedirectStandardError = $true
+$psi.CreateNoWindow = $true
+$proc = [System.Diagnostics.Process]::Start($psi)
+Start-Sleep -Milliseconds 500
+# Send 'y' to accept host key if prompted
+$proc.StandardInput.WriteLine("y")
+$proc.StandardInput.Flush()
+$output = $proc.StandardOutput.ReadToEnd()
+$errOut = $proc.StandardError.ReadToEnd()
+$proc.WaitForExit()
+if ($proc.ExitCode -ne 0) {
+    # Try again without host key prompt (already cached)
+    $psi2 = New-Object System.Diagnostics.ProcessStartInfo
+    $psi2.FileName = $Plink
+    $psi2.Arguments = "-ssh -l $User -pw $PlainPassword -batch $Server `"echo OK`""
+    $psi2.UseShellExecute = $false
+    $psi2.RedirectStandardOutput = $true
+    $psi2.RedirectStandardError = $true
+    $psi2.CreateNoWindow = $true
+    $proc2 = [System.Diagnostics.Process]::Start($psi2)
+    $out2 = $proc2.StandardOutput.ReadToEnd()
+    $err2 = $proc2.StandardError.ReadToEnd()
+    $proc2.WaitForExit()
+    if ($proc2.ExitCode -ne 0) {
+        Write-Host "  [ERROR] Connection failed!" -ForegroundColor Red
+        Write-Host "  $err2" -ForegroundColor DarkYellow
+        pause
+        exit 1
+    }
 }
+Write-Host "  Connected." -ForegroundColor Green
 
-Push-Location $backendDir
-& mvn clean package -DskipTests -q
+# Step 2: Static directory is C:\nginx\html (Nginx serves frontend)
+Write-Host "[2/5] Static directory: C:\nginx\html" -ForegroundColor Yellow
+$staticDir = "C:\nginx\html"
+Write-Host "  OK." -ForegroundColor Green
+
+# Step 3: Upload update.zip
+Write-Host "[3/5] Uploading update.zip..." -ForegroundColor Yellow
+& $Pscp -pw $PlainPassword $UpdateZip "$User@${Server}:C:\smart-erp\update.zip"
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "  [ERROR] Maven build failed!" -ForegroundColor Red
+    Write-Host "  [ERROR] Upload failed!" -ForegroundColor Red
     pause
     exit 1
 }
-$jarFile = Get-ChildItem "target\*.jar" | Where-Object { $_.Name -notmatch "sources|javadoc" } | Select-Object -First 1
-if ($jarFile) {
-    Copy-Item $jarFile.FullName "$ERP_HOME\smart-erp.jar" -Force
-    Write-Host "  Backend built: $($jarFile.Name)" -ForegroundColor Green
-}
-Pop-Location
+Write-Host "  Upload complete." -ForegroundColor Green
 
-# --- Step 8: Build Frontend ---
-Write-Host "[8/9] Building frontend..." -ForegroundColor Yellow
-$frontendDir = "$ERP_APP\frontend"
-if (Test-Path "$frontendDir\package.json") {
-    Push-Location $frontendDir
-    & npm install --silent 2>$null
-    & npm run build 2>$null
-    if (Test-Path "dist") {
-        # Copy dist to backend static resources
-        $staticDir = "$ERP_HOME\static"
-        New-Item -ItemType Directory -Force -Path $staticDir | Out-Null
-        Copy-Item "dist\*" $staticDir -Recurse -Force
-        Write-Host "  Frontend built to $staticDir" -ForegroundColor Green
-    } else {
-        Write-Host "  [WARNING] Frontend build may have failed." -ForegroundColor Yellow
+# Step 4: Remote update - backup, extract, restart
+Write-Host "[4/5] Running remote update..." -ForegroundColor Yellow
+
+# Build remote PowerShell command
+$remoteScript = @"
+`$staticDir = '$staticDir'
+`$zipFile = 'C:\smart-erp\update.zip'
+
+# Backup
+if (Test-Path `$staticDir) {
+    `$backup = 'C:\smart-erp\static_backup_' + (Get-Date -Format 'yyyyMMdd_HHmmss')
+    Copy-Item `$staticDir `$backup -Recurse -Force
+    Write-Host "Backup done: `$backup"
+}
+
+# Clear old files
+if (Test-Path `$staticDir) {
+    Remove-Item `$staticDir -Recurse -Force
+}
+New-Item -ItemType Directory -Force -Path `$staticDir | Out-Null
+
+# Extract
+Expand-Archive -Path `$zipFile -DestinationPath `$staticDir -Force
+Write-Host "Extract done"
+
+# Restart Java + reload Nginx
+Get-Process -Name java -ErrorAction SilentlyContinue | Stop-Process -Force
+Start-Sleep -Seconds 2
+Set-Location C:\smart-erp\backend
+Start-Process -FilePath java -ArgumentList '-jar','smart-erp-1.0.0.jar' -RedirectStandardOutput 'startup.log' -RedirectStandardError 'startup_err.log' -NoNewWindow
+Write-Host "ERP restarted"
+# Reload Nginx to pick up new static files
+try { & C:\nginx\nginx.exe -s reload -ErrorAction SilentlyContinue } catch {}
+Write-Host "Nginx reloaded"
+"@
+
+# Write remote script to temp file and upload it
+$tempScript = Join-Path $env:TEMP "erp_remote_update.ps1"
+$remoteScript | Out-File -FilePath $tempScript -Encoding UTF8
+
+& $Pscp -pw $PlainPassword $tempScript "$User@${Server}:C:\smart-erp\remote_update.ps1"
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "  [ERROR] Failed to upload update script!" -ForegroundColor Red
+    pause
+    exit 1
+}
+
+# Execute remote script
+$remoteCmd = "powershell -ExecutionPolicy Bypass -File C:\smart-erp\remote_update.ps1"
+
+$psi = New-Object System.Diagnostics.ProcessStartInfo
+$psi.FileName = $Plink
+$psi.Arguments = "-ssh -l $User -pw $PlainPassword -batch $Server `"$remoteCmd`""
+$psi.UseShellExecute = $false
+$psi.RedirectStandardOutput = $true
+$psi.RedirectStandardError = $true
+$psi.CreateNoWindow = $true
+
+$proc = [System.Diagnostics.Process]::Start($psi)
+while (-not $proc.HasExited) {
+    if (-not $proc.StandardOutput.EndOfStream) {
+        $line = $proc.StandardOutput.ReadLine()
+        if ($line) { Write-Host "  $line" -ForegroundColor Gray }
     }
-    Pop-Location
+    Start-Sleep -Milliseconds 200
+}
+$remaining = $proc.StandardOutput.ReadToEnd()
+$errRemaining = $proc.StandardError.ReadToEnd()
+if ($remaining) { Write-Host "  $remaining" -ForegroundColor Gray }
+if ($errRemaining) { Write-Host "  $errRemaining" -ForegroundColor DarkYellow }
+
+if ($proc.ExitCode -ne 0) {
+    Write-Host "  [WARNING] Remote exit code: $($proc.ExitCode)" -ForegroundColor Yellow
 } else {
-    Write-Host "  [SKIP] Frontend not found." -ForegroundColor Gray
+    Write-Host "  Remote update complete." -ForegroundColor Green
 }
 
-# --- Step 9: Create startup scripts ---
-Write-Host "[9/9] Creating startup scripts..." -ForegroundColor Yellow
-
-# Create config file
-$configContent = @"
-server.port=8080
-spring.datasource.url=jdbc:postgresql://localhost:5432/erp_db
-spring.datasource.username=erp_user
-spring.datasource.password=Erp@2026
-spring.redis.host=localhost
-spring.redis.port=6379
-erp.upload.path=$ERP_HOME\files
-logging.file.name=$ERP_HOME\logs\erp.log
-erp.ai.qwen.enabled=true
-erp.ai.qwen.api-key=
-erp.ai.qwen.model=qwen-plus
-erp.ai.gateway.write-confirm-required=true
-"@
-Set-Content -Path "$ERP_HOME\application.properties" -Value $configContent -Encoding UTF8
-
-# Create start script
-$startScript = @"
-@echo off
-title Smart ERP Server
-echo Starting Smart ERP...
-echo.
-echo Access URL: http://localhost:8080
-echo Press Ctrl+C to stop.
-echo.
-java -jar "$ERP_HOME\smart-erp.jar" --spring.config.additional-location="$ERP_HOME\application.properties"
-pause
-"@
-Set-Content -Path "$ERP_HOME\start-erp.bat" -Value $startScript -Encoding ASCII
-
-# Create start Redis script
-$startRedis = @"
-@echo off
-title Redis Server
-"$ERP_HOME\redis\redis-server.exe"
-pause
-"@
-Set-Content -Path "$ERP_HOME\start-redis.bat" -Value $startRedis -Encoding ASCII
-
-# Create start all script
-$startAll = @"
-@echo off
-echo Starting Redis...
-start "$ERP_HOME\start-redis.bat"
-timeout /t 2 /nobreak >nul
-echo Starting ERP Server...
-start "$ERP_HOME\start-erp.bat"
-echo.
-echo ERP System started!
-echo Web URL: http://localhost:8080
-echo.
-"@
-Set-Content -Path "$ERP_HOME\start-all.bat" -Value $startAll -Encoding ASCII
-
-# --- Create desktop shortcut ---
-$desktopPath = [Environment]::GetFolderPath("Desktop")
-$shortcutPath = "$desktopPath\启动ERP.lnk"
-$shell = New-Object -ComObject WScript.Shell
-$shortcut = $shell.CreateShortcut($shortcutPath)
-$shortcut.TargetPath = "$ERP_HOME\start-all.bat"
-$shortcut.WorkingDirectory = $ERP_HOME
-$shortcut.IconLocation = "shell32.dll,44"
-$shortcut.Save()
-
+# Step 5: Done
+Write-Host "[5/5] Done." -ForegroundColor Yellow
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Green
-Write-Host "  DEPLOY COMPLETE!" -ForegroundColor Green
+Write-Host "  Deploy Complete!" -ForegroundColor Green
 Write-Host "================================================" -ForegroundColor Green
 Write-Host ""
-Write-Host "  Next steps:" -ForegroundColor Cyan
-Write-Host "  1. Set AI API Key:" -ForegroundColor White
-Write-Host "     Edit C:\erp\application.properties" -ForegroundColor Gray
-Write-Host "     Set erp.ai.qwen.api-key=your-key" -ForegroundColor Gray
+Write-Host "  ERP server is restarting (10-30 seconds)" -ForegroundColor Cyan
+Write-Host "  Visit: http://$Server" -ForegroundColor Cyan
+Write-Host "  Press Ctrl + F5 to force refresh browser" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "  2. Start ERP:" -ForegroundColor White
-Write-Host "     Double-click desktop shortcut '启动ERP'" -ForegroundColor Gray
-Write-Host "     Or run: C:\erp\start-all.bat" -ForegroundColor Gray
-Write-Host ""
-Write-Host "  3. Access:" -ForegroundColor White
-Write-Host "     http://localhost:8080 (local)" -ForegroundColor Gray
-Write-Host "     http://114.55.15.199:8080 (public)" -ForegroundColor Gray
-Write-Host ""
-Write-Host "  4. Login:" -ForegroundColor White
-Write-Host "     admin / admin123" -ForegroundColor Gray
-Write-Host ""
-Write-Host "  5. Open firewall port 8080:" -ForegroundColor White
-Write-Host "     Run: open-firewall.bat" -ForegroundColor Gray
-Write-Host ""
-Write-Host "================================================" -ForegroundColor Green
-Write-Host ""
+
 pause

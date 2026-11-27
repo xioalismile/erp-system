@@ -7,7 +7,7 @@ import com.erp.system.entity.SysDictType;
 public interface SysDictTypeService extends IService<SysDictType> {
 
     /** 分页查询: keyword模糊搜字典类型编码/名称 */
-    PageResult<SysDictType> pageQuery(int current, int size, String keyword);
+    PageResult<SysDictType> pageQuery(int current, int size, String keyword, String sortBy, String sortOrder);
 
     /** 详情: 含dictDataList */
     SysDictType getDetail(Long id);

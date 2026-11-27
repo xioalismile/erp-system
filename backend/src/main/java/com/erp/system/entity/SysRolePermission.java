@@ -19,7 +19,7 @@ public class SysRolePermission {
     private Long roleId;
 
     @TableField("menu_id")
-    private Long menuId;
+    private String menuId;
 
     @TableField("permission_type")
     private String permissionType;
@@ -51,12 +51,12 @@ public class SysRolePermission {
     @TableField(value = "created_at", fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
 
-    @TableField("created_by")
+    @TableField(value = "created_by", fill = FieldFill.INSERT)
     private String createdBy;
 
     @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updatedAt;
 
-    @TableField("updated_by")
+    @TableField(value = "updated_by", fill = FieldFill.INSERT_UPDATE)
     private String updatedBy;
 }

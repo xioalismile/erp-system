@@ -11,21 +11,89 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+// ---------- 界面密度（设置中心 → 自定义 → 界面尺寸设置 → 界面密度）----------
+// 一处切换，全站列表页 + 编辑页同时变：内容区留白 / 卡片留白与间距 / 工具栏间距 /
+// 表格行高与单元格留白 / 表单行间距 / 编辑页表单每行字段数（按容器宽度自动排）。
+// 由 stores/uiSize.js 在 <html> 上打 data-density 属性；属性缺失时走下面 :root 默认值。
+// 【默认 = 紧凑】：2026-09-28 用户口径「全站排得太宽、左右留白多、一屏看的东西少」，
+// 故默认值即收紧档；客户可在设置中心切「标准」（= 改造前观感）/「宽松」。
+:root {
+  --erp-content-padding: 8px;
+  --erp-card-padding: 10px;
+  --erp-card-gap: 8px;
+  --erp-toolbar-gap: 6px;
+  --erp-toolbar-mb: 8px;
+  --erp-table-row-height: 36px;
+  --erp-table-cell-pad-y: 5px;
+  --erp-table-cell-pad-x: 8px;
+  --erp-form-item-gap: 6px;
+  --erp-form-grid-min: 220px;
+  --erp-form-grid-gap: 8px;
+}
+:root[data-density="standard"] {
+  --erp-content-padding: 16px;
+  --erp-card-padding: 16px;
+  --erp-card-gap: 16px;
+  --erp-toolbar-gap: 8px;
+  --erp-toolbar-mb: 12px;
+  --erp-table-row-height: 44px;
+  --erp-table-cell-pad-y: 8px;
+  --erp-table-cell-pad-x: 12px;
+  --erp-form-item-gap: 12px;
+  --erp-form-grid-min: 260px;
+  --erp-form-grid-gap: 12px;
+}
+:root[data-density="loose"] {
+  --erp-content-padding: 24px;
+  --erp-card-padding: 20px;
+  --erp-card-gap: 20px;
+  --erp-toolbar-gap: 10px;
+  --erp-toolbar-mb: 16px;
+  --erp-table-row-height: 48px;
+  --erp-table-cell-pad-y: 10px;
+  --erp-table-cell-pad-x: 14px;
+  --erp-form-item-gap: 18px;
+  --erp-form-grid-min: 320px;
+  --erp-form-grid-gap: 16px;
+}
+
 // ---------- 通用工具类 ----------
-.erp-page { padding: $spacing-lg; }
-.erp-card { background: $bg-card; border-radius: $radius-md; box-shadow: $shadow-light; padding: $spacing-lg; margin-bottom: $spacing-lg; }
+.erp-page { padding: var(--erp-content-padding, 8px); }
+.erp-card { background: $bg-card; border-radius: $radius-md; box-shadow: $shadow-light; padding: var(--erp-card-padding, 10px); margin-bottom: var(--erp-card-gap, 8px); }
 
-.erp-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: $spacing-md; flex-wrap: wrap; gap: $spacing-sm; }
-.erp-toolbar-left { display: flex; align-items: center; gap: $spacing-sm; flex-wrap: wrap; }
-.erp-toolbar-right { display: flex; align-items: center; gap: $spacing-sm; }
+.erp-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--erp-toolbar-mb, 8px); flex-wrap: wrap; gap: var(--erp-toolbar-gap, 6px); }
+.erp-toolbar-left { display: flex; align-items: center; gap: var(--erp-toolbar-gap, 6px); flex-wrap: wrap; }
+.erp-toolbar-right { display: flex; align-items: center; gap: var(--erp-toolbar-gap, 6px); }
 
-.erp-search-bar { display: flex; align-items: center; gap: $spacing-sm; margin-bottom: $spacing-md; flex-wrap: wrap; }
+.erp-search-bar { display: flex; align-items: center; gap: var(--erp-toolbar-gap, 6px); margin-bottom: var(--erp-toolbar-mb, 8px); flex-wrap: wrap; }
 .erp-search-item { display: flex; align-items: center; gap: $spacing-xs; }
 .erp-search-item .label { color: $text-regular; white-space: nowrap; font-size: 13px; }
 
 .erp-table-header { background: $bg-table-header !important; font-weight: 600; color: $text-primary; }
 
-.erp-form-dialog { .el-form-item { margin-bottom: 18px; } }
+.erp-form-dialog { .el-form-item { margin-bottom: var(--erp-form-item-gap, 8px); } }
+.el-form-item { margin-bottom: var(--erp-form-item-gap, 8px); }
+
+// ---------- 编辑页表单：按容器宽度自动排字段（不再固定 2/4 列拉宽）----------
+// 短字段（编号/日期/下拉/开关）一屏多排几个，长字段（备注/地址，带 .span-all）独占整行。
+// 覆盖各编辑页自己写死的 repeat(N, 1fr)；窄屏由 auto-fill 自动降列，页面里的媒体查询不再需要。
+.section-fields,
+.form-grid {
+  grid-template-columns: repeat(auto-fill, minmax(var(--erp-form-grid-min, 220px), 1fr)) !important;
+  gap: 0 var(--erp-form-grid-gap, 8px) !important;
+}
+.section-fields > .span-all,
+.section-fields > .empty-custom,
+.form-grid > .span-all,
+.form-grid > .empty-custom {
+  grid-column: 1 / -1 !important;
+}
+// 编辑页表单每行的上下间距：各页面在 scoped 里写死了 margin-bottom，
+// 这里用容器限定 + !important 接管，保证三档密度在编辑页也肉眼可见（改前后实测 6px）。
+.section-fields > .el-form-item,
+.form-grid > .el-form-item {
+  margin-bottom: var(--erp-form-item-gap, 8px) !important;
+}
 .erp-form-row { display: flex; gap: $spacing-lg; }
 .erp-form-row > .el-form-item { flex: 1; }
 
@@ -44,8 +112,37 @@ body {
   &.cancel   { background: rgba(245,108,108,0.1); color: $bill-cancel; }
 }
 
-// ---------- 表格行高增强 ----------
-.el-table { --el-table-row-height: 48px; }
+// ---------- 界面尺寸可调（设置中心 → 自定义 → 界面尺寸设置）----------
+// 左侧菜单文字大小：读 --erp-menu-font-size（由 stores/uiSize.js 注入）；
+// 未配置时 = 14px（Element Plus 默认值），即改造前界面完全一致（守则2.7.2-6）
+.el-menu-item,
+.el-sub-menu__title { font-size: var(--erp-menu-font-size, 14px); }
+
+// ---------- 单据页头 / 按钮条：按钮尺寸收紧（用户口径 2026-10-09「按钮 px 和按钮文字不要这么大」）----------
+// 只作用于「单据编辑页页头右侧按钮簇」与「通用按钮条」，不动其它页面的普通按钮。
+// 紧凑档观感：高度 28px、左右内边距 10px、字号 13px（Element Plus 默认是 32px / 15px / 14px）。
+.page-header .header-right .el-button:not(.el-dropdown__caret-button),
+.bill-actions .el-button:not(.el-dropdown__caret-button) {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 13px;
+}
+// 下拉箭头按钮保持窄条，只跟高度、不套用上面的左右内边距（否则下拉按钮被撑宽）
+.page-header .header-right .el-dropdown__caret-button,
+.bill-actions .el-dropdown__caret-button { height: 28px; }
+// 页头右侧按钮簇的间距统一交给容器 gap，抵消 Element Plus 相邻按钮默认 12px 外边距（否则间距忽大忽小、看着挤）
+.page-header .header-right > .el-button + .el-button,
+.page-header .header-right > .el-button + .el-dropdown,
+.page-header .header-right > .el-dropdown + .el-button,
+.page-header .header-right > .el-dropdown + .el-dropdown { margin-left: 0; }
+
+// ---------- 表格行高增强（行高/单元格留白随「界面密度」联动）----------
+.el-table { --el-table-row-height: var(--erp-table-row-height, 36px); }
+.el-table .el-table__cell {
+  padding-top: var(--erp-table-cell-pad-y, 5px) !important;
+  padding-bottom: var(--erp-table-cell-pad-y, 5px) !important;
+}
+.el-table .cell { padding-left: var(--erp-table-cell-pad-x, 8px); padding-right: var(--erp-table-cell-pad-x, 8px); }
 .el-table th.el-table__cell { background: $bg-table-header !important; font-weight: 600; }
 
 // ---------- 分页居右 ----------
@@ -55,3 +152,36 @@ body {
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-thumb { background: #C0C4CC; border-radius: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
+
+// ---------- 明细表格：齿轮按钮在表格上方正常显示，el-table 自己管滚动 ----------
+// 原理：
+//   1) 不给 .compact-table 设 min-width → el-table 宽度=父容器宽度(100%)
+//   2) el-table 内置 .el-table__body-wrapper { overflow-x:auto } → 列总宽超出时自己出1条滚动条
+//   3) 齿轮按钮(.detail-subtable-header)在 el-table 上方，不在滚动区内 → 不随滚动移动
+//   4) 不需要外层 overflow-x:hidden，不需要 .table-scroll-inner，不需要 DOM 修补
+.table-wrap {
+  position: relative;
+  padding: 10px 12px 0;
+}
+.detail-subtable-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 0 4px;
+  .subtable-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #303133;
+    white-space: nowrap;
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 3px;
+      height: 14px;
+      background: #409eff;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "generatedAt": "2026-11-11T15:34:05.880Z",
+  "menuPaths": 99,
+  "registeredBills": 33,
+  "pendingBills": [
+    "MRP计划",
+    "工序转移单"
+  ],
+  "unregisteredBillPages": []
+}

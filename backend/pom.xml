@@ -24,11 +24,20 @@
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <mybatis-plus.version>3.5.6</mybatis-plus.version>
         <hutool.version>5.8.27</hutool.version>
+        <zxing.version>3.5.3</zxing.version>
         <jjwt.version>0.12.5</jjwt.version>
         <okhttp.version>4.12.0</okhttp.version>
+        <!-- 默认跳过测试（项目约定：打包/构建一律不跑测试）；显式要求时用 -Derp.test.skip=false 覆盖 -->
+        <erp.test.skip>true</erp.test.skip>
     </properties>
 
     <dependencies>
+        <!-- JSch fork (mwiede): 支持 ed25519 密钥认证（客户升级部署/回滚） -->
+        <dependency>
+            <groupId>com.github.mwiede</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.2.17</version>
+        </dependency>
         <!-- Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -37,6 +46,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- Spring AOP (用于版本回滚切面) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
         <!-- MyBatis-Plus -->
@@ -52,11 +67,10 @@
             <artifactId>postgresql</artifactId>
         </dependency>
 
-        <!-- H2 Database (开发模式, 不需要安装数据库) -->
+        <!-- Spring Security Crypto (仅BCrypt密码加密, 不引入完整Spring Security过滤器链) -->
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
         </dependency>
 
         <!-- Redis (可选, 内存紧张时可注释掉用Caffeine替代) -->
@@ -76,6 +90,13 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>${hutool.version}</version>
+        </dependency>
+
+        <!-- 二维码生成（Hutool QrCodeUtil 依赖 zxing core） -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>${zxing.version}</version>
         </dependency>
 
         <!-- JWT -->
@@ -117,13 +138,139 @@
             <version>1.18.32</version>
         </dependency>
 
+        <!-- EasyExcel: 高性能Excel导入导出 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>3.3.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.poi</groupId>
+                    <artifactId>poi-ooxml-schemas</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- REST Assured: API 自动化测试 (字段输入输出/多条件验证) -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Testcontainers: 集成测试用真实 PG/Redis 容器 (不污染开发库) -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Allure: 测试报告可视化 -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-junit5</artifactId>
+            <version>2.25.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- @feature FEAT-AIKB-001 AI知识库：文档解析 -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
+        <!-- 打印模板 HTML → PDF（2026-11-11 手机端打印）：
+             选 flying-saucer + OpenPDF，而不是 openhtmltopdf —— 后者锁定 pdfbox 2.x，
+             与上面的 pdfbox 3.0.2 同包名不同 API，会直接把现有 PDF 读取功能打挂。 -->
+        <dependency>
+            <groupId>org.xhtmlrenderer</groupId>
+            <artifactId>flying-saucer-pdf-openpdf</artifactId>
+            <version>9.1.22</version>
+        </dependency>
+        <!-- HTML → 合法 XHTML（flying-saucer 用 XML 解析，模板里的 <br>/&nbsp; 必须先规范化） -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.17.2</version>
+        </dependency>
+
+        <!-- 设备接入（阶段 3）：MQTT 客户端 -->
+        <dependency>
+            <groupId>org.eclipse.paho</groupId>
+            <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+            <version>1.2.5</version>
+        </dependency>
+
+        <!-- 设备接入（阶段 3）：OPC UA 客户端（SecurityPolicy None / 用户名密码） -->
+        <dependency>
+            <groupId>org.eclipse.milo</groupId>
+            <artifactId>sdk-client</artifactId>
+            <version>0.6.11</version>
+        </dependency>
     </dependencies>
+
+    <!--
+      客户部署专用 profile：编译期排除"客户升级部署/一键打包"模块（com.erp.deploy 包）。
+      用法：mvn package -P customer  → 客户版 jar（无部署升级/一键打包接口）
+           mvn package              → 完整版 jar（本地/自营服务器，含部署升级/一键打包）
+      注意：com.erp.deploy 包内的类不得被其他包引用，否则 -P customer 编译会失败
+            （该失败本身即是防护——防止误加依赖）。
+      客户管理（多租户，com.erp.tenant 包）在客户包保留：121 开放客户管理，仅关闭部署升级。
+    -->
+    <profiles>
+        <profile>
+            <id>customer</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.11.0</version>
+                        <configuration>
+                            <source>17</source>
+                            <target>17</target>
+                            <encoding>UTF-8</encoding>
+                            <excludes>
+                                <exclude>com/erp/deploy/**</exclude>
+                                <!-- 小楷独立版（独立站用户/外部系统连接/自动化任务）：客户包不含（2026-10-12 客户包收敛） -->
+                                <exclude>com/erp/kai/**</exclude>
+                            </excludes>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>org.projectlombok</groupId>
+                                    <artifactId>lombok</artifactId>
+                                    <version>1.18.32</version>
+                                </path>
+                            </annotationProcessorPaths>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
@@ -147,6 +294,19 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.erp.ErpApplication</mainClass>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <skip>${erp.test.skip}</skip>
+                    <!-- Corretto 17 默认禁止 ByteBuddy 自附加，Mockito 内联模拟器初始化会失败 -->
+                    <argLine>-Djdk.attach.allowAttachSelf=true</argLine>
+                </configuration>
             </plugin>
         </plugins>
     </build>

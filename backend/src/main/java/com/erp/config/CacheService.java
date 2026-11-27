@@ -45,6 +45,22 @@ public class CacheService {
         memoryStore.put(key, new ExpiryValue(value, System.currentTimeMillis() + unit.toMillis(timeout)));
     }
 
+    /**
+     * 永久保存（无过期时间）：Redis 无 TTL 写入；内存模式过期时间取 Long.MAX_VALUE。
+     * 用途：AI 小助手会话记忆永久保留（2026-10-13 用户要求）——服务重启后同会话仍能续上。
+     */
+    public void setPersistent(String key, String value) {
+        if (redisAvailable) {
+            try {
+                redisTemplate.opsForValue().set(key, value);
+                return;
+            } catch (Exception e) {
+                redisAvailable = false;
+            }
+        }
+        memoryStore.put(key, new ExpiryValue(value, Long.MAX_VALUE));
+    }
+
     public String get(String key) {
         if (redisAvailable) {
             try {

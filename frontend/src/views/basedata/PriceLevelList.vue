@@ -1,28 +1,37 @@
 <template>
   <div class="erp-page">
-    <CrudTable
-      title="价格等级"
+    <CrudTable ref="tableRef"
+      :hide-buttons="['print']"
+      :title="$tt('价格等级')"
+      custom-field-entity="price_level"
       :columns="columns"
       :fetch-data="fetchData"
       :on-save="onSave"
       :on-delete="onDelete"
+      :on-batch-delete="onBatchDelete"
       :search-fields="searchFields"
-      :form-fields="formFields"
+      add-route="/basedata/price-level/new"
+      edit-route="/basedata/price-level/edit"
       id-field="priceLevelId"
       perm-add="basedata:price-level:add"
       perm-edit="basedata:price-level:edit"
       perm-delete="basedata:price-level:delete"
+      entity-name="priceLevel"
     >
       <template #statusSlot="{ row }">
-        <el-tag :type="row.status === '启用' ? 'success' : 'info'" size="small">{{ row.status }}</el-tag>
+        <el-tag :type="row.status === '启用' ? 'success' : 'info'" size="small">{{ $dt(row.status) }}</el-tag>
       </template>
     </CrudTable>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import { useAutoRefresh } from '@/composables/useAutoRefresh'
+const tableRef = ref(null)
+useAutoRefresh(() => tableRef.value?.loadData?.())
 import CrudTable from '@/components/CrudTable.vue'
-import { listPriceLevel, savePriceLevel, updatePriceLevel, deletePriceLevel } from '@/api/basedata/price-level'
+import { listPriceLevel, savePriceLevel, updatePriceLevel, deletePriceLevel, batchDeletePriceLevel } from '@/api/basedata/price-level'
 
 const searchFields = [
   { prop: 'keyword', label: '关键字', placeholder: '编码/名称' }
@@ -33,17 +42,8 @@ const columns = [
   { prop: 'priceLevelName', label: '价格等级名称', minWidth: 140 },
   { prop: 'priceAdjustRate', label: '调整率%', minWidth: 100 },
   { prop: 'sortOrder', label: '排序', minWidth: 100 },
-  { prop: 'status', label: '状态', width: 100, slot: 'statusSlot' }
-]
-
-const formFields = [
-  { prop: 'priceLevelCode', label: '价格等级编码', required: true, placeholder: '如 LV01' },
-  { prop: 'priceLevelName', label: '价格等级名称', required: true, placeholder: '如 批发价' },
-  { prop: 'priceAdjustRate', label: '调整率%', type: 'number', precision: 4, default: 0 },
-  { prop: 'sortOrder', label: '排序', type: 'number', default: 0 },
-  { prop: 'status', label: '状态', type: 'select', required: true, default: '启用', options: [
-    { value: '启用', label: '启用' }, { value: '停用', label: '停用' }
-  ] }
+  { prop: 'status', label: '状态', width: 100, slot: 'statusSlot' },
+  { prop: 'remark', label: '备注', minWidth: 150, showOverflowTooltip: true }
 ]
 
 async function fetchData(params) {
@@ -56,5 +56,9 @@ async function onSave(data, isEdit) {
 }
 async function onDelete(row) {
   await deletePriceLevel(row.priceLevelId)
+}
+/** 批量删除（2026-09-20 接入：CrudTable 一次请求批量删，替代原先逐条循环） */
+async function onBatchDelete(rows) {
+  await batchDeletePriceLevel(rows.map(r => r.priceLevelId))
 }
 </script>

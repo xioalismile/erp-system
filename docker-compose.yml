@@ -1,5 +1,8 @@
 version: '3.8'
 
+# 注意：Docker Compose 默认会读取同目录下的 .env 文件
+# 请参考 .env.example 创建 .env 并填入 ERP_LICENSE_PUBLIC_KEY 等配置
+
 services:
   # ===== PostgreSQL 数据库 =====
   postgres:
@@ -9,7 +12,7 @@ services:
     environment:
       POSTGRES_DB: erp_db
       POSTGRES_USER: erp_user
-      POSTGRES_PASSWORD: Erp@2026
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?请在同目录 .env 中设置 POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -54,15 +57,27 @@ services:
       # 覆盖application.yml中的数据源配置(用Docker服务名替换localhost)
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/erp_db
       SPRING_DATASOURCE_USERNAME: erp_user
-      SPRING_DATASOURCE_PASSWORD: Erp@2026
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?请在同目录 .env 中设置 POSTGRES_PASSWORD}
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: "6379"
       # 覆盖文件上传和日志路径(Linux路径)
       ERP_UPLOAD_PATH: /app/files
       LOGGING_FILE_NAME: /app/logs/erp.log
+      # ===== License 授权配置（通过环境变量注入公钥，不硬编码）=====
+      # 公钥从 .env 文件读取（供应商签发License后告诉客户公钥内容）
+      ERP_LICENSE_PUBLIC_KEY: ${ERP_LICENSE_PUBLIC_KEY:-}
+      ERP_LICENSE_FILE: /app/license/license.lic
+      # JWT 密钥（2026-09-15 起不再提供公开默认值）
+      # 留空 => 后端在 ERP_JWT_SECRET_FILE 指定位置首次启动自动生成随机密钥并复用；
+      # 密钥文件放在命名卷 erp-secrets 里，容器重建也不会换密钥（换了会导致全部用户登出）。
+      ERP_JWT_SECRET: ${ERP_JWT_SECRET:-}
+      ERP_JWT_SECRET_FILE: /app/secrets/erp-jwt-secret.key
     volumes:
       - erp-files:/app/files
       - erp-logs:/app/logs
+      - erp-secrets:/app/secrets
+      # License 文件挂载（不打入镜像，方便续期时替换）
+      - ./license:/app/license:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -91,3 +106,4 @@ volumes:
   pgdata:
   erp-files:
   erp-logs:
+  erp-secrets:

@@ -20,6 +20,14 @@ public class InventoryBatch {
     @TableField("material_id")
     private Long materialId;
 
+    /** 物料编码（列表展示用，来自 material 表，不落库） */
+    @TableField(exist = false)
+    private String materialCode;
+
+    /** 物料名称（列表展示用，来自 material 表，不落库） */
+    @TableField(exist = false)
+    private String materialName;
+
     @TableField("production_date")
     private LocalDate productionDate;
 
@@ -31,6 +39,10 @@ public class InventoryBatch {
 
     @TableField("supplier_id")
     private Long supplierId;
+
+    /** 供应商名称（列表展示用，来自 supplier 表，不落库） */
+    @TableField(exist = false)
+    private String supplierName;
 
     @TableField("incoming_date")
     private LocalDate incomingDate;
@@ -56,9 +68,9 @@ public class InventoryBatch {
     @TableField("updated_at")
     private LocalDateTime updatedAt;
 
-    @TableField("created_by")
+    @TableField(value = "created_by", fill = FieldFill.INSERT)
     private String createdBy;
 
-    @TableField("updated_by")
+    @TableField(value = "updated_by", fill = FieldFill.INSERT_UPDATE)
     private String updatedBy;
 }

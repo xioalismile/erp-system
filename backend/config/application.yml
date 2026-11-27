@@ -1,0 +1,6 @@
+# 本地运行时配置：不打进 jar，启动时由 Spring Boot 自动加载
+# 作用：固定小楷凭据加密口令，避免每次重启后已保存的支付密钥、外部连接凭据无法解密
+# 注意：本文件含加密口令，不要提交到公共代码仓库
+kai:
+  crypto:
+    secret: k7Qm2Xv9Tz4Lp8Rw3Nc6Hs1Yb5Jd0Fa7Ug2Eo4Ik9Ml3Pq

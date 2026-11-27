@@ -1,0 +1,343 @@
+{
+  "generatedAt": "2026-11-11T15:03:17.424Z",
+  "baseUrl": "https://kaiyu.pro",
+  "bill": "stock_transfer",
+  "name": "调拨单",
+  "module": "inventory",
+  "steps": {
+    "detailAnchorResolved": true,
+    "header_调拨类型": "同价调拨",
+    "header_调出仓库": "E2E-主仓",
+    "header_调入仓库": "调入仓库 E2E-备仓",
+    "header_币种": "E2E-测试币",
+    "header_调拨日期": "2026-11-11",
+    "diagRowsOnEnter": 0,
+    "diagElTableCount": 1,
+    "diagAnchorCount": 1,
+    "diagAnchorCountFirst": 1,
+    "diagAddBtnCount": 1,
+    "diagAddBtnDisabled": false,
+    "diagRowsPerClick": [
+      {
+        "click": 1,
+        "rows": 1
+      },
+      {
+        "click": 2,
+        "rows": 2
+      }
+    ],
+    "detailRowsAfterAdd": 2,
+    "detailPreRows": 0,
+    "diagMatIdx": 2,
+    "diagQtyIdx": 4,
+    "diagHeaders": [
+      "#",
+      "图片",
+      "商品名称",
+      "商品编号",
+      "数量",
+      "单价",
+      "含税价",
+      "不含税价",
+      "税率%",
+      "折扣率%",
+      "调出货位",
+      "调入货位",
+      "库存量",
+      "可用量",
+      "预计可用量",
+      "规格",
+      "单位",
+      "副单位",
+      "副单位数量",
+      "辅助数量",
+      "折扣额",
+      "金额",
+      "税额",
+      "价税合计",
+      "成本",
+      "来源单号",
+      "来源行号",
+      "操作"
+    ],
+    "diagTdCount": 28,
+    "diagStructure": {
+      "thCount": 28,
+      "rowCount": 2,
+      "tdCount": 28,
+      "consistent": true
+    },
+    "diagRow0Cells": [
+      {
+        "i": 0,
+        "sel": 0,
+        "input": 0,
+        "text": "1"
+      },
+      {
+        "i": 1,
+        "sel": 0,
+        "input": 0,
+        "text": "—"
+      },
+      {
+        "i": 2,
+        "sel": 1,
+        "input": 1,
+        "text": "选择物料"
+      },
+      {
+        "i": 3,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 4,
+        "sel": 0,
+        "input": 1,
+        "text": "1.0000"
+      },
+      {
+        "i": 5,
+        "sel": 0,
+        "input": 1,
+        "text": "0.0000"
+      },
+      {
+        "i": 6,
+        "sel": 0,
+        "input": 0,
+        "text": "0.0000"
+      },
+      {
+        "i": 7,
+        "sel": 0,
+        "input": 0,
+        "text": "0.0000"
+      },
+      {
+        "i": 8,
+        "sel": 0,
+        "input": 1,
+        "text": "13.00"
+      },
+      {
+        "i": 9,
+        "sel": 0,
+        "input": 1,
+        "text": "0.00"
+      },
+      {
+        "i": 10,
+        "sel": 1,
+        "input": 1,
+        "text": "调出货位"
+      },
+      {
+        "i": 11,
+        "sel": 1,
+        "input": 1,
+        "text": "调入货位"
+      },
+      {
+        "i": 12,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 13,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 14,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 15,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 16,
+        "sel": 1,
+        "input": 1,
+        "text": "单位"
+      },
+      {
+        "i": 17,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 18,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 19,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 20,
+        "sel": 0,
+        "input": 0,
+        "text": "0.00"
+      },
+      {
+        "i": 21,
+        "sel": 0,
+        "input": 0,
+        "text": "0.00"
+      },
+      {
+        "i": 22,
+        "sel": 0,
+        "input": 0,
+        "text": "0.00"
+      },
+      {
+        "i": 23,
+        "sel": 0,
+        "input": 0,
+        "text": "0.00"
+      },
+      {
+        "i": 24,
+        "sel": 0,
+        "input": 0,
+        "text": "0.0000"
+      },
+      {
+        "i": 25,
+        "sel": 0,
+        "input": 0,
+        "text": "—"
+      },
+      {
+        "i": 26,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 27,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      }
+    ],
+    "filledRows": [
+      {
+        "row": 1,
+        "code": "MAT000001",
+        "label": "MAT000001E2E-成品A",
+        "qty": 2,
+        "qtyActual": "2.0000",
+        "l3MaterialCell": "MAT000001 E2E-成品A",
+        "l3QtyCell": "2.0000"
+      },
+      {
+        "row": 2,
+        "code": "MAT000001",
+        "label": "MAT000001E2E-成品A",
+        "qty": 3,
+        "qtyActual": "3.0000",
+        "l3MaterialCell": "MAT000001 E2E-成品A",
+        "l3QtyCell": "3.0000"
+      }
+    ],
+    "numbersFilled": [],
+    "textsFilled": [],
+    "saveFeedback": "url",
+    "docCode": "ST-20261111-0003",
+    "detailUrl": "https://kaiyu.pro/inventory/stock-transfers/edit/10",
+    "docCodeAfterReload": "ST-20261111-0003",
+    "listWait": {
+      "ok": true,
+      "waitedMs": 677
+    },
+    "listHasCode": true,
+    "listFirstRow": "1 ST-20261111-0003 2026-11-11 E2E-主仓 E2E-备仓 同价调拨 1000.00 草稿 smoke_inventory 2026-11-11T23:02:36.255881 smoke_inventory 2026-11-11 23:02:36 smoke_inventory 2026-",
+    "l3EntrySelector": ".order-no-text:has-text(\"ST-20261111-0003\")",
+    "statusAfterReopen": null,
+    "tagsAfterReopen": [
+      "草稿"
+    ],
+    "qtyInputDisabledAtL3": false,
+    "detailRowsAfterReopen": 2,
+    "detailRowsText": [
+      "1 — MAT000001 E2E-成品A MAT000001 226.0000 200.0000 调出货位 调入货位 76.0000 76.0000 46.0000 E2E-个 E2E-个 2.0000 0.00 400.00 52.00 452.00 0.0000 —",
+      "2 — MAT000001 E2E-成品A MAT000001 226.0000 200.0000 调出货位 调入货位 76.0000 76.0000 46.0000 E2E-个 E2E-个 3.0000 0.00 600.00 78.00 678.00 0.0000 —"
+    ],
+    "l3ColumnIdx": {
+      "material": 2,
+      "qty": 4
+    },
+    "l3HeaderBack": {
+      "调拨类型": "同价调拨",
+      "调出仓库": "E2E-主仓",
+      "调入仓库": "E2E-备仓",
+      "币种": "E2E-测试币"
+    },
+    "l3CustomerItemHtml": "",
+    "l4QtyAfterFill": "7.0000",
+    "l4UrlBeforeSave": "https://kaiyu.pro/inventory/stock-transfers/edit/10",
+    "l4RowsBeforeSave": 2,
+    "l4SaveBtnCount": 1,
+    "l4SaveFeedback": "toast",
+    "l4Toasts": [
+      {
+        "kind": "success",
+        "text": "保存成功"
+      }
+    ],
+    "l4UrlAfterSave": "https://kaiyu.pro/inventory/stock-transfers/edit/10",
+    "l4UrlChangedBySave": false,
+    "l4RowsAfterSave": 2,
+    "l4UrlBeforeReload": "https://kaiyu.pro/inventory/stock-transfers/edit/10",
+    "l4AnchorResolved": true,
+    "l4UrlAfterReload": "https://kaiyu.pro/inventory/stock-transfers/edit/10",
+    "l4DetailTableVisible": true,
+    "l4DetailTableCount": 1,
+    "l4ElTableCount": 1,
+    "l4WaitDetailRows": {
+      "ok": true,
+      "rows": 2,
+      "waitedMs": 45
+    },
+    "l4HeaderAfterReload": {
+      "customer": null,
+      "saler": null,
+      "currency": "E2E-测试币"
+    },
+    "l4PageTextHead": "楷煜 库存管理 首页 / 编辑库存调拨单 简体中文 新手教程 冒 冒烟-库存管理 工作台 编辑库存调拨单 返回列表 库存调拨单 ST-20261111-0003 草稿 操作日志 保存 提交 作废 删除 打印 复制 单据码 手机扫码打开 单据 基本信息 单据信息 调拨单号 调拨日期 调拨类型 同价调拨 经办人 选择经办人 仓库信息 调出仓库 E2E-主仓 调入仓库 E2E-备仓 币种 E2E-测试币",
+    "detailRowsAfterEdit": 2,
+    "detailUrlAfterEdit": "https://kaiyu.pro/inventory/stock-transfers/edit/10",
+    "l4QtyCell": "7.0000",
+    "l4Row2MaterialCell": "MAT000001 E2E-成品A",
+    "l6SubmitBtnCount": 1,
+    "l6SubmitDisabled": false,
+    "l6SubmitFeedback": "toast",
+    "l6SubmitToasts": [
+      "info:提示 确认提交该调拨单？提交后单据将直接生效 取消 确定"
+    ],
+    "apiBase": "/api/inventory/stock-transfers",
+    "detailId": "10",
+    "effectiveStatus": "已生效",
+    "effective": true
+  },
+  "ok": true,
+  "problems": []
+}

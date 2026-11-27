@@ -1,0 +1,799 @@
+{
+  "startedAt": "2026-11-11T15:29:42.630Z",
+  "baseUrl": "https://kaiyu.pro",
+  "modules": [
+    {
+      "module": "dashboard",
+      "label": "工作台",
+      "role": "SMOKE_DASHBOARD",
+      "pageCount": 1,
+      "failed": 0
+    },
+    {
+      "module": "databoard",
+      "label": "数据看板",
+      "role": "SMOKE_DATABOARD",
+      "pageCount": 4,
+      "failed": 0
+    },
+    {
+      "module": "basedata",
+      "label": "基础资料",
+      "role": "SMOKE_BASEDATA",
+      "pageCount": 15,
+      "failed": 0
+    },
+    {
+      "module": "crm",
+      "label": "客户管理",
+      "role": "SMOKE_CRM",
+      "pageCount": 14,
+      "failed": 0
+    },
+    {
+      "module": "acquisition",
+      "label": "获客管理",
+      "role": "SMOKE_ACQUISITION",
+      "pageCount": 4,
+      "failed": 0
+    },
+    {
+      "module": "sale",
+      "label": "销售管理",
+      "role": "SMOKE_SALE",
+      "pageCount": 10,
+      "failed": 0
+    },
+    {
+      "module": "purchase",
+      "label": "采购管理",
+      "role": "SMOKE_PURCHASE",
+      "pageCount": 9,
+      "failed": 0
+    },
+    {
+      "module": "inventory",
+      "label": "库存管理",
+      "role": "SMOKE_INVENTORY",
+      "pageCount": 10,
+      "failed": 0
+    },
+    {
+      "module": "production",
+      "label": "生产管理",
+      "role": "SMOKE_PRODUCTION",
+      "pageCount": 11,
+      "failed": 0
+    },
+    {
+      "module": "subcontract",
+      "label": "委外管理",
+      "role": "SMOKE_SUBCONTRACT",
+      "pageCount": 6,
+      "failed": 0
+    },
+    {
+      "module": "sample",
+      "label": "打样管理",
+      "role": "SMOKE_SAMPLE",
+      "pageCount": 2,
+      "failed": 0
+    },
+    {
+      "module": "finance",
+      "label": "财务管理",
+      "role": "SMOKE_FINANCE",
+      "pageCount": 11,
+      "failed": 0
+    },
+    {
+      "module": "report",
+      "label": "报表中心",
+      "role": "SMOKE_REPORT",
+      "pageCount": 1,
+      "failed": 0
+    },
+    {
+      "module": "system",
+      "label": "系统管理",
+      "role": "SMOKE_SYSTEM",
+      "pageCount": 1,
+      "failed": 0
+    }
+  ],
+  "pages": [
+    {
+      "module": "dashboard",
+      "path": "/dashboard",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/dashboard"
+    },
+    {
+      "module": "databoard",
+      "path": "/databoard/spc",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/databoard/spc"
+    },
+    {
+      "module": "databoard",
+      "path": "/databoard/finance",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/databoard/finance"
+    },
+    {
+      "module": "databoard",
+      "path": "/databoard/sale",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/databoard/sale"
+    },
+    {
+      "module": "databoard",
+      "path": "/databoard/inventory",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/databoard/inventory"
+    },
+    {
+      "module": "basedata",
+      "path": "/basedata/unit",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/basedata/unit"
+    },
+    {
+      "module": "basedata",
+      "path": "/basedata/currency",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/basedata/currency"
+    },
+    {
+      "module": "basedata",
+      "path": "/basedata/settle",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/basedata/settle"
+    },
+    {
+      "module": "basedata",
+      "path": "/basedata/price-level",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/basedata/price-level"
+    },
+    {
+      "module": "basedata",
+      "path": "/basedata/department",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/basedata/department"
+    },
+    {
+      "module": "basedata",
+      "path": "/basedata/employee",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/basedata/employee"
+    },
+    {
+      "module": "basedata",
+      "path": "/basedata/warehouse",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/basedata/warehouse"
+    },
+    {
+      "module": "basedata",
+      "path": "/basedata/location",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/basedata/location"
+    },
+    {
+      "module": "basedata",
+      "path": "/basedata/material-category",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/basedata/material-category"
+    },
+    {
+      "module": "basedata",
+      "path": "/basedata/material",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/basedata/material"
+    },
+    {
+      "module": "basedata",
+      "path": "/basedata/customer",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/basedata/customer"
+    },
+    {
+      "module": "basedata",
+      "path": "/basedata/supplier",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/basedata/supplier"
+    },
+    {
+      "module": "basedata",
+      "path": "/basedata/help",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/basedata/help"
+    },
+    {
+      "module": "basedata",
+      "path": "/basedata/bank-account",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/basedata/bank-account"
+    },
+    {
+      "module": "basedata",
+      "path": "/masterdata/bom",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/masterdata/bom"
+    },
+    {
+      "module": "crm",
+      "path": "/crm/complaint",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/crm/complaint"
+    },
+    {
+      "module": "crm",
+      "path": "/crm/survey",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/crm/survey"
+    },
+    {
+      "module": "crm",
+      "path": "/crm/report",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/crm/report"
+    },
+    {
+      "module": "crm",
+      "path": "/crm/help",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/crm/help"
+    },
+    {
+      "module": "crm",
+      "path": "/crm/dashboard",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/crm/dashboard"
+    },
+    {
+      "module": "crm",
+      "path": "/crm/customer",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/crm/customer"
+    },
+    {
+      "module": "crm",
+      "path": "/crm/pool",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/crm/pool"
+    },
+    {
+      "module": "crm",
+      "path": "/crm/lead",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/crm/lead"
+    },
+    {
+      "module": "crm",
+      "path": "/crm/opportunity",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/crm/opportunity"
+    },
+    {
+      "module": "crm",
+      "path": "/crm/funnel",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/crm/funnel"
+    },
+    {
+      "module": "crm",
+      "path": "/crm/contact",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/crm/contact"
+    },
+    {
+      "module": "crm",
+      "path": "/crm/follow-up",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/crm/follow-up"
+    },
+    {
+      "module": "crm",
+      "path": "/crm/warning",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/crm/warning"
+    },
+    {
+      "module": "crm",
+      "path": "/crm/sales-target",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/crm/sales-target"
+    },
+    {
+      "module": "acquisition",
+      "path": "/acquisition/task",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/acquisition/task"
+    },
+    {
+      "module": "acquisition",
+      "path": "/acquisition/result",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/acquisition/result"
+    },
+    {
+      "module": "acquisition",
+      "path": "/acquisition/login",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/acquisition/login"
+    },
+    {
+      "module": "acquisition",
+      "path": "/acquisition/help",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/acquisition/help"
+    },
+    {
+      "module": "sale",
+      "path": "/sale/orders",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/sale/orders"
+    },
+    {
+      "module": "sale",
+      "path": "/sale/contracts",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/sale/contracts"
+    },
+    {
+      "module": "sale",
+      "path": "/sale/invoices",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/sale/invoices"
+    },
+    {
+      "module": "sale",
+      "path": "/sale/quotes",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/sale/quotes"
+    },
+    {
+      "module": "sale",
+      "path": "/sale/deliveries",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/sale/deliveries"
+    },
+    {
+      "module": "sale",
+      "path": "/logistics/dashboard",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/logistics/dashboard"
+    },
+    {
+      "module": "sale",
+      "path": "/sale/returns",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/sale/returns"
+    },
+    {
+      "module": "sale",
+      "path": "/sale/report/analysis",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/sale/report/analysis"
+    },
+    {
+      "module": "sale",
+      "path": "/sale/report/customer-statement",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/sale/report/customer-statement"
+    },
+    {
+      "module": "sale",
+      "path": "/sale/help",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/sale/help"
+    },
+    {
+      "module": "purchase",
+      "path": "/purchase/requests",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/purchase/requests"
+    },
+    {
+      "module": "purchase",
+      "path": "/purchase/contracts",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/purchase/contracts"
+    },
+    {
+      "module": "purchase",
+      "path": "/purchase/orders",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/purchase/orders"
+    },
+    {
+      "module": "purchase",
+      "path": "/purchase/inbounds",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/purchase/inbounds"
+    },
+    {
+      "module": "purchase",
+      "path": "/purchase/returns",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/purchase/returns"
+    },
+    {
+      "module": "purchase",
+      "path": "/purchase/invoices",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/purchase/invoices"
+    },
+    {
+      "module": "purchase",
+      "path": "/purchase/report/analysis",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/purchase/report/analysis"
+    },
+    {
+      "module": "purchase",
+      "path": "/purchase/report/supplier-statement",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/purchase/report/supplier-statement"
+    },
+    {
+      "module": "purchase",
+      "path": "/purchase/help",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/purchase/help"
+    },
+    {
+      "module": "inventory",
+      "path": "/inventory/batches",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/inventory/batches"
+    },
+    {
+      "module": "inventory",
+      "path": "/inventory/ledger",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/inventory/ledger"
+    },
+    {
+      "module": "inventory",
+      "path": "/inventory/stock-checks",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/inventory/stock-checks"
+    },
+    {
+      "module": "inventory",
+      "path": "/inventory/report/analysis",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/inventory/report/analysis"
+    },
+    {
+      "module": "inventory",
+      "path": "/inventory/other-receipts",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/inventory/other-receipts"
+    },
+    {
+      "module": "inventory",
+      "path": "/inventory/current",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/inventory/current"
+    },
+    {
+      "module": "inventory",
+      "path": "/inventory/stock-transfers",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/inventory/stock-transfers"
+    },
+    {
+      "module": "inventory",
+      "path": "/inventory/other-issues",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/inventory/other-issues"
+    },
+    {
+      "module": "inventory",
+      "path": "/inventory/help",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/inventory/help"
+    },
+    {
+      "module": "inventory",
+      "path": "/inventory/material-requisitions",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/inventory/material-requisitions"
+    },
+    {
+      "module": "production",
+      "path": "/production/assemble",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/production/assemble"
+    },
+    {
+      "module": "production",
+      "path": "/production/disassemble",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/production/disassemble"
+    },
+    {
+      "module": "production",
+      "path": "/production/routings",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/production/routings"
+    },
+    {
+      "module": "production",
+      "path": "/production/mrp",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/production/mrp"
+    },
+    {
+      "module": "production",
+      "path": "/production/workorders",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/production/workorders"
+    },
+    {
+      "module": "production",
+      "path": "/production/schedule-board",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/production/schedule-board"
+    },
+    {
+      "module": "production",
+      "path": "/production/returns",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/production/returns"
+    },
+    {
+      "module": "production",
+      "path": "/production/report/analysis",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/production/report/analysis"
+    },
+    {
+      "module": "production",
+      "path": "/production/supplements",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/production/supplements"
+    },
+    {
+      "module": "production",
+      "path": "/production/receipts",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/production/receipts"
+    },
+    {
+      "module": "production",
+      "path": "/production/help",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/production/help"
+    },
+    {
+      "module": "subcontract",
+      "path": "/subcontract/orders",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/subcontract/orders"
+    },
+    {
+      "module": "subcontract",
+      "path": "/subcontract/picks",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/subcontract/picks"
+    },
+    {
+      "module": "subcontract",
+      "path": "/subcontract/inbounds",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/subcontract/inbounds"
+    },
+    {
+      "module": "subcontract",
+      "path": "/subcontract/supplements",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/subcontract/supplements"
+    },
+    {
+      "module": "subcontract",
+      "path": "/subcontract/returns",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/subcontract/returns"
+    },
+    {
+      "module": "subcontract",
+      "path": "/subcontract/help",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/subcontract/help"
+    },
+    {
+      "module": "sample",
+      "path": "/sample/list",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/sample/list"
+    },
+    {
+      "module": "sample",
+      "path": "/freesample/list",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/freesample/list"
+    },
+    {
+      "module": "finance",
+      "path": "/finance/help",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/finance/help"
+    },
+    {
+      "module": "finance",
+      "path": "/finance/sale-pre-receipts",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/finance/sale-pre-receipts"
+    },
+    {
+      "module": "finance",
+      "path": "/finance/cost-calculation",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/finance/cost-calculation"
+    },
+    {
+      "module": "finance",
+      "path": "/finance/report/analysis",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/finance/report/analysis"
+    },
+    {
+      "module": "finance",
+      "path": "/finance/report/ar-summary",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/finance/report/ar-summary"
+    },
+    {
+      "module": "finance",
+      "path": "/finance/purchase-pre-payments",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/finance/purchase-pre-payments"
+    },
+    {
+      "module": "finance",
+      "path": "/finance/receipt",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/finance/receipt"
+    },
+    {
+      "module": "finance",
+      "path": "/finance/report/ap-summary",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/finance/report/ap-summary"
+    },
+    {
+      "module": "finance",
+      "path": "/finance/payment",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/finance/payment"
+    },
+    {
+      "module": "finance",
+      "path": "/finance/cost-config",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/finance/cost-config"
+    },
+    {
+      "module": "finance",
+      "path": "/finance/operation-expense",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/finance/operation-expense"
+    },
+    {
+      "module": "report",
+      "path": "/report/custom",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/report/custom"
+    },
+    {
+      "module": "system",
+      "path": "/system/settings",
+      "ok": true,
+      "reasons": [],
+      "url": "https://kaiyu.pro/system/settings"
+    }
+  ]
+}

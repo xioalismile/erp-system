@@ -13,19 +13,40 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.erp.common.util.SortHelper;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+
 public class SysDictTypeServiceImpl extends ServiceImpl<SysDictTypeMapper, SysDictType> implements SysDictTypeService {
+
+    /** 列头排序白名单（数据库列名，防注入） */
+    private static final Set<String> SORTABLE_COLUMNS = Set.of(
+            "created_at",
+            "created_by",
+            "dict_category",
+            "dict_sort",
+            "dict_type_code",
+            "dict_type_id",
+            "dict_type_name",
+            "is_system",
+            "remark",
+            "sort_order",
+            "status",
+            "updated_at",
+            "updated_by"
+        );
 
     private final SysDictDataMapper dictDataMapper;
 
     @Override
-    public PageResult<SysDictType> pageQuery(int current, int size, String keyword) {
+    public PageResult<SysDictType> pageQuery(int current, int size, String keyword, String sortBy, String sortOrder) {
         QueryWrapper<SysDictType> wrapper = new QueryWrapper<>();
+        if (!SortHelper.applyToWrapper(wrapper, sortBy, sortOrder, SORTABLE_COLUMNS)) SortHelper.orderByNewest(wrapper, SysDictType.class);
         if (keyword != null && !keyword.isBlank()) {
             wrapper.and(w -> w.like("dict_type_code", keyword)
                     .or().like("dict_type_name", keyword));

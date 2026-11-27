@@ -3,6 +3,7 @@ package com.erp.system.controller;
 import com.erp.common.Result;
 import com.erp.system.entity.SysMenu;
 import com.erp.system.service.SysMenuService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +26,24 @@ public class SysMenuController {
     }
 
     @GetMapping("/tree")
-    public Result<List<SysMenu>> tree() {
-        return Result.success(sysMenuService.getTree());
+    public Result<List<SysMenu>> tree(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("currentUserId");
+        // 检查是否admin
+        boolean isAdmin = false;
+        Object isAdminAttr = request.getAttribute("isAdmin");
+        if (isAdminAttr != null) {
+            isAdmin = Boolean.TRUE.equals(isAdminAttr) || "1".equals(isAdminAttr.toString());
+        }
+        if (!isAdmin) {
+            // 检查角色
+            Object roles = request.getAttribute("currentRoles");
+            if (roles instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<String> roleList = (List<String>) roles;
+                isAdmin = roleList.contains("ADMIN");
+            }
+        }
+        return Result.success(sysMenuService.getTreeByUser(userId, isAdmin));
     }
 
     @GetMapping("/{id}")

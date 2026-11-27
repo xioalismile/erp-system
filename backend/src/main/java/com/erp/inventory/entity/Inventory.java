@@ -59,9 +59,55 @@ public class Inventory {
     @TableField("updated_at")
     private LocalDateTime updatedAt;
 
-    @TableField("created_by")
+    @TableField(value = "created_by", fill = FieldFill.INSERT)
     private String createdBy;
 
-    @TableField("updated_by")
+    @TableField(value = "updated_by", fill = FieldFill.INSERT_UPDATE)
     private String updatedBy;
+
+    // ========== 关联展示字段（非数据库字段，仅用于前端展示）==========
+
+    /** 物料编码（真实列 inventory_current.material_code；物料被删时靠它兜底显示，2026-09-19 起生效） */
+    @TableField("material_code")
+    private String materialCode;
+
+    /** 物料名称（真实列 inventory_current.material_name；物料被删时靠它兜底显示） */
+    @TableField("material_name")
+    private String materialName;
+
+    /** 规格型号（真实列 inventory_current.spec；物料被删时靠它兜底显示） */
+    @TableField("spec")
+    private String model;
+
+    /** 物料主图URL（关联material表） */
+    @TableField(exist = false)
+    private String mainImage;
+
+    /** 单位名称（关联material表对应的单位） */
+    @TableField(exist = false)
+    private String unitName;
+
+    /** 安全/最小库存（关联material表，用于预警展示） */
+    @TableField(exist = false)
+    private BigDecimal safetyStock;
+
+    /** 仓库名称（关联warehouse表） */
+    @TableField(exist = false)
+    private String stockName;
+
+    /** 仓库编码（关联warehouse表） */
+    @TableField(exist = false)
+    private String stockCode;
+
+    /** 最新核算成本（取自cost_calculation表最新已确认记录的unit_cost，非数据库字段，仅用于前端展示） */
+    @TableField(exist = false)
+    private BigDecimal latestCalcCost;
+
+    /** 订单占用量（生效销售订单待发货数量合计，按物料全局统计，非数据库字段） */
+    @TableField(exist = false)
+    private BigDecimal reservedQuantity;
+
+    /** 预计可用量（历史名"虚拟可用"）= 本行实际可用库存 - 物料订单占用量（非数据库字段，负数表示缺口） */
+    @TableField(exist = false)
+    private BigDecimal virtualAvailable;
 }

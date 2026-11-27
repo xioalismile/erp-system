@@ -1,0 +1,254 @@
+{
+  "generatedAt": "2026-11-11T15:14:20.384Z",
+  "baseUrl": "https://kaiyu.pro",
+  "bill": "subcontract_supplement",
+  "name": "委外补料单",
+  "module": "subcontract",
+  "steps": {
+    "detailAnchorResolved": true,
+    "header_委外加工单": "SCO-20261111-0006",
+    "header_补料日期": "2026-11-11",
+    "headerText_补料原因": "E2E冒烟-补料原因",
+    "diagRowsOnEnter": 0,
+    "diagElTableCount": 1,
+    "diagAnchorCount": 1,
+    "diagAnchorCountFirst": 1,
+    "diagAddBtnCount": 1,
+    "diagAddBtnDisabled": false,
+    "diagRowsPerClick": [
+      {
+        "click": 1,
+        "rows": 1
+      },
+      {
+        "click": 2,
+        "rows": 2
+      }
+    ],
+    "detailRowsAfterAdd": 2,
+    "detailPreRows": 0,
+    "diagMatIdx": 1,
+    "diagQtyIdx": 11,
+    "diagHeaders": [
+      "#",
+      "商品名称",
+      "商品编号",
+      "库存量",
+      "可用量",
+      "预计可用量",
+      "来源单号",
+      "单位",
+      "副单位",
+      "副单位数量",
+      "辅助数量",
+      "数量",
+      "仓库",
+      "备注",
+      "操作"
+    ],
+    "diagTdCount": 15,
+    "diagStructure": {
+      "thCount": 15,
+      "rowCount": 2,
+      "tdCount": 15,
+      "consistent": true
+    },
+    "diagRow0Cells": [
+      {
+        "i": 0,
+        "sel": 0,
+        "input": 0,
+        "text": "1"
+      },
+      {
+        "i": 1,
+        "sel": 1,
+        "input": 1,
+        "text": "选择物料"
+      },
+      {
+        "i": 2,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 3,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 4,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 5,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 6,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 7,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 8,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 9,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 10,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 11,
+        "sel": 0,
+        "input": 1,
+        "text": "0.0000"
+      },
+      {
+        "i": 12,
+        "sel": 1,
+        "input": 1,
+        "text": "选择仓库"
+      },
+      {
+        "i": 13,
+        "sel": 0,
+        "input": 1,
+        "text": ""
+      },
+      {
+        "i": 14,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      }
+    ],
+    "filledRows": [
+      {
+        "row": 1,
+        "code": "MAT000001",
+        "label": "MAT000001E2E-成品A",
+        "qty": 2,
+        "qtyActual": "2.0000",
+        "l3MaterialCell": "E2E-成品A (MAT000001)",
+        "l3QtyCell": "2.0000"
+      },
+      {
+        "row": 2,
+        "code": "MAT000001",
+        "label": "MAT000001E2E-成品A",
+        "qty": 3,
+        "qtyActual": "3.0000",
+        "l3MaterialCell": "E2E-成品A (MAT000001)",
+        "l3QtyCell": "3.0000"
+      }
+    ],
+    "numbersFilled": [],
+    "textsFilled": [],
+    "saveFeedback": "toast",
+    "saveToasts": [
+      {
+        "kind": "success",
+        "text": "保存成功"
+      }
+    ],
+    "docCode": "SCS-20261111-0008",
+    "detailUrl": "https://kaiyu.pro/subcontract/supplements/10",
+    "docCodeAfterReload": "SCS-20261111-0008",
+    "listWait": {
+      "ok": true,
+      "waitedMs": 248
+    },
+    "listHasCode": true,
+    "listFirstRow": "1 SCS-20261111-0008 SCO-20261111-0006 E E2E-供应商甲 2026-11-11 5 草稿",
+    "l3EntrySelector": ".order-no-text:has-text(\"SCS-20261111-0008\")",
+    "statusAfterReopen": "草稿",
+    "tagsAfterReopen": [
+      "草稿"
+    ],
+    "qtyInputDisabledAtL3": false,
+    "detailRowsAfterReopen": 2,
+    "detailRowsText": [
+      "1 E2E-成品A (MAT000001) MAT000001 86.0000 86.0000 56.0000 E2E-个 E2E-个 E2E-个 2.0000 选择仓库",
+      "2 E2E-成品A (MAT000001) MAT000001 86.0000 86.0000 56.0000 E2E-个 E2E-个 E2E-个 3.0000 选择仓库"
+    ],
+    "l3ColumnIdx": {
+      "material": 1,
+      "qty": 11
+    },
+    "l3HeaderBack": {
+      "委外加工单": "SCO-20261111-0006"
+    },
+    "l3CustomerItemHtml": "",
+    "l4QtyAfterFill": "7.0000",
+    "l4UrlBeforeSave": "https://kaiyu.pro/subcontract/supplements/10",
+    "l4RowsBeforeSave": 2,
+    "l4SaveBtnCount": 1,
+    "l4SaveFeedback": "toast",
+    "l4Toasts": [
+      {
+        "kind": "success",
+        "text": "保存成功"
+      }
+    ],
+    "l4UrlAfterSave": "https://kaiyu.pro/subcontract/supplements/10",
+    "l4UrlChangedBySave": false,
+    "l4RowsAfterSave": 2,
+    "l4UrlBeforeReload": "https://kaiyu.pro/subcontract/supplements/10",
+    "l4AnchorResolved": true,
+    "l4UrlAfterReload": "https://kaiyu.pro/subcontract/supplements/10",
+    "l4DetailTableVisible": true,
+    "l4DetailTableCount": 1,
+    "l4ElTableCount": 1,
+    "l4WaitDetailRows": {
+      "ok": true,
+      "rows": 2,
+      "waitedMs": 19
+    },
+    "l4HeaderAfterReload": {
+      "customer": null,
+      "saler": null,
+      "currency": null
+    },
+    "l4PageTextHead": "楷煜 委外管理 首页 / 编辑委外补料单 简体中文 新手教程 冒 冒烟-委外管理 工作台 编辑委外补料单 返回列表 委外补料单 SCS-20261111-0009 草稿 操作日志 保存 提交 作废 删除 打印 复制 单据码 手机扫码打开 单据 基本信息 单据信息 补料单号 补料日期 状态 委外来源 委外加工单 SCO-20261111-0006 委外单号 供应商 补料原因 补料原因 备注 补料明细",
+    "detailRowsAfterEdit": 2,
+    "detailUrlAfterEdit": "https://kaiyu.pro/subcontract/supplements/10",
+    "l4QtyCell": "7.0000",
+    "l4Row2MaterialCell": "E2E-成品A (MAT000001)",
+    "l6SubmitBtnCount": 1,
+    "l6SubmitDisabled": false,
+    "l6SubmitFeedback": "toast",
+    "l6SubmitToasts": [
+      "info:提示 确认提交该委外补料单？提交后单据将直接生效 取消 确定"
+    ],
+    "apiBase": "/api/subcontract/supplements",
+    "detailId": "10",
+    "effectiveStatus": "",
+    "effective": false,
+    "effectiveNote": "提交=第1行仓库ID不能为空；审核=第1行仓库ID不能为空；回读状态=空"
+  },
+  "ok": true,
+  "problems": []
+}

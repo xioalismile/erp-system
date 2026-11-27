@@ -104,6 +104,7 @@ CREATE TABLE sys_menu (
     external_link VARCHAR(500),
     keepalive SMALLINT NOT NULL DEFAULT 1,
     status VARCHAR(10) NOT NULL DEFAULT '启用',
+    version VARCHAR(50),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
     created_by VARCHAR(50),
@@ -122,7 +123,7 @@ COMMENT ON COLUMN sys_menu.menu_type IS '菜单类型';
 CREATE TABLE sys_role_permission (
     permission_id BIGSERIAL PRIMARY KEY,
     role_id BIGINT NOT NULL,
-    menu_id BIGINT NOT NULL,
+    menu_id VARCHAR(200) NOT NULL,
     permission_type VARCHAR(20) NOT NULL,
     permission_value INT NOT NULL DEFAULT 0,
     is_inherited SMALLINT NOT NULL DEFAULT 0,

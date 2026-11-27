@@ -1,0 +1,307 @@
+{
+  "generatedAt": "2026-11-11T14:53:09.796Z",
+  "baseUrl": "https://kaiyu.pro",
+  "bill": "purchase_request",
+  "name": "采购申请单",
+  "module": "purchase",
+  "steps": {
+    "detailAnchorResolved": true,
+    "header_申请部门": "E2E-销售部",
+    "header_申请人": "E2E-销售员甲",
+    "header_申请类型": "普通采购",
+    "header_申请日期": "2026-11-11",
+    "header_需求日期": "2026-11-11",
+    "diagRowsOnEnter": 0,
+    "diagElTableCount": 1,
+    "diagAnchorCount": 1,
+    "diagAnchorCountFirst": 1,
+    "diagAddBtnCount": 1,
+    "diagAddBtnDisabled": false,
+    "diagRowsPerClick": [
+      {
+        "click": 1,
+        "rows": 1
+      },
+      {
+        "click": 2,
+        "rows": 2
+      }
+    ],
+    "detailRowsAfterAdd": 2,
+    "detailPreRows": 0,
+    "diagMatIdx": 2,
+    "diagQtyIdx": 12,
+    "diagHeaders": [
+      "#",
+      "图片",
+      "商品名称",
+      "商品编号",
+      "库存量",
+      "可用量",
+      "预计可用量",
+      "规格",
+      "单位",
+      "副单位",
+      "副单位数量",
+      "辅助数量",
+      "申请数量",
+      "审批数量",
+      "建议供应商",
+      "需求日期",
+      "行备注",
+      "生产日期",
+      "有效期至",
+      "来源单号",
+      "来源行号",
+      "操作"
+    ],
+    "diagTdCount": 22,
+    "diagStructure": {
+      "thCount": 22,
+      "rowCount": 2,
+      "tdCount": 22,
+      "consistent": true
+    },
+    "diagRow0Cells": [
+      {
+        "i": 0,
+        "sel": 0,
+        "input": 0,
+        "text": "1"
+      },
+      {
+        "i": 1,
+        "sel": 0,
+        "input": 0,
+        "text": "—"
+      },
+      {
+        "i": 2,
+        "sel": 1,
+        "input": 1,
+        "text": "选择物料"
+      },
+      {
+        "i": 3,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 4,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 5,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 6,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 7,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 8,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 9,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 10,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 11,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 12,
+        "sel": 0,
+        "input": 1,
+        "text": "1.0000"
+      },
+      {
+        "i": 13,
+        "sel": 0,
+        "input": 1,
+        "text": "0.0000"
+      },
+      {
+        "i": 14,
+        "sel": 1,
+        "input": 1,
+        "text": "选择供应商"
+      },
+      {
+        "i": 15,
+        "sel": 0,
+        "input": 1,
+        "text": "2026-11-11"
+      },
+      {
+        "i": 16,
+        "sel": 0,
+        "input": 1,
+        "text": ""
+      },
+      {
+        "i": 17,
+        "sel": 0,
+        "input": 0,
+        "text": "—"
+      },
+      {
+        "i": 18,
+        "sel": 0,
+        "input": 0,
+        "text": "—"
+      },
+      {
+        "i": 19,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 20,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 21,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      }
+    ],
+    "filledRows": [
+      {
+        "row": 1,
+        "code": "MAT000001",
+        "label": "MAT000001E2E-成品A",
+        "qty": 2,
+        "qtyActual": "2.0000",
+        "l3MaterialCell": "MAT000001 E2E-成品A",
+        "l3QtyCell": "2.0000"
+      },
+      {
+        "row": 2,
+        "code": "MAT000001",
+        "label": "MAT000001E2E-成品A",
+        "qty": 3,
+        "qtyActual": "3.0000",
+        "l3MaterialCell": "MAT000001 E2E-成品A",
+        "l3QtyCell": "3.0000"
+      }
+    ],
+    "numbersFilled": [],
+    "textsFilled": [],
+    "saveFeedback": "toast",
+    "saveToasts": [
+      {
+        "kind": "success",
+        "text": "保存成功"
+      }
+    ],
+    "docCode": "PR-20261111-0023",
+    "detailUrl": "https://kaiyu.pro/purchase/requests/34",
+    "docCodeAfterReload": "PR-20261111-0023",
+    "listWait": {
+      "ok": true,
+      "waitedMs": 635
+    },
+    "listHasCode": true,
+    "listFirstRow": "1 PR-20261111-0023 2026-11-11 E2E-销售部 E2E-销售员甲 普通采购 2026-11-11 草稿 5.0000 否 smoke_purchase 2026-11-11 22:52:25 2026-11-11 22:52:25",
+    "l3EntrySelector": ".order-no-text:has-text(\"PR-20261111-0023\")",
+    "statusAfterReopen": null,
+    "tagsAfterReopen": [
+      "草稿",
+      "普通"
+    ],
+    "qtyInputDisabledAtL3": false,
+    "detailRowsAfterReopen": 2,
+    "detailRowsText": [
+      "1 — MAT000001 E2E-成品A MAT000001 76.0000 76.0000 46.0000 E2E-个 E2E-个 选择供应商 — —",
+      "2 — MAT000001 E2E-成品A MAT000001 76.0000 76.0000 46.0000 E2E-个 E2E-个 选择供应商 — —"
+    ],
+    "l3ColumnIdx": {
+      "material": 2,
+      "qty": 12
+    },
+    "l3HeaderBack": {
+      "申请部门": "E2E-销售部",
+      "申请人": "E2E-销售员甲",
+      "申请类型": "普通采购"
+    },
+    "l3CustomerItemHtml": "",
+    "l4QtyAfterFill": "7.0000",
+    "l4UrlBeforeSave": "https://kaiyu.pro/purchase/requests/34",
+    "l4RowsBeforeSave": 2,
+    "l4SaveBtnCount": 1,
+    "l4SaveFeedback": "toast",
+    "l4Toasts": [
+      {
+        "kind": "success",
+        "text": "保存成功"
+      }
+    ],
+    "l4UrlAfterSave": "https://kaiyu.pro/purchase/requests/34",
+    "l4UrlChangedBySave": false,
+    "l4RowsAfterSave": 2,
+    "l4UrlBeforeReload": "https://kaiyu.pro/purchase/requests/34",
+    "l4AnchorResolved": true,
+    "l4UrlAfterReload": "https://kaiyu.pro/purchase/requests/34",
+    "l4DetailTableVisible": true,
+    "l4DetailTableCount": 1,
+    "l4ElTableCount": 1,
+    "l4WaitDetailRows": {
+      "ok": true,
+      "rows": 2,
+      "waitedMs": 100
+    },
+    "l4HeaderAfterReload": {
+      "customer": null,
+      "saler": null,
+      "currency": null
+    },
+    "l4PageTextHead": "楷煜 采购管理 首页 / 编辑采购申请单 简体中文 新手教程 冒 冒烟-采购管理 工作台 编辑采购申请单 返回列表 采购申请单 PR-20261111-0023 草稿 操作日志 保存 提交 作废 删除 复制 单据码 手机扫码打开 单据 来源单据 去向单据 基本信息 单据信息 申请单号 申请日期 需求日期 申请类型 普通采购 是否紧急 普通 申请信息 申请部门 E2E-销售部 申请人 E2E-销售员",
+    "detailRowsAfterEdit": 2,
+    "detailUrlAfterEdit": "https://kaiyu.pro/purchase/requests/34",
+    "l4QtyCell": "7.0000",
+    "l4Row2MaterialCell": "MAT000001 E2E-成品A",
+    "l6SubmitBtnCount": 1,
+    "l6SubmitDisabled": false,
+    "l6SubmitFeedback": "toast",
+    "l6SubmitToasts": [
+      "info:提示 确认提交该采购申请单？提交后单据将直接生效 取消 确定"
+    ],
+    "apiBase": "/api/purchase/requests",
+    "detailId": "34",
+    "effectiveStatus": "已生效",
+    "effective": true
+  },
+  "ok": true,
+  "problems": []
+}

@@ -1,0 +1,22 @@
+-- 单据编号配置初始数据
+INSERT INTO sys_serial_no_config (doc_type, doc_name, prefix, date_format, serial_length, reset_type, separator, current_serial, current_date, sort_order, enabled, remark) VALUES
+('SALE_ORDER', '销售订单', 'SO', 'yyyyMMdd', 4, 'DAILY', '-', 0, NULL, 1, 1, '销售订单编号规则'),
+('PURCHASE_ORDER', '采购订单', 'PO', 'yyyyMMdd', 4, 'DAILY', '-', 0, NULL, 2, 1, '采购订单编号规则'),
+('SALE_DELIVERY', '销售出库单', 'SD', 'yyyyMMdd', 4, 'DAILY', '-', 0, NULL, 3, 1, '销售出库单编号规则'),
+('PURCHASE_INBOUND', '采购入库单', 'PI', 'yyyyMMdd', 4, 'DAILY', '-', 0, NULL, 4, 1, '采购入库单编号规则'),
+('SALE_RETURN', '销售退货单', 'SR', 'yyyyMMdd', 4, 'DAILY', '-', 0, NULL, 5, 1, '销售退货单编号规则'),
+('PURCHASE_RETURN', '采购退货单', 'PR', 'yyyyMMdd', 4, 'DAILY', '-', 0, NULL, 6, 1, '采购退货单编号规则'),
+('SALE_INVOICE', '销售发票', 'SI', 'yyyyMM', 4, 'MONTHLY', '-', 0, NULL, 7, 1, '销售发票编号规则'),
+('PURCHASE_INVOICE', '采购发票', 'PI', 'yyyyMM', 4, 'MONTHLY', '-', 0, NULL, 8, 1, '采购发票编号规则'),
+('STOCK_CHECK', '库存盘点单', 'SC', 'yyyyMMdd', 4, 'DAILY', '-', 0, NULL, 9, 1, '库存盘点单编号规则'),
+('STOCK_TRANSFER', '库存调拨单', 'ST', 'yyyyMMdd', 4, 'DAILY', '-', 0, NULL, 10, 1, '库存调拨单编号规则'),
+('OTHER_RECEIPT', '其他入库单', 'OR', 'yyyyMMdd', 4, 'DAILY', '-', 0, NULL, 11, 1, '其他入库单编号规则'),
+('OTHER_ISSUE', '其他出库单', 'OI', 'yyyyMMdd', 4, 'DAILY', '-', 0, NULL, 12, 1, '其他出库单编号规则'),
+('MATERIAL_REQUISITION', '领料单', 'MR', 'yyyyMMdd', 4, 'DAILY', '-', 0, NULL, 13, 1, '领料单编号规则'),
+('PRODUCTION_ORDER', '生产订单', 'MO', 'yyyyMMdd', 4, 'DAILY', '-', 0, NULL, 14, 1, '生产订单编号规则'),
+('WORK_ORDER', '工单', 'WO', 'yyyyMMdd', 4, 'DAILY', '-', 0, NULL, 15, 1, '工单编号规则'),
+('BOM', '物料清单', 'BOM', 'yyyy', 4, 'YEARLY', '-', 0, NULL, 16, 1, '物料清单编号规则'),
+('CUSTOMER', '客户档案', 'CUS', '', 4, 'NONE', '', 0, NULL, 17, 1, '客户档案编号规则'),
+('SUPPLIER', '供应商档案', 'SUP', '', 4, 'NONE', '', 0, NULL, 18, 1, '供应商档案编号规则'),
+('MATERIAL', '物料档案', 'MAT', '', 4, 'NONE', '', 0, NULL, 19, 1, '物料档案编号规则'),
+('FREE_SAMPLE_ORDER', '免费样品单', 'FS', 'yyyyMMdd', 4, 'DAILY', '-', 0, NULL, 20, 1, '免费样品单编号规则');

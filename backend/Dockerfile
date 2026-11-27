@@ -22,8 +22,9 @@ RUN apk add --no-cache tzdata && \
 # 复制打包好的JAR
 COPY --from=builder /build/target/smart-erp-1.0.0.jar app.jar
 
-# 创建文件存储和日志目录
-RUN mkdir -p /app/files /app/logs
+# 创建文件存储、日志、License 目录
+# license/ 目录通过 docker-compose 挂载（不打入镜像，方便续期）
+RUN mkdir -p /app/files /app/logs /app/license
 
 EXPOSE 8080
 

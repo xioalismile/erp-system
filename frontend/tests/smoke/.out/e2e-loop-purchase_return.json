@@ -1,0 +1,386 @@
+{
+  "generatedAt": "2026-11-11T14:58:22.411Z",
+  "baseUrl": "https://kaiyu.pro",
+  "bill": "purchase_return",
+  "name": "采购退货单",
+  "module": "purchase",
+  "steps": {
+    "detailAnchorResolved": true,
+    "header_供应商": "E2E-供应商甲",
+    "header_仓库": "E2E-主仓",
+    "header_退货类型": "质量退货",
+    "header_采购员": "E2E-销售员甲",
+    "header_币种": "CUR001",
+    "header_退货日期": "2026-11-11",
+    "headerText_退货原因": "E2E冒烟-质量问题退货",
+    "diagRowsOnEnter": 0,
+    "diagElTableCount": 1,
+    "diagAnchorCount": 1,
+    "diagAnchorCountFirst": 1,
+    "diagAddBtnCount": 1,
+    "diagAddBtnDisabled": false,
+    "diagRowsPerClick": [
+      {
+        "click": 1,
+        "rows": 1
+      },
+      {
+        "click": 2,
+        "rows": 2
+      }
+    ],
+    "detailRowsAfterAdd": 2,
+    "detailPreRows": 0,
+    "diagMatIdx": 2,
+    "diagQtyIdx": 12,
+    "diagHeaders": [
+      "#",
+      "图片",
+      "商品名称",
+      "商品编号",
+      "库存量",
+      "可用量",
+      "预计可用量",
+      "规格",
+      "单位",
+      "副单位",
+      "副单位数量",
+      "辅助数量",
+      "数量",
+      "单价",
+      "含税价",
+      "不含税价",
+      "税率%",
+      "计税方式",
+      "折扣率%",
+      "折扣额",
+      "金额",
+      "税额",
+      "价税合计",
+      "成本",
+      "生产日期",
+      "有效期至",
+      "货位",
+      "行备注",
+      "来源单号",
+      "操作"
+    ],
+    "diagTdCount": 30,
+    "diagStructure": {
+      "thCount": 30,
+      "rowCount": 2,
+      "tdCount": 30,
+      "consistent": true
+    },
+    "diagRow0Cells": [
+      {
+        "i": 0,
+        "sel": 0,
+        "input": 0,
+        "text": "1"
+      },
+      {
+        "i": 1,
+        "sel": 0,
+        "input": 0,
+        "text": "—"
+      },
+      {
+        "i": 2,
+        "sel": 1,
+        "input": 1,
+        "text": "选择物料"
+      },
+      {
+        "i": 3,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 4,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 5,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 6,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 7,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 8,
+        "sel": 1,
+        "input": 1,
+        "text": "单位"
+      },
+      {
+        "i": 9,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 10,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 11,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 12,
+        "sel": 0,
+        "input": 1,
+        "text": "1.0000"
+      },
+      {
+        "i": 13,
+        "sel": 0,
+        "input": 1,
+        "text": "0.0000"
+      },
+      {
+        "i": 14,
+        "sel": 0,
+        "input": 0,
+        "text": "0.0000"
+      },
+      {
+        "i": 15,
+        "sel": 0,
+        "input": 0,
+        "text": "0.0000"
+      },
+      {
+        "i": 16,
+        "sel": 0,
+        "input": 1,
+        "text": "13.00"
+      },
+      {
+        "i": 17,
+        "sel": 1,
+        "input": 1,
+        "text": "价外税"
+      },
+      {
+        "i": 18,
+        "sel": 0,
+        "input": 1,
+        "text": "0.00"
+      },
+      {
+        "i": 19,
+        "sel": 0,
+        "input": 0,
+        "text": "0.00"
+      },
+      {
+        "i": 20,
+        "sel": 0,
+        "input": 0,
+        "text": "0.00"
+      },
+      {
+        "i": 21,
+        "sel": 0,
+        "input": 0,
+        "text": "0.00"
+      },
+      {
+        "i": 22,
+        "sel": 0,
+        "input": 0,
+        "text": "0.00"
+      },
+      {
+        "i": 23,
+        "sel": 0,
+        "input": 0,
+        "text": "0.0000"
+      },
+      {
+        "i": 24,
+        "sel": 0,
+        "input": 0,
+        "text": "-"
+      },
+      {
+        "i": 25,
+        "sel": 0,
+        "input": 0,
+        "text": "-"
+      },
+      {
+        "i": 26,
+        "sel": 1,
+        "input": 1,
+        "text": "货位"
+      },
+      {
+        "i": 27,
+        "sel": 0,
+        "input": 1,
+        "text": ""
+      },
+      {
+        "i": 28,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 29,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      }
+    ],
+    "filledRows": [
+      {
+        "row": 1,
+        "code": "MAT000001",
+        "label": "MAT000001E2E-成品A",
+        "qty": 2,
+        "qtyActual": "2.0000",
+        "l3MaterialCell": "MAT000001 E2E-成品A",
+        "l3QtyCell": "2.0000"
+      },
+      {
+        "row": 2,
+        "code": "MAT000001",
+        "label": "MAT000001E2E-成品A",
+        "qty": 3,
+        "qtyActual": "3.0000",
+        "l3MaterialCell": "MAT000001 E2E-成品A",
+        "l3QtyCell": "3.0000"
+      }
+    ],
+    "numbersFilled": [
+      {
+        "row": 1,
+        "values": [
+          {
+            "header": "单价",
+            "actual": "100.0000"
+          }
+        ]
+      },
+      {
+        "row": 2,
+        "values": [
+          {
+            "header": "单价",
+            "actual": "100.0000"
+          }
+        ]
+      }
+    ],
+    "textsFilled": [],
+    "saveFeedback": "toast",
+    "saveToasts": [
+      {
+        "kind": "success",
+        "text": "保存成功"
+      }
+    ],
+    "docCode": "PR-20261111-0003",
+    "detailUrl": "https://kaiyu.pro/purchase/returns/8",
+    "docCodeAfterReload": "PR-20261111-0003",
+    "listWait": {
+      "ok": true,
+      "waitedMs": 536
+    },
+    "listHasCode": true,
+    "listFirstRow": "1 PR-20261111-0003 2026-11-11 E E2E-供应商甲 E2E-销售员甲 E2E-主仓 ¥500.00 质量退货 草稿 smoke_purchase 2026-11-11 22:57:38 2026-11-11 22:57:38",
+    "l3EntrySelector": ".order-no-text:has-text(\"PR-20261111-0003\")",
+    "statusAfterReopen": null,
+    "tagsAfterReopen": [
+      "草稿",
+      "否"
+    ],
+    "qtyInputDisabledAtL3": false,
+    "detailRowsAfterReopen": 2,
+    "detailRowsText": [
+      "1 — MAT000001 E2E-成品A MAT000001 86.0000 86.0000 56.0000 E2E-个 E2E-个 2.0000 113.0000 100.0000 价外税 0.00 200.00 26.00 226.00 0.0000 - - 货位",
+      "2 — MAT000001 E2E-成品A MAT000001 86.0000 86.0000 56.0000 E2E-个 E2E-个 3.0000 113.0000 100.0000 价外税 0.00 300.00 39.00 339.00 0.0000 - - 货位"
+    ],
+    "l3ColumnIdx": {
+      "material": 2,
+      "qty": 12
+    },
+    "l3HeaderBack": {
+      "供应商": "E2E-供应商甲",
+      "仓库": "E2E-主仓",
+      "退货类型": "质量退货",
+      "采购员": "E2E-销售员甲",
+      "币种": "CUR001"
+    },
+    "l3CustomerItemHtml": "",
+    "l4QtyAfterFill": "7.0000",
+    "l4UrlBeforeSave": "https://kaiyu.pro/purchase/returns/8",
+    "l4RowsBeforeSave": 2,
+    "l4SaveBtnCount": 1,
+    "l4SaveFeedback": "toast",
+    "l4Toasts": [
+      {
+        "kind": "success",
+        "text": "保存成功"
+      }
+    ],
+    "l4UrlAfterSave": "https://kaiyu.pro/purchase/returns/8",
+    "l4UrlChangedBySave": false,
+    "l4RowsAfterSave": 2,
+    "l4UrlBeforeReload": "https://kaiyu.pro/purchase/returns/8",
+    "l4AnchorResolved": true,
+    "l4UrlAfterReload": "https://kaiyu.pro/purchase/returns/8",
+    "l4DetailTableVisible": true,
+    "l4DetailTableCount": 1,
+    "l4ElTableCount": 1,
+    "l4WaitDetailRows": {
+      "ok": true,
+      "rows": 2,
+      "waitedMs": 58
+    },
+    "l4HeaderAfterReload": {
+      "customer": null,
+      "saler": null,
+      "currency": "CUR001"
+    },
+    "l4PageTextHead": "楷煜 采购管理 首页 / 编辑采购退货单 简体中文 新手教程 冒 冒烟-采购管理 工作台 编辑采购退货单 返回列表 采购退货单 PR-20261111-0003 草稿 保存 提交 打印 复制 单据 来源单据 去向单据 基本信息 单据信息 退货单号 退货日期 退货类型 质量退货 批次管理 否 供应商信息 供应商 E2E-供应商甲 供应商编号 联系人 联系电话 收货地址 交易信息 采购员 E2E-销售",
+    "detailRowsAfterEdit": 2,
+    "detailUrlAfterEdit": "https://kaiyu.pro/purchase/returns/8",
+    "l4QtyCell": "7.0000",
+    "l4Row2MaterialCell": "MAT000001 E2E-成品A",
+    "l6SubmitBtnCount": 1,
+    "l6SubmitDisabled": false,
+    "l6SubmitFeedback": "toast",
+    "l6SubmitToasts": [
+      "info:提示 确认提交该采购退货单？提交后单据将直接生效 取消 确定"
+    ],
+    "apiBase": "/api/purchase/returns",
+    "detailId": "8",
+    "effectiveStatus": "已生效",
+    "effective": true
+  },
+  "ok": true,
+  "problems": []
+}

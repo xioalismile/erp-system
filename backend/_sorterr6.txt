@@ -1,0 +1,609 @@
+﻿[ERROR] COMPILATION ERROR : 
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/inventory/service/MaterialRequisitionServiceImpl.java:[200,44] ������ com.erp.inventory.service.MaterialRequisitionServiceImpl�ж����˷��� pageQueryByBillType(int,int,java.lang.String,java.lang.String,java.lang.String,java.lang.String)
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/price/service/PriceEngineServiceImpl.java:[43,13] �Ҳ�������
+  ����:   ���� log
+  λ��: �� com.erp.price.service.PriceEngineServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/price/service/PriceEngineServiceImpl.java:[52,13] �Ҳ�������
+  ����:   ���� log
+  λ��: �� com.erp.price.service.PriceEngineServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/price/service/PriceEngineServiceImpl.java:[59,9] �Ҳ�������
+  ����:   ���� log
+  λ��: �� com.erp.price.service.PriceEngineServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/price/service/PriceEngineServiceImpl.java:[67,9] �Ҳ�������
+  ����:   ���� log
+  λ��: �� com.erp.price.service.PriceEngineServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/price/service/PriceEngineServiceImpl.java:[75,9] �Ҳ�������
+  ����:   ���� log
+  λ��: �� com.erp.price.service.PriceEngineServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/common/PageResult.java:[15,10] �Ҳ�������
+  ����:   ���� setRecords(java.util.List<T>)
+  λ��: ����Ϊcom.erp.common.PageResult<T>�ı��� r
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/common/PageResult.java:[16,10] �Ҳ�������
+  ����:   ���� setTotal(long)
+  λ��: ����Ϊcom.erp.common.PageResult<T>�ı��� r
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/common/PageResult.java:[17,10] �Ҳ�������
+  ����:   ���� setCurrent(int)
+  λ��: ����Ϊcom.erp.common.PageResult<T>�ı��� r
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/common/PageResult.java:[18,10] �Ҳ�������
+  ����:   ���� setSize(int)
+  λ��: ����Ϊcom.erp.common.PageResult<T>�ı��� r
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[54,68] �Ҳ�������
+  ����:   ���� getFlowId()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[56,53] ����������Ч
+  �Ҳ�������
+    ����:   ���� getNodeId()
+    λ��: �� com.erp.approval.entity.ApprovalNode
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[60,52] ����������Ч
+  �Ҳ�������
+    ����:   ���� getNodeId()
+    λ��: �� com.erp.approval.entity.ApprovalNodeApprover
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[62,58] �Ҳ�������
+  ����:   ���� getNodeId()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� n
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[63,37] �Ҳ�������
+  ����:   ���� getApprovers()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� n
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[66,13] �Ҳ�������
+  ����:   ���� setNodes(java.util.List<com.erp.approval.entity.ApprovalNode>)
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[67,13] �Ҳ�������
+  ����:   ���� setNodeCount(int)
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[84,17] �Ҳ�������
+  ����:   ���� getFlowCode()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[84,47] �Ҳ�������
+  ����:   ���� getFlowCode()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[85,17] �Ҳ�������
+  ����:   ���� setFlowCode(java.lang.String)
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[87,84] �Ҳ�������
+  ����:   ���� getFlowCode()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[88,59] �Ҳ�������
+  ����:   ���� getFlowCode()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[90,17] �Ҳ�������
+  ����:   ���� getEnabled()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[90,44] �Ҳ�������
+  ����:   ���� setEnabled(short)
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[92,17] �Ҳ�������
+  ����:   ���� getNodes()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[93,42] �Ҳ�������
+  ����:   ���� getNodes()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[94,36] �Ҳ�������
+  ����:   ���� getFlowId()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[95,21] �Ҳ�������
+  ����:   ���� setNodeId(<nulltype>)
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[96,25] �Ҳ�������
+  ����:   ���� getNodeOrder()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[96,54] �Ҳ�������
+  ����:   ���� setNodeOrder(int)
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[97,25] �Ҳ�������
+  ����:   ���� getApproverMode()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[97,57] �Ҳ�������
+  ����:   ���� setApproverMode(java.lang.String)
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[102,36] �Ҳ�������
+  ����:   ���� getFlowCode()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[108,17] �Ҳ�������
+  ����:   ���� getFlowCode()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[108,48] �Ҳ�������
+  ����:   ���� getFlowCode()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[109,24] �Ҳ�������
+  ����:   ���� getFlowId()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[111,42] �Ҳ�������
+  ����:   ���� getFlowCode()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[111,76] �Ҳ�������
+  ����:   ���� getFlowId()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[112,63] �Ҳ�������
+  ����:   ���� getFlowCode()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[117,68] �Ҳ�������
+  ����:   ���� getFlowId()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[119,93] �Ҳ�������
+  ����:   ���� getNodeId()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� old
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[121,78] �Ҳ�������
+  ����:   ���� getFlowId()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[122,88] �Ҳ�������
+  ����:   ���� getFlowId()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[125,17] �Ҳ�������
+  ����:   ���� getNodes()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[126,42] �Ҳ�������
+  ����:   ���� getNodes()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[127,21] �Ҳ�������
+  ����:   ���� setNodeId(<nulltype>)
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[128,36] �Ҳ�������
+  ����:   ���� getFlowId()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[129,25] �Ҳ�������
+  ����:   ���� getNodeOrder()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[129,54] �Ҳ�������
+  ����:   ���� setNodeOrder(int)
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[130,25] �Ҳ�������
+  ����:   ���� getApproverMode()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[130,57] �Ҳ�������
+  ����:   ���� setApproverMode(java.lang.String)
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[135,36] �Ҳ�������
+  ����:   ���� getFlowCode()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[139,17] �Ҳ�������
+  ����:   ���� getApprovers()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[140,43] �Ҳ�������
+  ����:   ���� getApprovers()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[141,14] �Ҳ�������
+  ����:   ���� setId(<nulltype>)
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNodeApprover�ı��� a
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[142,29] �Ҳ�������
+  ����:   ���� getNodeId()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[153,91] �Ҳ�������
+  ����:   ���� getNodeId()
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� n
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[158,12] �Ҳ�������
+  ����:   ���� info(java.lang.String,java.lang.Long)
+  λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[166,13] �Ҳ�������
+  ����:   ���� setEnabled(java.lang.Short)
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[176,14] �Ҳ�������
+  ����:   ���� setConditionId(<nulltype>)
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalCondition�ı��� c
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[177,14] �Ҳ�������
+  ����:   ���� setFlowId(java.lang.Long)
+  λ��: ����Ϊcom.erp.approval.entity.ApprovalCondition�ı��� c
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[138,30] �Ҳ�������
+  ����:   ���� getOrderId()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[141,18] �Ҳ�������
+  ����:   ���� getQuantity()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[141,49] �Ҳ�������
+  ����:   ���� getQuantity()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[148,16] �Ҳ�������
+  ����:   ���� info(java.lang.String)
+  λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[151,18] �Ҳ�������
+  ����:   ���� getOrderNo()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[151,48] �Ҳ�������
+  ����:   ���� getOrderNo()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[152,18] �Ҳ�������
+  ����:   ���� setOrderNo(java.lang.String)
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[154,18] �Ҳ�������
+  ����:   ���� getStatus()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[154,45] �Ҳ�������
+  ����:   ���� setStatus(java.lang.String)
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[155,18] �Ҳ�������
+  ����:   ���� getApprovalStatus()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[155,53] �Ҳ�������
+  ����:   ���� setApprovalStatus(java.lang.String)
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[156,18] �Ҳ�������
+  ����:   ���� getIsUrgent()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[156,47] �Ҳ�������
+  ����:   ���� setIsUrgent(short)
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[157,18] �Ҳ�������
+  ����:   ���� getIsClosed()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[157,47] �Ҳ�������
+  ����:   ���� setIsClosed(short)
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[158,18] �Ҳ�������
+  ����:   ���� getCompletedQuantity()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[158,56] �Ҳ�������
+  ����:   ���� setCompletedQuantity(java.math.BigDecimal)
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[159,18] �Ҳ�������
+  ����:   ���� getReportedQuantity()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[159,55] �Ҳ�������
+  ����:   ���� setReportedQuantity(java.math.BigDecimal)
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[160,18] �Ҳ�������
+  ����:   ���� getRejectedQuantity()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[160,55] �Ҳ�������
+  ����:   ���� setRejectedQuantity(java.math.BigDecimal)
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[161,18] �Ҳ�������
+  ����:   ���� getOrderDate()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[161,48] �Ҳ�������
+  ����:   ���� setOrderDate(java.time.LocalDate)
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[164,18] �Ҳ�������
+  ����:   ���� getBomId()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[164,47] �Ҳ�������
+  ����:   ���� getBomVersion()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[164,80] �Ҳ�������
+  ����:   ���� getBomVersion()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[165,49] �Ҳ�������
+  ����:   ���� getBomId()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[167,40] �Ҳ�������
+  ����:   ���� getBomVersion()
+  λ��: ����Ϊcom.erp.masterdata.entity.Bom�ı��� bom
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[172,48] �Ҳ�������
+  ����:   ���� getProducts()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[173,62] �Ҳ�������
+  ����:   ���� getMaterialId()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[176,39] �Ҳ�������
+  ����:   ���� getMaterialId()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[177,41] �Ҳ�������
+  ����:   ���� getMaterialCode()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[178,41] �Ҳ�������
+  ����:   ���� getMaterialName()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[179,42] �Ҳ�������
+  ����:   ���� getModel()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[180,34] �Ҳ�������
+  ����:   ���� getModel()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[181,35] �Ҳ�������
+  ����:   ���� getUnitId()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[182,37] �Ҳ�������
+  ����:   ���� getQuantity()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[183,46] �Ҳ�������
+  ����:   ���� getCompletedQuantity()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[184,45] �Ҳ�������
+  ����:   ���� getReportedQuantity()
+  λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project smart-erp: Compilation failure: Compilation failure: 
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/inventory/service/MaterialRequisitionServiceImpl.java:[200,44] ������ com.erp.inventory.service.MaterialRequisitionServiceImpl�ж����˷��� pageQueryByBillType(int,int,java.lang.String,java.lang.String,java.lang.String,java.lang.String)
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/price/service/PriceEngineServiceImpl.java:[43,13] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� com.erp.price.service.PriceEngineServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/price/service/PriceEngineServiceImpl.java:[52,13] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� com.erp.price.service.PriceEngineServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/price/service/PriceEngineServiceImpl.java:[59,9] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� com.erp.price.service.PriceEngineServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/price/service/PriceEngineServiceImpl.java:[67,9] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� com.erp.price.service.PriceEngineServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/price/service/PriceEngineServiceImpl.java:[75,9] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� com.erp.price.service.PriceEngineServiceImpl
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/common/PageResult.java:[15,10] �Ҳ�������
+[ERROR]   ����:   ���� setRecords(java.util.List<T>)
+[ERROR]   λ��: ����Ϊcom.erp.common.PageResult<T>�ı��� r
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/common/PageResult.java:[16,10] �Ҳ�������
+[ERROR]   ����:   ���� setTotal(long)
+[ERROR]   λ��: ����Ϊcom.erp.common.PageResult<T>�ı��� r
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/common/PageResult.java:[17,10] �Ҳ�������
+[ERROR]   ����:   ���� setCurrent(int)
+[ERROR]   λ��: ����Ϊcom.erp.common.PageResult<T>�ı��� r
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/common/PageResult.java:[18,10] �Ҳ�������
+[ERROR]   ����:   ���� setSize(int)
+[ERROR]   λ��: ����Ϊcom.erp.common.PageResult<T>�ı��� r
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[54,68] �Ҳ�������
+[ERROR]   ����:   ���� getFlowId()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[56,53] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getNodeId()
+[ERROR]     λ��: �� com.erp.approval.entity.ApprovalNode
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[60,52] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getNodeId()
+[ERROR]     λ��: �� com.erp.approval.entity.ApprovalNodeApprover
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[62,58] �Ҳ�������
+[ERROR]   ����:   ���� getNodeId()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� n
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[63,37] �Ҳ�������
+[ERROR]   ����:   ���� getApprovers()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� n
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[66,13] �Ҳ�������
+[ERROR]   ����:   ���� setNodes(java.util.List<com.erp.approval.entity.ApprovalNode>)
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[67,13] �Ҳ�������
+[ERROR]   ����:   ���� setNodeCount(int)
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[84,17] �Ҳ�������
+[ERROR]   ����:   ���� getFlowCode()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[84,47] �Ҳ�������
+[ERROR]   ����:   ���� getFlowCode()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[85,17] �Ҳ�������
+[ERROR]   ����:   ���� setFlowCode(java.lang.String)
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[87,84] �Ҳ�������
+[ERROR]   ����:   ���� getFlowCode()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[88,59] �Ҳ�������
+[ERROR]   ����:   ���� getFlowCode()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[90,17] �Ҳ�������
+[ERROR]   ����:   ���� getEnabled()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[90,44] �Ҳ�������
+[ERROR]   ����:   ���� setEnabled(short)
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[92,17] �Ҳ�������
+[ERROR]   ����:   ���� getNodes()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[93,42] �Ҳ�������
+[ERROR]   ����:   ���� getNodes()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[94,36] �Ҳ�������
+[ERROR]   ����:   ���� getFlowId()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[95,21] �Ҳ�������
+[ERROR]   ����:   ���� setNodeId(<nulltype>)
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[96,25] �Ҳ�������
+[ERROR]   ����:   ���� getNodeOrder()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[96,54] �Ҳ�������
+[ERROR]   ����:   ���� setNodeOrder(int)
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[97,25] �Ҳ�������
+[ERROR]   ����:   ���� getApproverMode()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[97,57] �Ҳ�������
+[ERROR]   ����:   ���� setApproverMode(java.lang.String)
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[102,36] �Ҳ�������
+[ERROR]   ����:   ���� getFlowCode()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[108,17] �Ҳ�������
+[ERROR]   ����:   ���� getFlowCode()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[108,48] �Ҳ�������
+[ERROR]   ����:   ���� getFlowCode()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[109,24] �Ҳ�������
+[ERROR]   ����:   ���� getFlowId()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[111,42] �Ҳ�������
+[ERROR]   ����:   ���� getFlowCode()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[111,76] �Ҳ�������
+[ERROR]   ����:   ���� getFlowId()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[112,63] �Ҳ�������
+[ERROR]   ����:   ���� getFlowCode()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[117,68] �Ҳ�������
+[ERROR]   ����:   ���� getFlowId()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[119,93] �Ҳ�������
+[ERROR]   ����:   ���� getNodeId()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� old
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[121,78] �Ҳ�������
+[ERROR]   ����:   ���� getFlowId()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[122,88] �Ҳ�������
+[ERROR]   ����:   ���� getFlowId()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[125,17] �Ҳ�������
+[ERROR]   ����:   ���� getNodes()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[126,42] �Ҳ�������
+[ERROR]   ����:   ���� getNodes()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[127,21] �Ҳ�������
+[ERROR]   ����:   ���� setNodeId(<nulltype>)
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[128,36] �Ҳ�������
+[ERROR]   ����:   ���� getFlowId()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[129,25] �Ҳ�������
+[ERROR]   ����:   ���� getNodeOrder()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[129,54] �Ҳ�������
+[ERROR]   ����:   ���� setNodeOrder(int)
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[130,25] �Ҳ�������
+[ERROR]   ����:   ���� getApproverMode()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[130,57] �Ҳ�������
+[ERROR]   ����:   ���� setApproverMode(java.lang.String)
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[135,36] �Ҳ�������
+[ERROR]   ����:   ���� getFlowCode()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[139,17] �Ҳ�������
+[ERROR]   ����:   ���� getApprovers()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[140,43] �Ҳ�������
+[ERROR]   ����:   ���� getApprovers()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[141,14] �Ҳ�������
+[ERROR]   ����:   ���� setId(<nulltype>)
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNodeApprover�ı��� a
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[142,29] �Ҳ�������
+[ERROR]   ����:   ���� getNodeId()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� node
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[153,91] �Ҳ�������
+[ERROR]   ����:   ���� getNodeId()
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalNode�ı��� n
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[158,12] �Ҳ�������
+[ERROR]   ����:   ���� info(java.lang.String,java.lang.Long)
+[ERROR]   λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[166,13] �Ҳ�������
+[ERROR]   ����:   ���� setEnabled(java.lang.Short)
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalFlow�ı��� flow
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[176,14] �Ҳ�������
+[ERROR]   ����:   ���� setConditionId(<nulltype>)
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalCondition�ı��� c
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/approval/service/ApprovalFlowService.java:[177,14] �Ҳ�������
+[ERROR]   ����:   ���� setFlowId(java.lang.Long)
+[ERROR]   λ��: ����Ϊcom.erp.approval.entity.ApprovalCondition�ı��� c
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[138,30] �Ҳ�������
+[ERROR]   ����:   ���� getOrderId()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[141,18] �Ҳ�������
+[ERROR]   ����:   ���� getQuantity()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[141,49] �Ҳ�������
+[ERROR]   ����:   ���� getQuantity()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[148,16] �Ҳ�������
+[ERROR]   ����:   ���� info(java.lang.String)
+[ERROR]   λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[151,18] �Ҳ�������
+[ERROR]   ����:   ���� getOrderNo()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[151,48] �Ҳ�������
+[ERROR]   ����:   ���� getOrderNo()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[152,18] �Ҳ�������
+[ERROR]   ����:   ���� setOrderNo(java.lang.String)
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[154,18] �Ҳ�������
+[ERROR]   ����:   ���� getStatus()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[154,45] �Ҳ�������
+[ERROR]   ����:   ���� setStatus(java.lang.String)
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[155,18] �Ҳ�������
+[ERROR]   ����:   ���� getApprovalStatus()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[155,53] �Ҳ�������
+[ERROR]   ����:   ���� setApprovalStatus(java.lang.String)
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[156,18] �Ҳ�������
+[ERROR]   ����:   ���� getIsUrgent()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[156,47] �Ҳ�������
+[ERROR]   ����:   ���� setIsUrgent(short)
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[157,18] �Ҳ�������
+[ERROR]   ����:   ���� getIsClosed()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[157,47] �Ҳ�������
+[ERROR]   ����:   ���� setIsClosed(short)
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[158,18] �Ҳ�������
+[ERROR]   ����:   ���� getCompletedQuantity()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[158,56] �Ҳ�������
+[ERROR]   ����:   ���� setCompletedQuantity(java.math.BigDecimal)
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[159,18] �Ҳ�������
+[ERROR]   ����:   ���� getReportedQuantity()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[159,55] �Ҳ�������
+[ERROR]   ����:   ���� setReportedQuantity(java.math.BigDecimal)
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[160,18] �Ҳ�������
+[ERROR]   ����:   ���� getRejectedQuantity()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[160,55] �Ҳ�������
+[ERROR]   ����:   ���� setRejectedQuantity(java.math.BigDecimal)
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[161,18] �Ҳ�������
+[ERROR]   ����:   ���� getOrderDate()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[161,48] �Ҳ�������
+[ERROR]   ����:   ���� setOrderDate(java.time.LocalDate)
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[164,18] �Ҳ�������
+[ERROR]   ����:   ���� getBomId()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[164,47] �Ҳ�������
+[ERROR]   ����:   ���� getBomVersion()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[164,80] �Ҳ�������
+[ERROR]   ����:   ���� getBomVersion()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[165,49] �Ҳ�������
+[ERROR]   ����:   ���� getBomId()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[167,40] �Ҳ�������
+[ERROR]   ����:   ���� getBomVersion()
+[ERROR]   λ��: ����Ϊcom.erp.masterdata.entity.Bom�ı��� bom
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[172,48] �Ҳ�������
+[ERROR]   ����:   ���� getProducts()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[173,62] �Ҳ�������
+[ERROR]   ����:   ���� getMaterialId()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[176,39] �Ҳ�������
+[ERROR]   ����:   ���� getMaterialId()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[177,41] �Ҳ�������
+[ERROR]   ����:   ���� getMaterialCode()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[178,41] �Ҳ�������
+[ERROR]   ����:   ���� getMaterialName()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[179,42] �Ҳ�������
+[ERROR]   ����:   ���� getModel()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[180,34] �Ҳ�������
+[ERROR]   ����:   ���� getModel()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[181,35] �Ҳ�������
+[ERROR]   ����:   ���� getUnitId()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[182,37] �Ҳ�������
+[ERROR]   ����:   ���� getQuantity()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[183,46] �Ҳ�������
+[ERROR]   ����:   ���� getCompletedQuantity()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] /D:/erp/prodsrc/����ERP-��Ŀ/backend/src/main/java/com/erp/production/service/WorkOrderServiceImpl.java:[184,45] �Ҳ�������
+[ERROR]   ����:   ���� getReportedQuantity()
+[ERROR]   λ��: ����Ϊcom.erp.production.entity.WorkOrder�ı��� order
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

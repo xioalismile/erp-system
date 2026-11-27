@@ -3,48 +3,41 @@
     <div class="filter-bar">
       <el-input
         v-model="query.keyword"
-        placeholder="用户名/真实姓名"
+        :placeholder="$tt('用户名/真实姓名')"
         class="filter-input"
         clearable
         @keyup.enter="onSearch"
       />
-      <el-select v-model="query.isEnabled" placeholder="状态" clearable class="filter-select">
-        <el-option label="启用" :value="1" />
-        <el-option label="禁用" :value="0" />
+      <el-select v-model="query.isEnabled" :placeholder="$tt('状态')" clearable class="filter-select">
+        <el-option :label="$tf('启用')" :value="1" />
+        <el-option :label="$tf('禁用')" :value="0" />
       </el-select>
-      <el-button type="primary" @click="onSearch">查询</el-button>
-      <el-button @click="onReset">重置</el-button>
-      <el-button type="success" @click="onAdd">新增</el-button>
+      <el-button v-permission="perm('query')" type="primary" @click="onSearch">{{ $tt("查询") }}</el-button>
+      <el-button v-permission="perm('reset')" @click="onReset">{{ $tt("重置") }}</el-button>
+      <el-button v-permission="perm('add')" type="success" @click="onAdd">{{ $tt("新增") }}</el-button>
     </div>
 
-    <el-table :data="tableData" border v-loading="loading">
-      <el-table-column prop="userCode" label="用户编码" min-width="120" />
-      <el-table-column prop="username" label="用户名" min-width="120" />
-      <el-table-column prop="realName" label="真实姓名" min-width="120" />
-      <el-table-column prop="email" label="邮箱" min-width="180" />
-      <el-table-column prop="mobilePhone" label="手机号" min-width="130" />
-      <el-table-column label="是否管理员" width="110" align="center">
+    <el-table :data="tableData" border v-loading="loading" @sort-change="onSortChange">
+      <el-table-column prop="userCode" :label="$tf('用户编码')" min-width="120" sortable="custom"/>
+      <el-table-column prop="username" :label="$tf('用户名')" min-width="120" sortable="custom"/>
+      <el-table-column prop="realName" :label="$tf('真实姓名')" min-width="120" sortable="custom"/>
+      <el-table-column prop="email" :label="$tf('邮箱')" min-width="180" sortable="custom"/>
+      <el-table-column prop="mobilePhone" :label="$tf('手机号')" min-width="130" sortable="custom"/>
+      <el-table-column :label="$tf('是否管理员')" width="110" align="center">
         <template #default="{ row }">
           <el-tag :type="row.isAdmin ? 'danger' : 'info'" size="small">
             {{ row.isAdmin ? '管理员' : '普通' }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="状态" width="90" align="center">
+      <el-table-column :label="$tf('状态')" width="90" align="center">
         <template #default="{ row }">
           <el-tag :type="row.isEnabled ? 'success' : 'info'" size="small">
             {{ row.isEnabled ? '启用' : '禁用' }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="280" fixed="right">
-        <template #default="{ row }">
-          <el-button size="small" @click="onEdit(row)">编辑</el-button>
-          <el-button size="small" type="warning" @click="onAssignRoles(row)">分配角色</el-button>
-          <el-button size="small" type="primary" @click="onResetPassword(row)">重置密码</el-button>
-          <el-button size="small" type="danger" @click="onDelete(row)">删除</el-button>
-        </template>
-      </el-table-column>
+      <AuditColumns />
     </el-table>
 
     <el-pagination
@@ -68,67 +61,71 @@
       <el-form :model="form" :rules="rules" ref="formRef" label-width="110px">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="用户编码" prop="userCode">
-              <el-input v-model="form.userCode" placeholder="如 U001" />
+            <el-form-item :label="$tf('用户编码')" prop="userCode">
+              <el-input v-model="form.userCode" :placeholder="$tt('如 U001')" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="用户名" prop="username">
-              <el-input v-model="form.username" placeholder="登录用户名" :disabled="isEdit" />
+            <el-form-item :label="$tf('用户名')" prop="username">
+              <el-input v-model="form.username" :placeholder="$tt('登录用户名')" :disabled="isEdit" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="真实姓名" prop="realName">
+            <el-form-item :label="$tf('真实姓名')" prop="realName">
               <el-input v-model="form.realName" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="用户类型" prop="userType">
-              <el-select v-model="form.userType" placeholder="请选择" style="width:100%">
-                <el-option label="内部用户" value="内部用户" />
-                <el-option label="外部用户" value="外部用户" />
+            <el-form-item :label="$tf('用户类型')" prop="userType">
+              <el-select v-model="form.userType" :placeholder="$tt('请选择')" style="width:100%">
+                <el-option :label="$tf('内部用户')" value="内部用户" />
+                <el-option :label="$tf('外部用户')" value="外部用户" />
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="邮箱" prop="email">
+            <el-form-item :label="$tf('邮箱')" prop="email">
               <el-input v-model="form.email" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="手机号" prop="mobilePhone">
+            <el-form-item :label="$tf('手机号')" prop="mobilePhone">
               <el-input v-model="form.mobilePhone" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="是否启用" prop="isEnabled">
+            <el-form-item :label="$tf('是否启用')" prop="isEnabled">
               <el-switch v-model="form.isEnabled" :active-value="1" :inactive-value="0" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="是否管理员" prop="isAdmin">
+            <el-form-item :label="$tf('是否管理员')" prop="isAdmin">
               <el-switch v-model="form.isAdmin" :active-value="1" :inactive-value="0" />
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="备注" prop="remark">
+        <el-form-item :label="$tf('备注')" prop="remark">
           <el-input v-model="form.remark" type="textarea" :rows="2" />
         </el-form-item>
+        <!-- 账号 ↔ 员工档案联动说明（2026-09-21）：保存时自动在员工档案生成并绑定对应员工 -->
+        <div style="margin-left:110px;color:#909399;font-size:12px;line-height:18px;">
+          {{ $tt('保存时会自动在【基础资料 → 员工档案】创建并绑定对应员工（员工编码自动生成），部门/岗位/电话可在员工档案里补充。') }}
+        </div>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="onSubmit">保存</el-button>
+        <el-button v-permission="perm('dlgCancel')" @click="dialogVisible = false">{{ $tt("取消") }}</el-button>
+        <el-button v-permission="perm('save')" type="primary" @click="onSubmit">{{ $tt("保存") }}</el-button>
       </template>
     </el-dialog>
 
     <!-- 分配角色弹窗 -->
-    <el-dialog title="分配角色" v-model="roleDialogVisible" width="560px">
+    <el-dialog :title="$tf('分配角色')" v-model="roleDialogVisible" width="560px">
       <div style="margin-bottom:8px;color:#666">
         当前用户：{{ currentUser.username }} ({{ currentUser.realName }})
       </div>
@@ -140,21 +137,29 @@
         </div>
       </el-checkbox-group>
       <template #footer>
-        <el-button @click="roleDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="onSubmitRoles">保存</el-button>
+        <el-button v-permission="perm('dlgCancel')" @click="roleDialogVisible = false">{{ $tt("取消") }}</el-button>
+        <el-button v-permission="perm('save')" type="primary" @click="onSubmitRoles">{{ $tt("保存") }}</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup>
+import { usePagePerm } from '@/utils/pagePerm'
+const perm = usePagePerm('system:role-perm')
+import { useAutoRefresh } from '@/composables/useAutoRefresh'
 import { ref, reactive, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import {
-  pageUser, getUser, createUser, updateUser, deleteUser, resetPassword, assignRoles
+  pageUser, createUser, updateUser, assignRoles
 } from '@/api/system/user'
-import { listAllRole } from '@/api/system/role'
+import AuditColumns from '@/components/AuditColumns.vue'
+import { useTableSort } from '@/composables/useTableSort'
+import { tt } from '@/i18n'
+const { handleSortChange, getSortParams } = useTableSort()
 
+
+const onSortChange = (e) => { handleSortChange(e); loadData() }
 const loading = ref(false)
 const tableData = ref([])
 const total = ref(0)
@@ -162,7 +167,8 @@ const query = reactive({
   current: 1,
   size: 20,
   keyword: '',
-  isEnabled: ''
+  isEnabled: '',
+  ...getSortParams()
 })
 
 const dialogVisible = ref(false)
@@ -183,15 +189,15 @@ const defaultForm = {
 const form = reactive({ ...defaultForm })
 
 const rules = {
-  userCode: [{ required: true, message: '请输入用户编码', trigger: 'blur' }],
-  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-  realName: [{ required: true, message: '请输入真实姓名', trigger: 'blur' }]
+  userCode: [{ required: true, message: tt('请输入用户编码'), trigger: 'blur' }],
+  username: [{ required: true, message: tt('请输入用户名'), trigger: 'blur' }],
+  realName: [{ required: true, message: tt('请输入真实姓名'), trigger: 'blur' }]
 }
 
 async function loadData() {
   loading.value = true
   try {
-    const res = await pageUser(query)
+    const res = await pageUser({ ...query, ...getSortParams() })
     tableData.value = res.records || []
     total.value = res.total || 0
   } finally {
@@ -221,18 +227,6 @@ function onAdd() {
   dialogVisible.value = true
 }
 
-async function onEdit(row) {
-  isEdit.value = true
-  resetForm()
-  try {
-    const detail = await getUser(row.userId)
-    Object.assign(form, detail)
-  } catch (e) {
-    Object.assign(form, row)
-  }
-  dialogVisible.value = true
-}
-
 function onDialogClose() {
   formRef.value && formRef.value.resetFields()
   resetForm()
@@ -244,31 +238,14 @@ async function onSubmit() {
     if (!valid) return
     if (isEdit.value) {
       await updateUser(form.userId, form)
-      ElMessage.success('编辑成功')
+      ElMessage.success(tt('编辑成功'))
     } else {
       await createUser(form)
-      ElMessage.success('新增成功')
+      ElMessage.success(tt('新增成功'))
     }
     dialogVisible.value = false
     loadData()
   })
-}
-
-async function onDelete(row) {
-  await ElMessageBox.confirm(`确定删除用户 [${row.username}] 吗？`, '提示', {
-    type: 'warning'
-  })
-  await deleteUser(row.userId)
-  ElMessage.success('删除成功')
-  loadData()
-}
-
-async function onResetPassword(row) {
-  await ElMessageBox.confirm(`确定重置用户 [${row.username}] 的密码吗？`, '提示', {
-    type: 'warning'
-  })
-  await resetPassword(row.userId)
-  ElMessage.success('密码已重置')
 }
 
 // ===== 分配角色 =====
@@ -277,27 +254,15 @@ const currentUser = reactive({ userId: null, username: '', realName: '' })
 const allRoles = ref([])
 const selectedRoleIds = ref([])
 
-async function onAssignRoles(row) {
-  Object.assign(currentUser, { userId: row.userId, username: row.username, realName: row.realName })
-  selectedRoleIds.value = Array.isArray(row.roleIds) ? [...row.roleIds] : []
-  if (allRoles.value.length === 0) {
-    try {
-      allRoles.value = (await listAllRole()) || []
-    } catch (e) {
-      allRoles.value = []
-    }
-  }
-  roleDialogVisible.value = true
-}
-
 async function onSubmitRoles() {
   await assignRoles(currentUser.userId, selectedRoleIds.value)
-  ElMessage.success('分配角色成功')
+  ElMessage.success(tt('分配角色成功'))
   roleDialogVisible.value = false
   loadData()
 }
 
 onMounted(loadData)
+useAutoRefresh(loadData)
 </script>
 
 <style scoped>

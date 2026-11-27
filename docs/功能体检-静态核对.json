@@ -1,0 +1,2015 @@
+{
+  "generatedAt": "2026-11-27T10:00:52.844Z",
+  "pages": [
+    {
+      "page": "FreeSampleList",
+      "file": "src/views/freesample/FreeSampleList.vue",
+      "title": "免费样品单",
+      "storageKey": "FreeSampleList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "free_sample_order",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "FREE_SAMPLE",
+      "billName": "免费样品单",
+      "table": "free_sample_order",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": false,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "MaterialRequisitionList",
+      "file": "src/views/inventory/MaterialRequisitionList.vue",
+      "title": "生产领料单",
+      "storageKey": "MaterialRequisitionList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "material_requisition",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "MATERIAL_REQUISITION",
+      "billName": "生产领料单",
+      "table": "material_requisition",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "MrpPlanList",
+      "file": "src/views/production/MrpPlanList.vue",
+      "title": "MRP计划",
+      "storageKey": "MrpPlanList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": false,
+      "customEntity": "",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "MRP_PLAN",
+      "billName": "MRP计划",
+      "table": "mrp_plan",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "OperationExpenseList",
+      "file": "src/views/finance/OperationExpenseList.vue",
+      "title": "费用分摊",
+      "storageKey": "OperationExpenseList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": false,
+      "customEntity": "",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "OPERATION_EXPENSE",
+      "billName": "费用分摊",
+      "table": "operation_expense",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "OperationReportList",
+      "file": "src/views/production/OperationReportList.vue",
+      "title": "作业汇报",
+      "storageKey": "OperationReportList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "operation_report",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "OPERATION_REPORT",
+      "billName": "工序汇报单",
+      "table": "operation_report",
+      "link": true,
+      "cascade": false,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "OtherIssueList",
+      "file": "src/views/inventory/OtherIssueList.vue",
+      "title": "其他出库单",
+      "storageKey": "OtherIssueList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "other_issue",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "OTHER_ISSUE",
+      "billName": "其他出库单",
+      "table": "other_issue",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "OtherReceiptList",
+      "file": "src/views/inventory/OtherReceiptList.vue",
+      "title": "其他入库",
+      "storageKey": "OtherReceiptList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "other_receipt",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "OTHER_RECEIPT",
+      "billName": "其他入库单",
+      "table": "other_receipt",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "PaymentReceiptList",
+      "file": "src/views/finance/PaymentReceiptList.vue",
+      "title": "收款单",
+      "storageKey": "PaymentReceiptList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": false,
+      "customEntity": "",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "PAYMENT_RECEIPT",
+      "billName": "收款单",
+      "table": "cash_receipt",
+      "link": true,
+      "cascade": true,
+      "summary": true,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "PaymentVoucherList",
+      "file": "src/views/finance/PaymentVoucherList.vue",
+      "title": "付款单",
+      "storageKey": "PaymentVoucherList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": false,
+      "customEntity": "",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "PAYMENT_VOUCHER",
+      "billName": "付款单",
+      "table": "cash_payment",
+      "link": true,
+      "cascade": true,
+      "summary": true,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "ProduceAssembleList",
+      "file": "src/views/production/ProduceAssembleList.vue",
+      "title": "生产组装单",
+      "storageKey": "ProduceAssembleList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "produce_assemble",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "PRODUCE_ASSEMBLE",
+      "billName": "生产组装单",
+      "table": "produce_assemble",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "ProduceDisassembleList",
+      "file": "src/views/production/ProduceDisassembleList.vue",
+      "title": "生产拆卸单",
+      "storageKey": "ProduceDisassembleList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "produce_disassemble",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "PRODUCE_DISASSEMBLE",
+      "billName": "生产拆卸单",
+      "table": "produce_disassemble",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "ProductionReceiptList",
+      "file": "src/views/production/ProductionReceiptList.vue",
+      "title": "生产入库单",
+      "storageKey": "ProductionReceiptList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "production_receipt",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "PRODUCTION_RECEIPT",
+      "billName": "生产入库单",
+      "table": "production_receipt",
+      "link": true,
+      "cascade": true,
+      "summary": true,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "ProductionReturnList",
+      "file": "src/views/production/ProductionReturnList.vue",
+      "title": "生产退料单",
+      "storageKey": "ProductionReturnList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": false,
+      "customEntity": "",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "MATERIAL_RETURN",
+      "billName": "生产退料单",
+      "table": "material_requisition",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": false,
+      "excel": true,
+      "excelShared": true,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "ProductionSupplementList",
+      "file": "src/views/production/ProductionSupplementList.vue",
+      "title": "生产补料单",
+      "storageKey": "ProductionSupplementList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": false,
+      "customEntity": "",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "MATERIAL_SUPPLEMENT",
+      "billName": "生产补料单",
+      "table": "material_requisition",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": false,
+      "excel": true,
+      "excelShared": true,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "PurchaseContractList",
+      "file": "src/views/purchase/PurchaseContractList.vue",
+      "title": "采购合同",
+      "storageKey": "PurchaseContractList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "purchase_contract",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "PURCHASE_CONTRACT",
+      "billName": "采购合同",
+      "table": "purchase_contract",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "PurchaseInboundList",
+      "file": "src/views/purchase/PurchaseInboundList.vue",
+      "title": "采购入库单",
+      "storageKey": "PurchaseInboundList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "purchase_inbound",
+      "fieldPerm": "purchase_receipt",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "PURCHASE_INBOUND",
+      "billName": "采购入库单",
+      "table": "purchase_receipt",
+      "link": true,
+      "cascade": true,
+      "summary": true,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "PurchaseInvoiceList",
+      "file": "src/views/purchase/PurchaseInvoiceList.vue",
+      "title": "采购发票",
+      "storageKey": "PurchaseInvoiceList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "purchase_invoice",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "PURCHASE_INVOICE",
+      "billName": "采购发票",
+      "table": "purchase_invoice",
+      "link": true,
+      "cascade": true,
+      "summary": true,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "PurchaseOrderList",
+      "file": "src/views/purchase/PurchaseOrderList.vue",
+      "title": "采购订单",
+      "storageKey": "PurchaseOrderList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "purchase_order",
+      "fieldPerm": "purchase_order",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "PURCHASE_ORDER",
+      "billName": "采购订单",
+      "table": "purchase_order",
+      "link": true,
+      "cascade": true,
+      "summary": true,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "PurchasePrePaymentList",
+      "file": "src/views/finance/PurchasePrePaymentList.vue",
+      "title": "采购预付款单",
+      "storageKey": "PurchasePrePaymentList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": false,
+      "customEntity": "",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "PURCHASE_PRE_PAYMENT",
+      "billName": "预付款单",
+      "table": "purchase_pre_payment",
+      "link": true,
+      "cascade": true,
+      "summary": true,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "PurchaseRequestList",
+      "file": "src/views/purchase/PurchaseRequestList.vue",
+      "title": "采购申请单",
+      "storageKey": "PurchaseRequestList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "purchase_request",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "PURCHASE_REQUEST",
+      "billName": "采购申请单",
+      "table": "purchase_request",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "PurchaseReturnList",
+      "file": "src/views/purchase/PurchaseReturnList.vue",
+      "title": "采购退货单",
+      "storageKey": "PurchaseReturnList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "purchase_return",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "PURCHASE_RETURN",
+      "billName": "采购退货单",
+      "table": "purchase_return",
+      "link": true,
+      "cascade": true,
+      "summary": true,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "QcTemplateList",
+      "file": "src/views/masterdata/QcTemplateList.vue",
+      "title": "质检模板",
+      "storageKey": "QcTemplateList",
+      "billListPage": true,
+      "detail": false,
+      "detailManual": false,
+      "customFields": false,
+      "customEntity": "",
+      "fieldPerm": "",
+      "filterDefs": false,
+      "detailFilterDefs": false,
+      "batchActions": false,
+      "isBill": false,
+      "billType": "",
+      "billName": "",
+      "table": "",
+      "link": false,
+      "cascade": false,
+      "summary": false,
+      "action": false,
+      "excel": false,
+      "excelShared": false,
+      "fieldPermBackend": false
+    },
+    {
+      "page": "RoutingList",
+      "file": "src/views/production/RoutingList.vue",
+      "title": "工艺路线",
+      "storageKey": "RoutingList",
+      "billListPage": true,
+      "detail": false,
+      "detailManual": false,
+      "customFields": false,
+      "customEntity": "",
+      "fieldPerm": "",
+      "filterDefs": false,
+      "detailFilterDefs": false,
+      "batchActions": false,
+      "isBill": false,
+      "billType": "",
+      "billName": "",
+      "table": "",
+      "link": false,
+      "cascade": false,
+      "summary": false,
+      "action": false,
+      "excel": false,
+      "excelShared": false,
+      "fieldPermBackend": false
+    },
+    {
+      "page": "SaleContractList",
+      "file": "src/views/sale/SaleContractList.vue",
+      "title": "销售合同",
+      "storageKey": "SaleContractList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "sale_contract",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "SALE_CONTRACT",
+      "billName": "销售合同",
+      "table": "sale_contract",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "SaleDeliveryList",
+      "file": "src/views/sale/SaleDeliveryList.vue",
+      "title": "销售出库单",
+      "storageKey": "SaleDeliveryList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "sale_delivery",
+      "fieldPerm": "sale_delivery",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "SALE_DELIVERY",
+      "billName": "销售出库单",
+      "table": "sale_delivery",
+      "link": true,
+      "cascade": true,
+      "summary": true,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "SaleExchangeList",
+      "file": "src/views/sale/SaleExchangeList.vue",
+      "title": "销售换货单",
+      "storageKey": "SaleExchangeList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "sale_exchange",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": false,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "SALE_EXCHANGE",
+      "billName": "销售换货单",
+      "table": "sale_exchange",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": false,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "SaleInvoiceList",
+      "file": "src/views/sale/SaleInvoiceList.vue",
+      "title": "销售发票",
+      "storageKey": "SaleInvoiceList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "sale_invoice",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "SALE_INVOICE",
+      "billName": "销售发票",
+      "table": "sale_invoice",
+      "link": true,
+      "cascade": true,
+      "summary": true,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "SaleOrderList",
+      "file": "src/views/sale/SaleOrderList.vue",
+      "title": "销售订单",
+      "storageKey": "SaleOrderList",
+      "billListPage": true,
+      "detail": false,
+      "detailManual": true,
+      "customFields": true,
+      "customEntity": "sale_order",
+      "fieldPerm": "sale_order",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "SALE_ORDER",
+      "billName": "销售订单",
+      "table": "sale_order",
+      "link": true,
+      "cascade": true,
+      "summary": true,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "SalePreReceiptList",
+      "file": "src/views/finance/SalePreReceiptList.vue",
+      "title": "销售预收款单",
+      "storageKey": "SalePreReceiptList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": false,
+      "customEntity": "",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "SALE_PRE_RECEIPT",
+      "billName": "销售预收款单",
+      "table": "sale_pre_receipt",
+      "link": true,
+      "cascade": true,
+      "summary": true,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "SaleQuoteList",
+      "file": "src/views/sale/SaleQuoteList.vue",
+      "title": "销售报价单",
+      "storageKey": "SaleQuoteList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "sale_quote",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "SALE_QUOTE",
+      "billName": "销售报价单",
+      "table": "sale_quote",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "SaleRepairList",
+      "file": "src/views/sale/SaleRepairList.vue",
+      "title": "售后维修单",
+      "storageKey": "SaleRepairList",
+      "billListPage": true,
+      "detail": false,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "sale_repair",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": false,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "SALE_REPAIR",
+      "billName": "售后维修单",
+      "table": "sale_repair",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "SaleReturnList",
+      "file": "src/views/sale/SaleReturnList.vue",
+      "title": "销售退货单",
+      "storageKey": "SaleReturnList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "sale_return",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "SALE_RETURN",
+      "billName": "销售退货单",
+      "table": "sale_return",
+      "link": true,
+      "cascade": true,
+      "summary": true,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "SampleList",
+      "file": "src/views/sample/SampleList.vue",
+      "title": "打样单",
+      "storageKey": "SampleList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "sample_order",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "SAMPLE_ORDER",
+      "billName": "打样单",
+      "table": "sample_order",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": false,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "StockCheckList",
+      "file": "src/views/inventory/StockCheckList.vue",
+      "title": "库存盘点",
+      "storageKey": "StockCheckList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "stock_check",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "STOCK_CHECK",
+      "billName": "库存盘点单",
+      "table": "stock_check",
+      "link": true,
+      "cascade": true,
+      "summary": true,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "StockFlowList",
+      "file": "src/views/inventory/StockFlowList.vue",
+      "title": "库存流水",
+      "storageKey": "StockFlowList",
+      "billListPage": true,
+      "detail": false,
+      "detailManual": false,
+      "customFields": false,
+      "customEntity": "",
+      "fieldPerm": "",
+      "filterDefs": false,
+      "detailFilterDefs": false,
+      "batchActions": false,
+      "isBill": false,
+      "billType": "",
+      "billName": "",
+      "table": "",
+      "link": false,
+      "cascade": false,
+      "summary": false,
+      "action": false,
+      "excel": false,
+      "excelShared": false,
+      "fieldPermBackend": false
+    },
+    {
+      "page": "StockTransferList",
+      "file": "src/views/inventory/StockTransferList.vue",
+      "title": "库存调拨",
+      "storageKey": "StockTransferList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "stock_transfer",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "STOCK_TRANSFER",
+      "billName": "库存调拨单",
+      "table": "stock_transfer",
+      "link": true,
+      "cascade": true,
+      "summary": true,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "SubcontractInboundList",
+      "file": "src/views/subcontract/SubcontractInboundList.vue",
+      "title": "委外入库单",
+      "storageKey": "SubcontractInboundList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "subcontract_inbound",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "SUBCONTRACT_RECEIPT",
+      "billName": "委外入库单",
+      "table": "subcontract_inbound",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "SubcontractList",
+      "file": "src/views/production/SubcontractList.vue",
+      "title": "委外加工单",
+      "storageKey": "SubcontractList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "subcontract_order",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "SUBCONTRACT_ORDER",
+      "billName": "委外订单",
+      "table": "subcontract_order",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": false,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "SubcontractPickList",
+      "file": "src/views/subcontract/SubcontractPickList.vue",
+      "title": "委外领料单",
+      "storageKey": "SubcontractPickList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "subcontract_pick",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "SUBCONTRACT_DELIVERY",
+      "billName": "委外发料单",
+      "table": "subcontract_pick",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "SubcontractReturnList",
+      "file": "src/views/subcontract/SubcontractReturnList.vue",
+      "title": "委外退货单",
+      "storageKey": "SubcontractReturnList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "subcontract_return",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "SUBCONTRACT_RETURN",
+      "billName": "委外退货单",
+      "table": "subcontract_return",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "SubcontractSupplementList",
+      "file": "src/views/subcontract/SubcontractSupplementList.vue",
+      "title": "委外补料单",
+      "storageKey": "SubcontractSupplementList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "subcontract_supplement",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "SUBCONTRACT_SUPPLEMENT",
+      "billName": "委外补料单",
+      "table": "subcontract_supplement",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "WageSettlementList",
+      "file": "src/views/finance/WageSettlementList.vue",
+      "title": "工序工资核算",
+      "storageKey": "WageSettlementList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": false,
+      "customEntity": "",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": false,
+      "isBill": true,
+      "billType": "",
+      "billName": "",
+      "table": "",
+      "link": false,
+      "cascade": false,
+      "summary": false,
+      "action": false,
+      "excel": false,
+      "excelShared": false,
+      "fieldPermBackend": false
+    },
+    {
+      "page": "WorkCenterList",
+      "file": "src/views/production/WorkCenterList.vue",
+      "title": "工作中心",
+      "storageKey": "WorkCenterList",
+      "billListPage": true,
+      "detail": false,
+      "detailManual": false,
+      "customFields": false,
+      "customEntity": "",
+      "fieldPerm": "",
+      "filterDefs": false,
+      "detailFilterDefs": false,
+      "batchActions": false,
+      "isBill": false,
+      "billType": "",
+      "billName": "",
+      "table": "",
+      "link": false,
+      "cascade": false,
+      "summary": false,
+      "action": false,
+      "excel": false,
+      "excelShared": false,
+      "fieldPermBackend": false
+    },
+    {
+      "page": "WorkOrderList",
+      "file": "src/views/production/WorkOrderList.vue",
+      "title": "生产工单",
+      "storageKey": "WorkOrderList",
+      "billListPage": true,
+      "detail": true,
+      "detailManual": false,
+      "customFields": true,
+      "customEntity": "production_order",
+      "fieldPerm": "",
+      "filterDefs": true,
+      "detailFilterDefs": true,
+      "batchActions": true,
+      "isBill": true,
+      "billType": "PRODUCTION_ORDER",
+      "billName": "生产订单",
+      "table": "production_order",
+      "link": true,
+      "cascade": true,
+      "summary": false,
+      "action": true,
+      "excel": true,
+      "excelShared": false,
+      "fieldPermBackend": true
+    },
+    {
+      "page": "WorkstationList",
+      "file": "src/views/production/WorkstationList.vue",
+      "title": "工作站",
+      "storageKey": "WorkstationList",
+      "billListPage": true,
+      "detail": false,
+      "detailManual": false,
+      "customFields": false,
+      "customEntity": "",
+      "fieldPerm": "",
+      "filterDefs": false,
+      "detailFilterDefs": false,
+      "batchActions": false,
+      "isBill": false,
+      "billType": "",
+      "billName": "",
+      "table": "",
+      "link": false,
+      "cascade": false,
+      "summary": false,
+      "action": false,
+      "excel": false,
+      "excelShared": false,
+      "fieldPermBackend": false
+    }
+  ],
+  "links": [
+    {
+      "billType": "SALE_QUOTE",
+      "name": "销售报价单",
+      "table": "sale_quote"
+    },
+    {
+      "billType": "SALE_CONTRACT",
+      "name": "销售合同",
+      "table": "sale_contract"
+    },
+    {
+      "billType": "SALE_ORDER",
+      "name": "销售订单",
+      "table": "sale_order"
+    },
+    {
+      "billType": "SALE_DELIVERY",
+      "name": "销售出库单",
+      "table": "sale_delivery"
+    },
+    {
+      "billType": "SALE_INVOICE",
+      "name": "销售发票",
+      "table": "sale_invoice"
+    },
+    {
+      "billType": "SALE_RETURN",
+      "name": "销售退货单",
+      "table": "sale_return"
+    },
+    {
+      "billType": "SALE_EXCHANGE",
+      "name": "销售换货单",
+      "table": "sale_exchange"
+    },
+    {
+      "billType": "SALE_REPAIR",
+      "name": "售后维修单",
+      "table": "sale_repair"
+    },
+    {
+      "billType": "PURCHASE_REQUEST",
+      "name": "采购申请单",
+      "table": "purchase_request"
+    },
+    {
+      "billType": "PURCHASE_ORDER",
+      "name": "采购订单",
+      "table": "purchase_order"
+    },
+    {
+      "billType": "PURCHASE_CONTRACT",
+      "name": "采购合同",
+      "table": "purchase_contract"
+    },
+    {
+      "billType": "PURCHASE_INBOUND",
+      "name": "采购入库单",
+      "table": "purchase_receipt"
+    },
+    {
+      "billType": "PURCHASE_RETURN",
+      "name": "采购退货单",
+      "table": "purchase_return"
+    },
+    {
+      "billType": "PURCHASE_INVOICE",
+      "name": "采购发票",
+      "table": "purchase_invoice"
+    },
+    {
+      "billType": "OTHER_ISSUE",
+      "name": "其他出库单",
+      "table": "other_issue"
+    },
+    {
+      "billType": "OTHER_RECEIPT",
+      "name": "其他入库单",
+      "table": "other_receipt"
+    },
+    {
+      "billType": "MATERIAL_REQUISITION",
+      "name": "生产领料单",
+      "table": "material_requisition"
+    },
+    {
+      "billType": "MATERIAL_RETURN",
+      "name": "生产退料单",
+      "table": "material_requisition"
+    },
+    {
+      "billType": "MATERIAL_SUPPLEMENT",
+      "name": "生产补料单",
+      "table": "material_requisition"
+    },
+    {
+      "billType": "STOCK_TRANSFER",
+      "name": "库存调拨单",
+      "table": "stock_transfer"
+    },
+    {
+      "billType": "STOCK_CHECK",
+      "name": "库存盘点单",
+      "table": "stock_check"
+    },
+    {
+      "billType": "PRODUCTION_ORDER",
+      "name": "生产订单",
+      "table": "production_order"
+    },
+    {
+      "billType": "PRODUCTION_RECEIPT",
+      "name": "生产入库单",
+      "table": "production_receipt"
+    },
+    {
+      "billType": "PRODUCE_ASSEMBLE",
+      "name": "生产组装单",
+      "table": "produce_assemble"
+    },
+    {
+      "billType": "PRODUCE_DISASSEMBLE",
+      "name": "生产拆卸单",
+      "table": "produce_disassemble"
+    },
+    {
+      "billType": "OPERATION_REPORT",
+      "name": "工序汇报单",
+      "table": "operation_report"
+    },
+    {
+      "billType": "SUBCONTRACT_ORDER",
+      "name": "委外订单",
+      "table": "subcontract_order"
+    },
+    {
+      "billType": "SUBCONTRACT_DELIVERY",
+      "name": "委外发料单",
+      "table": "subcontract_pick"
+    },
+    {
+      "billType": "SUBCONTRACT_RECEIPT",
+      "name": "委外入库单",
+      "table": "subcontract_inbound"
+    },
+    {
+      "billType": "SUBCONTRACT_RETURN",
+      "name": "委外退货单",
+      "table": "subcontract_return"
+    },
+    {
+      "billType": "SUBCONTRACT_SUPPLEMENT",
+      "name": "委外补料单",
+      "table": "subcontract_supplement"
+    },
+    {
+      "billType": "PAYMENT_RECEIPT",
+      "name": "收款单",
+      "table": "cash_receipt"
+    },
+    {
+      "billType": "PAYMENT_VOUCHER",
+      "name": "付款单",
+      "table": "cash_payment"
+    },
+    {
+      "billType": "PURCHASE_PRE_PAYMENT",
+      "name": "预付款单",
+      "table": "purchase_pre_payment"
+    },
+    {
+      "billType": "SALE_PRE_RECEIPT",
+      "name": "销售预收款单",
+      "table": "sale_pre_receipt"
+    },
+    {
+      "billType": "ACCOUNT_RECEIVABLE",
+      "name": "应收单",
+      "table": "account_receivable"
+    },
+    {
+      "billType": "ACCOUNT_PAYABLE",
+      "name": "应付单",
+      "table": "account_payable"
+    },
+    {
+      "billType": "PURCHASE_EXPENSE",
+      "name": "采购费用单",
+      "table": "purchase_expense"
+    },
+    {
+      "billType": "OPERATION_EXPENSE",
+      "name": "费用分摊",
+      "table": "operation_expense"
+    },
+    {
+      "billType": "SAMPLE_ORDER",
+      "name": "打样单",
+      "table": "sample_order"
+    },
+    {
+      "billType": "FREE_SAMPLE",
+      "name": "免费样品单",
+      "table": "free_sample_order"
+    },
+    {
+      "billType": "MRP_PLAN",
+      "name": "MRP计划",
+      "table": "mrp_plan"
+    }
+  ],
+  "cascadeTables": [
+    "sale_order",
+    "sale_quote",
+    "sale_contract",
+    "sale_delivery",
+    "sale_return",
+    "sale_invoice",
+    "sale_exchange",
+    "sale_repair",
+    "sale_pre_receipt",
+    "sale_expense",
+    "sale_price_strategy",
+    "purchase_request",
+    "purchase_order",
+    "purchase_contract",
+    "purchase_receipt",
+    "purchase_return",
+    "purchase_invoice",
+    "purchase_pre_payment",
+    "purchase_expense",
+    "purchase_price_strategy",
+    "other_issue",
+    "other_receipt",
+    "material_requisition",
+    "stock_transfer",
+    "stock_check",
+    "production_order",
+    "production_receipt",
+    "produce_assemble",
+    "produce_disassemble",
+    "subcontract_order",
+    "subcontract_pick",
+    "subcontract_inbound",
+    "subcontract_return",
+    "subcontract_supplement",
+    "bom",
+    "cash_receipt",
+    "cash_payment",
+    "operation_expense",
+    "cost_calculation",
+    "fund_transfer",
+    "budget",
+    "sale_statement",
+    "purchase_statement",
+    "sample_order",
+    "free_sample_order",
+    "mrp_plan"
+  ],
+  "summaryBills": [
+    "SALE_ORDER",
+    "SALE_DELIVERY",
+    "SALE_RETURN",
+    "SALE_INVOICE",
+    "PURCHASE_ORDER",
+    "PURCHASE_INBOUND",
+    "PURCHASE_RETURN",
+    "PURCHASE_INVOICE",
+    "STOCK_TRANSFER",
+    "STOCK_CHECK",
+    "PRODUCTION_RECEIPT",
+    "PAYMENT_RECEIPT",
+    "PAYMENT_VOUCHER",
+    "SALE_PRE_RECEIPT",
+    "PURCHASE_PRE_PAYMENT",
+    "WAGE_SETTLEMENT",
+    "PURCHASE_EXPENSE"
+  ],
+  "actionBills": [
+    "SALE_QUOTE",
+    "SALE_ORDER",
+    "SALE_CONTRACT",
+    "SALE_DELIVERY",
+    "SALE_RETURN",
+    "SALE_INVOICE",
+    "SALE_EXCHANGE",
+    "SALE_REPAIR",
+    "PURCHASE_REQUEST",
+    "PURCHASE_ORDER",
+    "PURCHASE_CONTRACT",
+    "PURCHASE_INBOUND",
+    "PURCHASE_RETURN",
+    "PURCHASE_INVOICE",
+    "PRODUCTION_ORDER",
+    "PRODUCTION_RECEIPT",
+    "PRODUCE_ASSEMBLE",
+    "PRODUCE_DISASSEMBLE",
+    "MATERIAL_REQUISITION",
+    "PRODUCTION_RETURN",
+    "PRODUCTION_SUPPLEMENT",
+    "STOCK_TRANSFER",
+    "STOCK_CHECK",
+    "OTHER_RECEIPT",
+    "OTHER_ISSUE",
+    "SUBCONTRACT_ORDER",
+    "SUBCONTRACT_DELIVERY",
+    "SUBCONTRACT_RECEIPT",
+    "SAMPLE_ORDER",
+    "FREE_SAMPLE",
+    "PURCHASE_EXPENSE",
+    "PURCHASE_PRE_PAYMENT",
+    "PAYMENT_RECEIPT",
+    "PAYMENT_VOUCHER",
+    "BOM",
+    "SALE_PRE_RECEIPT",
+    "OPERATION_EXPENSE",
+    "COST_CALCULATION",
+    "WAGE_SETTLEMENT",
+    "SALE_EXPENSE",
+    "SALE_STATEMENT",
+    "PURCHASE_STATEMENT",
+    "OPERATION_REPORT",
+    "SUBCONTRACT_RETURN",
+    "SUBCONTRACT_SUPPLEMENT",
+    "MRP_PLAN"
+  ],
+  "excelCodes": [
+    "supplier",
+    "material",
+    "warehouse",
+    "lead",
+    "opportunity",
+    "complaint",
+    "survey",
+    "saleQuote",
+    "saleOrder",
+    "saleContract",
+    "saleDelivery",
+    "saleReturn",
+    "saleRepair",
+    "saleInvoice",
+    "purchaseRequest",
+    "purchaseOrder",
+    "purchaseContract",
+    "purchaseInbound",
+    "purchaseReturn",
+    "purchaseInvoice",
+    "otherReceipt",
+    "otherIssue",
+    "stockTransfer",
+    "stockCheck",
+    "materialRequisition",
+    "paymentReceipt",
+    "paymentVoucher",
+    "purchasePrePayment",
+    "salePreReceipt",
+    "operationExpense",
+    "workOrder",
+    "productionReceipt",
+    "operationReport",
+    "mrpPlan",
+    "subcontract",
+    "subcontractPick",
+    "subcontractInbound",
+    "subcontractReturn",
+    "subcontractSupplement",
+    "produceAssemble",
+    "produceDisassemble",
+    "customer"
+  ],
+  "reportCtrls": [
+    {
+      "file": "FreeSampleDetailReportController.java",
+      "base": "/api/report/sample/free-sample-detail",
+      "title": "免费样品订单明细报表"
+    },
+    {
+      "file": "MaterialRequisitionDetailReportController.java",
+      "base": "/api/report/inventory/material-requisition-detail",
+      "title": "生产领料单明细报表"
+    },
+    {
+      "file": "MrpPlanDetailReportController.java",
+      "base": "/api/report/production/mrp-plan-detail",
+      "title": "MRP运算计划明细报表"
+    },
+    {
+      "file": "OperationExpenseAllDetailReportController.java",
+      "base": "/api/report/finance/operation-expense-all-detail",
+      "title": "费用分摊单全明细"
+    },
+    {
+      "file": "OperationExpenseDetailReportController.java",
+      "base": "/api/report/finance/operation-expense-detail",
+      "title": "费用分摊明细报表"
+    },
+    {
+      "file": "OperationReportDetailReportController.java",
+      "base": "/api/report/production/operation-report-detail",
+      "title": "工序汇报明细报表"
+    },
+    {
+      "file": "OtherIssueDetailReportController.java",
+      "base": "/api/report/inventory/other-issue-detail",
+      "title": "其他出库单明细报表"
+    },
+    {
+      "file": "OtherReceiptDetailReportController.java",
+      "base": "/api/report/inventory/other-receipt-detail",
+      "title": "其他入库单明细报表"
+    },
+    {
+      "file": "PaymentReceiptAllDetailReportController.java",
+      "base": "/api/report/finance/receipt-all-detail",
+      "title": "收款单全明细"
+    },
+    {
+      "file": "PaymentReceiptDetailReportController.java",
+      "base": "/api/report/finance/receipt-detail",
+      "title": "收款单明细报表"
+    },
+    {
+      "file": "PaymentVoucherAllDetailReportController.java",
+      "base": "/api/report/finance/payment-all-detail",
+      "title": "付款单全明细"
+    },
+    {
+      "file": "PaymentVoucherDetailReportController.java",
+      "base": "/api/report/finance/voucher-detail",
+      "title": "付款单明细报表"
+    },
+    {
+      "file": "ProduceAssembleAllDetailReportController.java",
+      "base": "/api/report/production/assemble-all-detail",
+      "title": "生产组装单全明细"
+    },
+    {
+      "file": "ProduceAssembleDetailReportController.java",
+      "base": "/api/report/production/assemble-detail",
+      "title": "组装单明细报表"
+    },
+    {
+      "file": "ProduceDisassembleAllDetailReportController.java",
+      "base": "/api/report/production/disassemble-all-detail",
+      "title": "生产拆卸单全明细"
+    },
+    {
+      "file": "ProduceDisassembleDetailReportController.java",
+      "base": "/api/report/production/disassemble-detail",
+      "title": "拆卸单明细报表"
+    },
+    {
+      "file": "ProductionMaterialReturnDetailReportController.java",
+      "base": "/api/report/production/material-return-detail",
+      "title": "生产退料单明细报表"
+    },
+    {
+      "file": "ProductionMaterialSupplementDetailReportController.java",
+      "base": "/api/report/production/material-supplement-detail",
+      "title": "生产补料单明细报表"
+    },
+    {
+      "file": "ProductionOrderAllDetailReportController.java",
+      "base": "/api/report/production/order-all-detail",
+      "title": "生产工单全明细"
+    },
+    {
+      "file": "ProductionOrderDetailReportController.java",
+      "base": "/api/report/production/order-detail",
+      "title": "生产工单明细报表"
+    },
+    {
+      "file": "ProductionReceiptDetailReportController.java",
+      "base": "/api/report/production/receipt-detail",
+      "title": "生产入库单明细报表"
+    },
+    {
+      "file": "PurchaseContractDetailReportController.java",
+      "base": "/api/report/purchase/contract-detail",
+      "title": "采购合同明细报表"
+    },
+    {
+      "file": "PurchaseInboundDetailReportController.java",
+      "base": "/api/report/purchase/inbound-detail",
+      "title": "采购入库单明细报表"
+    },
+    {
+      "file": "PurchaseInvoiceDetailReportController.java",
+      "base": "/api/report/purchase/invoice-detail",
+      "title": "采购发票明细报表"
+    },
+    {
+      "file": "PurchaseOrderDetailReportController.java",
+      "base": "/api/report/purchase/order-detail",
+      "title": "采购订单明细报表"
+    },
+    {
+      "file": "PurchasePrePaymentDetailReportController.java",
+      "base": "/api/report/finance/purchase-pre-payment-detail",
+      "title": "采购预付款明细报表"
+    },
+    {
+      "file": "PurchaseRequestDetailReportController.java",
+      "base": "/api/report/purchase/request-detail",
+      "title": "采购申请单明细报表"
+    },
+    {
+      "file": "PurchaseReturnDetailReportController.java",
+      "base": "/api/report/purchase/return-detail",
+      "title": "采购退货单明细报表"
+    },
+    {
+      "file": "SaleContractDetailReportController.java",
+      "base": "/api/report/sale/contract-detail",
+      "title": "销售合同明细报表"
+    },
+    {
+      "file": "SaleDeliveryDetailReportController.java",
+      "base": "/api/report/sale/delivery-detail",
+      "title": "销售出库明细报表"
+    },
+    {
+      "file": "SaleExchangeDetailReportController.java",
+      "base": "/api/report/sale/exchange-detail",
+      "title": "销售换货单明细报表"
+    },
+    {
+      "file": "SaleInvoiceDetailReportController.java",
+      "base": "/api/report/sale/invoice-detail",
+      "title": "销售发票明细报表"
+    },
+    {
+      "file": "SaleOrderDetailReportController.java",
+      "base": "/api/report/sale/order-detail",
+      "title": "销售订单明细报表"
+    },
+    {
+      "file": "SalePreReceiptDetailReportController.java",
+      "base": "/api/report/finance/sale-pre-receipt-detail",
+      "title": "销售预收款明细报表"
+    },
+    {
+      "file": "SaleQuoteDetailReportController.java",
+      "base": "/api/report/sale/quote-detail",
+      "title": "销售报价明细报表"
+    },
+    {
+      "file": "SaleReturnDetailReportController.java",
+      "base": "/api/report/sale/return-detail",
+      "title": "销售退货单明细报表"
+    },
+    {
+      "file": "SampleOrderDetailReportController.java",
+      "base": "/api/report/sample/order-detail",
+      "title": "打样单明细报表"
+    },
+    {
+      "file": "StockCheckDetailReportController.java",
+      "base": "/api/report/inventory/stock-check-detail",
+      "title": "库存盘点单明细报表"
+    },
+    {
+      "file": "StockTransferDetailReportController.java",
+      "base": "/api/report/inventory/stock-transfer-detail",
+      "title": "库存调拨单明细报表"
+    },
+    {
+      "file": "SubcontractInboundDetailReportController.java",
+      "base": "/api/report/subcontract/inbound-detail",
+      "title": "委外入库单明细报表"
+    },
+    {
+      "file": "SubcontractOrderDetailReportController.java",
+      "base": "/api/report/subcontract/order-detail",
+      "title": "委外加工单明细报表"
+    },
+    {
+      "file": "SubcontractPickDetailReportController.java",
+      "base": "/api/report/subcontract/pick-detail",
+      "title": "委外发料单明细报表"
+    },
+    {
+      "file": "SubcontractReturnDetailReportController.java",
+      "base": "/api/report/subcontract/return-detail",
+      "title": "委外退料单明细报表"
+    },
+    {
+      "file": "SubcontractSupplementDetailReportController.java",
+      "base": "/api/report/subcontract/supplement-detail",
+      "title": "委外补料单明细报表"
+    },
+    {
+      "file": "WageSettlementDetailReportController.java",
+      "base": "/api/report/finance/wage-settlement-detail",
+      "title": "工序工资核算明细报表"
+    }
+  ],
+  "fpPathMap": [
+    {
+      "path": "/api/sale/quotes",
+      "pageKey": "sale_quote"
+    },
+    {
+      "path": "/api/sale/contracts",
+      "pageKey": "sale_contract"
+    },
+    {
+      "path": "/api/sale/orders",
+      "pageKey": "sale_order"
+    },
+    {
+      "path": "/api/sale/deliveries",
+      "pageKey": "sale_delivery"
+    },
+    {
+      "path": "/api/sale/returns",
+      "pageKey": "sale_return"
+    },
+    {
+      "path": "/api/sale/exchanges",
+      "pageKey": "sale_exchange"
+    },
+    {
+      "path": "/api/sale/repairs",
+      "pageKey": "sale_repair"
+    },
+    {
+      "path": "/api/sale/invoices",
+      "pageKey": "sale_invoice"
+    },
+    {
+      "path": "/api/sale/price-strategy",
+      "pageKey": "sale_price_strategy"
+    },
+    {
+      "path": "/api/purchase/requests",
+      "pageKey": "purchase_request"
+    },
+    {
+      "path": "/api/purchase/contracts",
+      "pageKey": "purchase_contract"
+    },
+    {
+      "path": "/api/purchase/orders",
+      "pageKey": "purchase_order"
+    },
+    {
+      "path": "/api/purchase/inbounds",
+      "pageKey": "purchase_receipt"
+    },
+    {
+      "path": "/api/purchase/returns",
+      "pageKey": "purchase_return"
+    },
+    {
+      "path": "/api/purchase/invoices",
+      "pageKey": "purchase_invoice"
+    },
+    {
+      "path": "/api/purchase/price-strategy",
+      "pageKey": "purchase_price_strategy"
+    },
+    {
+      "path": "/api/inventory/material-requisitions",
+      "pageKey": "material_requisition"
+    },
+    {
+      "path": "/api/inventory/other-receipts",
+      "pageKey": "other_receipt"
+    },
+    {
+      "path": "/api/inventory/other-issues",
+      "pageKey": "other_issue"
+    },
+    {
+      "path": "/api/inventory/stock-transfers",
+      "pageKey": "stock_transfer"
+    },
+    {
+      "path": "/api/inventory/stock-checks",
+      "pageKey": "stock_check"
+    },
+    {
+      "path": "/api/production/workorders",
+      "pageKey": "production_order"
+    },
+    {
+      "path": "/api/production/receipts",
+      "pageKey": "production_receipt"
+    },
+    {
+      "path": "/api/production/returns",
+      "pageKey": "material_requisition"
+    },
+    {
+      "path": "/api/production/supplements",
+      "pageKey": "material_requisition"
+    },
+    {
+      "path": "/api/production/operation-report",
+      "pageKey": "operation_report"
+    },
+    {
+      "path": "/api/production/mrp-plan",
+      "pageKey": "mrp_plan"
+    },
+    {
+      "path": "/api/produce/assemble",
+      "pageKey": "produce_assemble"
+    },
+    {
+      "path": "/api/produce/disassemble",
+      "pageKey": "produce_disassemble"
+    },
+    {
+      "path": "/api/subcontract/orders",
+      "pageKey": "subcontract_order"
+    },
+    {
+      "path": "/api/subcontract/picks",
+      "pageKey": "subcontract_pick"
+    },
+    {
+      "path": "/api/subcontract/inbounds",
+      "pageKey": "subcontract_inbound"
+    },
+    {
+      "path": "/api/subcontract/returns",
+      "pageKey": "subcontract_return"
+    },
+    {
+      "path": "/api/subcontract/supplements",
+      "pageKey": "subcontract_supplement"
+    },
+    {
+      "path": "/api/finance/receipts",
+      "pageKey": "cash_receipt"
+    },
+    {
+      "path": "/api/finance/vouchers",
+      "pageKey": "cash_payment"
+    },
+    {
+      "path": "/api/finance/operation-expense",
+      "pageKey": "operation_expense"
+    },
+    {
+      "path": "/api/finance/wage-settlements",
+      "pageKey": "wage_settlement"
+    },
+    {
+      "path": "/api/sale-pre-receipt",
+      "pageKey": "sale_pre_receipt"
+    },
+    {
+      "path": "/api/sale-pre-receipts",
+      "pageKey": "sale_pre_receipt"
+    },
+    {
+      "path": "/api/purchase-pre-payment",
+      "pageKey": "purchase_pre_payment"
+    },
+    {
+      "path": "/api/purchase-pre-payments",
+      "pageKey": "purchase_pre_payment"
+    },
+    {
+      "path": "/api/cost-calculation",
+      "pageKey": "cost_calculation"
+    },
+    {
+      "path": "/api/sample/orders",
+      "pageKey": "sample_order"
+    },
+    {
+      "path": "/api/free-sample",
+      "pageKey": "free_sample_order"
+    },
+    {
+      "path": "/api/basedata/customer",
+      "pageKey": "customer"
+    },
+    {
+      "path": "/api/basedata/supplier",
+      "pageKey": "supplier"
+    },
+    {
+      "path": "/api/basedata/material",
+      "pageKey": "material"
+    },
+    {
+      "path": "/api/basedata/material-category",
+      "pageKey": "material_category"
+    },
+    {
+      "path": "/api/basedata/employee",
+      "pageKey": "employee"
+    },
+    {
+      "path": "/api/basedata/department",
+      "pageKey": "department"
+    },
+    {
+      "path": "/api/basedata/warehouse",
+      "pageKey": "warehouse"
+    },
+    {
+      "path": "/api/basedata/location",
+      "pageKey": "location"
+    },
+    {
+      "path": "/api/basedata/currency",
+      "pageKey": "currency"
+    },
+    {
+      "path": "/api/basedata/settle",
+      "pageKey": "settle"
+    },
+    {
+      "path": "/api/basedata/price-level",
+      "pageKey": "price_level"
+    },
+    {
+      "path": "/api/basedata/unit",
+      "pageKey": "unit"
+    },
+    {
+      "path": "/api/basedata/account",
+      "pageKey": "account"
+    },
+    {
+      "path": "/api/basedata/bank-account",
+      "pageKey": "bank_account"
+    },
+    {
+      "path": "/api/masterdata/bom",
+      "pageKey": "bom"
+    }
+  ]
+}

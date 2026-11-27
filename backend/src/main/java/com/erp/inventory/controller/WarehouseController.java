@@ -2,29 +2,34 @@ package com.erp.inventory.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.erp.common.Result;
-import com.erp.inventory.entity.Warehouse;
+import com.erp.common.scope.DataScopeResolver;
+import com.erp.basedata.entity.Warehouse;
 import com.erp.inventory.service.WarehouseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestController("inventoryWarehouseController")
 @RequestMapping("/api/warehouse")
 @RequiredArgsConstructor
 public class WarehouseController {
 
     private final WarehouseService warehouseService;
+    private final DataScopeResolver dataScopeResolver;
 
+    /** 仓库下拉（2026-10-09 权限收口：与仓库档案同口径 —— 数据范围 + 仓库白名单） */
     @GetMapping("/list")
     public Result<List<Warehouse>> list(
             @RequestParam(required = false) String stockCode,
             @RequestParam(required = false) String stockName,
-            @RequestParam(required = false) String status) {
+            @RequestParam(required = false) String status,
+            jakarta.servlet.http.HttpServletRequest req) {
         QueryWrapper<Warehouse> wrapper = new QueryWrapper<>();
         if (stockCode != null && !stockCode.isBlank()) wrapper.like("stock_code", stockCode);
         if (stockName != null && !stockName.isBlank()) wrapper.like("stock_name", stockName);
         if (status != null && !status.isBlank()) wrapper.eq("status", status);
+        dataScopeResolver.applyVisibleWarehouses(wrapper, req);
         wrapper.orderByAsc("stock_code");
         return Result.success(warehouseService.list(wrapper));
     }

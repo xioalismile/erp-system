@@ -37,10 +37,10 @@ public class AiReportService {
     }
 
     private Map<String, Object> generateSalesReport(String dimension) {
-        // 新实体status取值: 草稿/已审核/已关闭/已取消
+        // 新实体status取值: 草稿/已生效/已关闭/已取消
         List<SaleOrder> orders = saleOrderService.list(new QueryWrapper<SaleOrder>()
-                .eq("status", "已审核")
-                .orderByDesc("created_at").last("LIMIT 100"));
+                .eq("status", "已生效")
+                .orderByAsc("created_at is null").orderByDesc("created_at").last("LIMIT 100"));
 
         // 预加载客户名(通过customer_id关联)
         Set<Long> customerIds = new HashSet<>();

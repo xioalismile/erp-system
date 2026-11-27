@@ -1,0 +1,14 @@
+{
+  "name": "erp-e2e-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "智能ERP系统 Playwright E2E 测试 - 覆盖销售模块与基础资料模块",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  },
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "report": "npx playwright show-report"
+  }
+}

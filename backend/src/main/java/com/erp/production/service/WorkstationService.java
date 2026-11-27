@@ -7,7 +7,7 @@ import com.erp.production.entity.Workstation;
 public interface WorkstationService extends IService<Workstation> {
 
     /** 分页查询: keyword模糊搜workstation_code/workstation_name, status/workCenterId过滤 */
-    PageResult<Workstation> pageQuery(int current, int size, String keyword, String status, Long workCenterId);
+    PageResult<Workstation> pageQuery(int current, int size, String keyword, String status, Long workCenterId, String sortBy, String sortOrder);
 
     /** 编码是否存在 */
     boolean existsByCode(String code);

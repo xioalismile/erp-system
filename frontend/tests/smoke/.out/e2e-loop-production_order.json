@@ -1,0 +1,271 @@
+{
+  "generatedAt": "2026-11-11T15:08:09.848Z",
+  "baseUrl": "https://kaiyu.pro",
+  "bill": "production_order",
+  "name": "生产工单",
+  "module": "production",
+  "steps": {
+    "detailAnchorResolved": true,
+    "header_工单日期": "2026-11-11",
+    "diagRowsOnEnter": 0,
+    "diagElTableCount": 2,
+    "diagAnchorCount": 1,
+    "diagAnchorCountFirst": 1,
+    "diagAddBtnCount": 1,
+    "diagAddBtnDisabled": false,
+    "diagRowsPerClick": [
+      {
+        "click": 1,
+        "rows": 1
+      },
+      {
+        "click": 2,
+        "rows": 2
+      }
+    ],
+    "detailRowsAfterAdd": 2,
+    "detailPreRows": 0,
+    "diagMatIdx": 2,
+    "diagQtyIdx": 12,
+    "diagHeaders": [
+      "#",
+      "图片",
+      "成品编码",
+      "库存量",
+      "可用量",
+      "预计可用量",
+      "成品名称",
+      "规格型号",
+      "BOM清单",
+      "BOM版本",
+      "工艺路线",
+      "工序",
+      "计划数量",
+      "单位",
+      "副单位",
+      "副单位数量",
+      "辅助数量",
+      "来源单号",
+      "操作"
+    ],
+    "diagTdCount": 19,
+    "diagStructure": {
+      "thCount": 19,
+      "rowCount": 2,
+      "tdCount": 19,
+      "consistent": true
+    },
+    "diagRow0Cells": [
+      {
+        "i": 0,
+        "sel": 0,
+        "input": 0,
+        "text": "1"
+      },
+      {
+        "i": 1,
+        "sel": 0,
+        "input": 0,
+        "text": "无图"
+      },
+      {
+        "i": 2,
+        "sel": 1,
+        "input": 1,
+        "text": "选择物料"
+      },
+      {
+        "i": 3,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 4,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 5,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 6,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 7,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 8,
+        "sel": 1,
+        "input": 1,
+        "text": "请先选择物料"
+      },
+      {
+        "i": 9,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 10,
+        "sel": 1,
+        "input": 1,
+        "text": "选择工艺路线"
+      },
+      {
+        "i": 11,
+        "sel": 0,
+        "input": 0,
+        "text": "共 0 道"
+      },
+      {
+        "i": 12,
+        "sel": 0,
+        "input": 1,
+        "text": "1.0000"
+      },
+      {
+        "i": 13,
+        "sel": 1,
+        "input": 1,
+        "text": "单位"
+      },
+      {
+        "i": 14,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 15,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 16,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 17,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 18,
+        "sel": 0,
+        "input": 0,
+        "text": "删除"
+      }
+    ],
+    "filledRows": [
+      {
+        "row": 1,
+        "code": "MAT000001",
+        "label": "MAT000001E2E-成品A",
+        "qty": 2,
+        "qtyActual": "2.0000",
+        "l3MaterialCell": "MAT000001 - E2E-成品A",
+        "l3QtyCell": "2.0000"
+      },
+      {
+        "row": 2,
+        "code": "MAT000001",
+        "label": "MAT000001E2E-成品A",
+        "qty": 3,
+        "qtyActual": "3.0000",
+        "l3MaterialCell": "MAT000001 - E2E-成品A",
+        "l3QtyCell": "3.0000"
+      }
+    ],
+    "numbersFilled": [],
+    "textsFilled": [],
+    "saveFeedback": "url",
+    "docCode": "WO-20261111-0025",
+    "detailUrl": "https://kaiyu.pro/production/workorders/34",
+    "docCodeAfterReload": "WO-20261111-0025",
+    "listWait": {
+      "ok": true,
+      "waitedMs": 599
+    },
+    "listHasCode": true,
+    "listFirstRow": "1 WO-20261111-0025 MAT000001 E2E-成品A 0% 0/1 — 开始: - 完工: - MANUAL 草稿 smoke_production 2026-11-11 23:07:18 smoke_production 2026-11-11 23:07:18",
+    "l3EntrySelector": ".order-no-text:has-text(\"WO-20261111-0025\")",
+    "statusAfterReopen": null,
+    "tagsAfterReopen": [
+      "草稿",
+      "草稿"
+    ],
+    "qtyInputDisabledAtL3": false,
+    "detailRowsAfterReopen": 2,
+    "detailRowsText": [
+      "1 无图 MAT000001 - E2E-成品A 86.0000 86.0000 56.0000 E2E-成品A BOM-20261111-0001 / V1.0 V1.0 选择工艺路线 共 0 道 E2E-个 E2E-个 2.0000 删除",
+      "2 无图 MAT000001 - E2E-成品A 86.0000 86.0000 56.0000 E2E-成品A BOM-20261111-0001 / V1.0 V1.0 选择工艺路线 共 0 道 E2E-个 E2E-个 3.0000 删除"
+    ],
+    "l3ColumnIdx": {
+      "material": 2,
+      "qty": 12
+    },
+    "l3HeaderBack": {},
+    "l3CustomerItemHtml": "",
+    "l4QtyAfterFill": "7.0000",
+    "l4UrlBeforeSave": "https://kaiyu.pro/production/workorders/34",
+    "l4RowsBeforeSave": 2,
+    "l4SaveBtnCount": 1,
+    "l4SaveFeedback": "toast",
+    "l4Toasts": [
+      {
+        "kind": "success",
+        "text": "保存成功"
+      }
+    ],
+    "l4UrlAfterSave": "https://kaiyu.pro/production/workorders/34",
+    "l4UrlChangedBySave": false,
+    "l4RowsAfterSave": 2,
+    "l4UrlBeforeReload": "https://kaiyu.pro/production/workorders/34",
+    "l4AnchorResolved": true,
+    "l4UrlAfterReload": "https://kaiyu.pro/production/workorders/34",
+    "l4DetailTableVisible": true,
+    "l4DetailTableCount": 1,
+    "l4ElTableCount": 3,
+    "l4WaitDetailRows": {
+      "ok": true,
+      "rows": 2,
+      "waitedMs": 87
+    },
+    "l4HeaderAfterReload": {
+      "customer": null,
+      "saler": null,
+      "currency": null
+    },
+    "l4PageTextHead": "楷煜 生产管理 首页 / 工单详情 简体中文 新手教程 冒 冒烟-生产管理 工作台 工单详情 返回列表 生产工单 WO-20261111-0025 草稿 操作日志 保存 提交 作废 删除 打印 复制 单据码 手机扫码打开 单据 批生产记录 来源单据 去向单据 基本信息 单据信息 工单编号 工单日期 工单状态 草稿 优先级 普通 计税方式 不含税价 计划信息 计划开始 计划完工 提前期 天 实际开始",
+    "detailRowsAfterEdit": 2,
+    "detailUrlAfterEdit": "https://kaiyu.pro/production/workorders/34",
+    "l4QtyCell": "7.0000",
+    "l4Row2MaterialCell": "MAT000001 - E2E-成品A",
+    "l6SubmitBtnCount": 1,
+    "l6SubmitDisabled": false,
+    "l6SubmitFeedback": "dialog",
+    "l6SubmitToasts": [],
+    "l6DialogText": "提示 确认提交该生产工单？提交后单据将直接生效 取消 确定",
+    "apiBase": "/api/production/workorders",
+    "detailId": "34",
+    "effectiveStatus": "已生效",
+    "effective": true
+  },
+  "ok": true,
+  "problems": []
+}

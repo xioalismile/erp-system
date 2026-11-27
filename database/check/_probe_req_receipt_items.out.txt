@@ -1,0 +1,14 @@
+﻿ tbl | id | no | src_type | src_no | status | item_rows 
+-----+----+----+----------+--------+--------+-----------
+(0 rows)
+
+ tbl | id | no | src_type | src_no | status | item_rows 
+-----+----+----+----------+--------+--------+-----------
+(0 rows)
+
+         tbl          | head_rows | item_rows 
+----------------------+-----------+-----------
+ material_requisition |         8 |        25
+ production_receipt   |         8 |        10
+(2 rows)
+

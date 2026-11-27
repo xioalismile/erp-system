@@ -8,23 +8,25 @@ spring:
   application:
     name: smart-erp
   datasource:
-    url: jdbc:postgresql://localhost:5432/erp_db
-    username: erp_user
-    password: Erp@2026
+    url: ${ERP_DB_URL:jdbc:postgresql://localhost:5432/erp_db}
+    username: ${ERP_DB_USERNAME:erp_user}
+    password: ${ERP_DB_PASSWORD:Erp@2026}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
       minimum-idle: 2
       connection-timeout: 30000
   redis:
-    host: localhost
-    port: 6379
+    host: ${ERP_REDIS_HOST:localhost}
+    port: ${ERP_REDIS_PORT:6379}
+    password: ${ERP_REDIS_PASSWORD:}
     database: 0
     timeout: 5000
   servlet:
     multipart:
-      max-file-size: 50MB
-      max-request-size: 100MB
+      # -1 = 不限制：2026-10-21 按用户要求去掉小楷独立版文件上传大小限制
+      max-file-size: -1
+      max-request-size: -1
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
@@ -33,22 +35,51 @@ mybatis-plus:
   mapper-locations: classpath:mapper/**/*.xml
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 【性能修复 2026-09-16】原为 StdOutImpl：每条 SQL 都以 "==> Preparing: / ==> Parameters: / <== Total:"
+    # 多行无缓冲写入 stdout；服务器上 stdout 被 smart-erp-guard.ps1 重定向到 backend/startup.log，
+    # 实测使每条 SQL 多花约 2~10ms（物料导入单行约 18 条 SQL → 单行 0.16~0.6 秒 → 400+ 行导入 5 分钟以上），
+    # 且 stdout 会带全部参数（客户名称/价格等）落盘，属数据外泄面。统一改为不打印 SQL。
+    # 排查需要时用启动参数临时覆盖：--mybatis-plus.configuration.log-impl=org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
   global-config:
     db-config:
       id-type: auto
 
 # ERP自定义配置
 erp:
+  # 多租户平台库数据源配置
+  datasource:
+    platform:
+      url: ${ERP_PLATFORM_DB_URL:jdbc:postgresql://localhost:5432/erp_platform}
+      username: ${ERP_PLATFORM_DB_USERNAME:erp_user}
+      password: ${ERP_PLATFORM_DB_PASSWORD:Erp@2026}
+  # License 授权配置
+  # 公钥通过环境变量 ERP_LICENSE_PUBLIC_KEY 注入（不硬编码在配置文件中）
+  # license.lic 文件路径默认放在 jar 同级目录
+  license:
+    enabled: ${ERP_LICENSE_ENABLED:false}  # 开发环境设 false 跳过校验
+    file-path: ${ERP_LICENSE_FILE:license.lic}
+    public-key: ${ERP_LICENSE_PUBLIC_KEY:}  # RSA 公钥 Base64
   # JWT配置
+  # 密钥来源优先级：环境变量 ERP_JWT_SECRET > 密钥文件 erp-jwt-secret.key（首次启动自动生成随机密钥并落盘）
+  # 【安全】此处不再提供默认值：历史默认值已随源码/部署包外泄，任何人可用它伪造 admin token
+  # （修复记录见 knowledge/2026-09-15_jwt-secret-self-provisioning.md）
   jwt:
-    secret: SmartErpSecretKey2026ForJwtTokenGenerationAndValidation
-    expiration: 86400000  # 24小时(毫秒)
+    secret: ${ERP_JWT_SECRET:}
+    expiration: ${ERP_JWT_EXPIRATION:259200000}  # 3天(毫秒)
     header: Authorization
     prefix: "Bearer "
+  # JWT 密钥安全闸门（见 JwtSecretProvider）
+  security:
+    # 密钥文件路径（仅当未注入 ERP_JWT_SECRET 时使用；相对路径 = 进程工作目录）
+    jwt-secret-file: ${ERP_JWT_SECRET_FILE:erp-jwt-secret.key}
+    # true=检测到历史公开默认密钥即拒绝启动（防回归成公开密钥）
+    strict-secret: ${ERP_SECURITY_STRICT_SECRET:true}
+    # 本地开发放行开关：允许使用历史公开默认密钥（仅限本机开发，服务器必须保持 false）
+    allow-dev-secret: ${ERP_SECURITY_ALLOW_DEV_SECRET:false}
   # 文件上传存储(本地存储, 不用OSS节省成本)
   upload:
-    path: D:/erp-files
+    path: d:/erp/uploads
   # AI网关配置
   ai:
     gateway:
@@ -56,6 +87,13 @@ erp:
       default-channel: QWEN
       # 写操作必须人工确认
       write-confirm-required: true
+    # 视觉识别可读的本地图片根目录白名单（除 erp.upload.path 之外）
+    # 安全审计 H-2：本地图片路径必须落在此白名单内才允许读取，防任意文件读取
+    # 获客采集服务 start-acquisition.bat 中 SCREENSHOT_DIR=./screenshots，
+    # 运行目录固定 C:\smart-erp\acquisition-service，故截图实际落在下方目录
+    # 多目录用英文逗号分隔；环境不同可经 ERP_AI_VISION_EXTRA_ROOTS 覆盖
+    vision:
+      extra-allowed-roots: ${ERP_AI_VISION_EXTRA_ROOTS:C:/smart-erp/acquisition-service/screenshots}
     # 通义千问(阿里云百炼, 有免费额度)
     qwen:
       enabled: true
@@ -67,7 +105,7 @@ erp:
       enabled: false
       api-key: ${DEEPSEEK_API_KEY:}
       base-url: https://api.deepseek.com
-      model: deepseek-chat
+      model: deepseek-flash
     # 限流
     rate-limit:
       user-per-minute: 5
@@ -75,12 +113,47 @@ erp:
   # 限流配置
   rate-limit:
     enabled: true
+  # 租户创建配置
+  tenant:
+    schema-dir: ${ERP_TENANT_SCHEMA_DIR:D:/erp/prodsrc/智能ERP-项目/database/schema}
+    db-host: ${ERP_TENANT_DB_HOST:localhost}
+    db-port: ${ERP_TENANT_DB_PORT:5432}
+    # 多租户版本控制开关
+    # true: 启用版本控制（平台管理新增的客户按版本限制功能）
+    # false: 禁用版本控制（独立部署的客户保持全功能访问，不受租户版本限制）
+    # 注意：默认租户（ID=1）始终不受版本限制
+    version-control-enabled: ${ERP_TENANT_VERSION_CONTROL:false}
+  # 物流查询配置（对接快递100 / 百递云API开放平台，实时查询接口 query.json）
+  # 接入步骤：1.访问 https://api.kuaidi100.com 注册百递云开发者账号 2.控制台「我的授权」获取 customer + key
+  #         3.配置到此处、环境变量，或在系统设置 → 物流配置中填写
+  logistics:
+    kuaidi100:
+      enabled: ${ERP_LOGISTICS_ENABLED:true}
+      customer: ${ERP_KUAIDI100_CUSTOMER:}
+      key: ${ERP_KUAIDI100_KEY:}
+    # 17TRACK 国际物流（接入步骤：1.访问 https://api.17track.net 注册 2.登录后台「设置页」获取17token
+    #                    3.在 系统设置 → 物流配置 中填写，或配置到此处/环境变量）
+    seventeen-track:
+      enabled: ${ERP_17TRACK_ENABLED:false}
+      token: ${ERP_17TRACK_TOKEN:}
+      cache-level: ${ERP_17TRACK_CACHE_LEVEL:Standard}
 
 logging:
   level:
     com.erp: debug
     org.springframework: info
   file:
-    name: D:/erp-logs/erp.log
+    name: ./logs/erp.log
     max-size: 10MB
     max-history: 7
+
+# 微信小程序登录配置（账号密码登录不依赖本段；只有"微信一键登录/绑定微信"需要）
+# secret 只能通过环境变量 WX_SECRET 注入，不要写进代码库
+wx:
+  miniapp:
+    appid: ${WX_APPID:wx7154341eab6e7caf}
+    secret: ${WX_SECRET:}
+    # 订阅消息模板号（审批提醒，微信公众平台-订阅消息-我的模板）
+    subscribe-template-id: ${WX_SUBSCRIBE_TEMPLATE_ID:kgL3Xq6i2gImA2PFnjPUNFRQCw_n3I7eKu-sK3RrlJs}
+    # 订阅消息模板号（工序通知，2026-11-20 用户选定「报修工单通知」模板）
+    operation-template-id: ${WX_OPERATION_TEMPLATE_ID:q-UJsXepFXmqRrSZzsH1iRqF9sUvzaVfc0jqbLNjKp8}

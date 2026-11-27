@@ -1,0 +1,261 @@
+{
+  "generatedAt": "2026-11-11T15:11:11.349Z",
+  "baseUrl": "https://kaiyu.pro",
+  "bill": "subcontract",
+  "name": "委外加工单",
+  "module": "subcontract",
+  "steps": {
+    "detailAnchorResolved": true,
+    "header_物料": "MAT000001E2E-成品A",
+    "header_委外供应商": "E2E-供应商甲",
+    "header_委外日期": "2026-11-11",
+    "header_计划开工日期": "2026-11-11",
+    "header_计划完工日期": "2026-11-11",
+    "diagRowsOnEnter": 2,
+    "diagElTableCount": 1,
+    "diagAnchorCount": 1,
+    "diagAnchorCountFirst": 1,
+    "diagAddBtnCount": 1,
+    "diagAddBtnDisabled": false,
+    "diagRowsPerClick": [
+      {
+        "click": 1,
+        "rows": 3
+      },
+      {
+        "click": 2,
+        "rows": 4
+      }
+    ],
+    "detailRowsAfterAdd": 4,
+    "detailPreRows": 2,
+    "diagMatIdx": 1,
+    "diagQtyIdx": 11,
+    "diagHeaders": [
+      "#",
+      "商品名称",
+      "商品编号",
+      "库存量",
+      "可用量",
+      "预计可用量",
+      "来源单号",
+      "单位",
+      "副单位",
+      "副单位数量",
+      "辅助数量",
+      "应发数量",
+      "实发数量",
+      "供应方式",
+      "备注",
+      "操作"
+    ],
+    "diagTdCount": 16,
+    "diagStructure": {
+      "thCount": 16,
+      "rowCount": 4,
+      "tdCount": 16,
+      "consistent": true
+    },
+    "diagRow0Cells": [
+      {
+        "i": 0,
+        "sel": 0,
+        "input": 0,
+        "text": "1"
+      },
+      {
+        "i": 1,
+        "sel": 1,
+        "input": 1,
+        "text": "E2E-半成品B (MAT000002)"
+      },
+      {
+        "i": 2,
+        "sel": 0,
+        "input": 0,
+        "text": "MAT000002"
+      },
+      {
+        "i": 3,
+        "sel": 0,
+        "input": 0,
+        "text": "17.0000"
+      },
+      {
+        "i": 4,
+        "sel": 0,
+        "input": 0,
+        "text": "17.0000"
+      },
+      {
+        "i": 5,
+        "sel": 0,
+        "input": 0,
+        "text": "17.0000"
+      },
+      {
+        "i": 6,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 7,
+        "sel": 1,
+        "input": 1,
+        "text": "E2E-个 E2E-个"
+      },
+      {
+        "i": 8,
+        "sel": 0,
+        "input": 0,
+        "text": "E2E-个"
+      },
+      {
+        "i": 9,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 10,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 11,
+        "sel": 0,
+        "input": 1,
+        "text": "7.0000"
+      },
+      {
+        "i": 12,
+        "sel": 0,
+        "input": 1,
+        "text": "0.0000"
+      },
+      {
+        "i": 13,
+        "sel": 1,
+        "input": 1,
+        "text": "我方供料"
+      },
+      {
+        "i": 14,
+        "sel": 0,
+        "input": 1,
+        "text": ""
+      },
+      {
+        "i": 15,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      }
+    ],
+    "filledRows": [
+      {
+        "row": 3,
+        "code": "MAT000001",
+        "label": "MAT000001E2E-成品A",
+        "qtyActual": "2.0000",
+        "l3MaterialCell": "E2E-成品A (MAT000001)"
+      },
+      {
+        "row": 4,
+        "code": "MAT000001",
+        "label": "MAT000001E2E-成品A",
+        "qtyActual": "3.0000",
+        "l3MaterialCell": "E2E-成品A (MAT000001)"
+      }
+    ],
+    "numbersFilled": [],
+    "textsFilled": [],
+    "saveFeedback": "toast",
+    "saveToasts": [
+      {
+        "kind": "success",
+        "text": "保存成功"
+      }
+    ],
+    "docCode": "SCO-20261111-0006",
+    "detailUrl": "https://kaiyu.pro/subcontract/orders/12",
+    "docCodeAfterReload": "SCO-20261111-0006",
+    "listWait": {
+      "ok": true,
+      "waitedMs": 379
+    },
+    "listHasCode": true,
+    "listFirstRow": "1 SCO-20261111-0006 2026-11-11 MAT000001 E2E-成品A 15 E2E-供应商甲 0 0.00 草稿",
+    "l3EntrySelector": ".order-no-text:has-text(\"SCO-20261111-0006\")",
+    "statusAfterReopen": "草稿",
+    "tagsAfterReopen": [
+      "草稿"
+    ],
+    "qtyInputDisabledAtL3": false,
+    "detailRowsAfterReopen": 4,
+    "detailRowsText": [
+      "1 E2E-半成品B (MAT000002) MAT000002 17.0000 17.0000 17.0000 E2E-个 E2E-个 E2E-个 我方供料",
+      "2 E2E-半成品B (MAT000002) MAT000002 17.0000 17.0000 17.0000 E2E-个 E2E-个 E2E-个 我方供料",
+      "3 E2E-成品A (MAT000001) MAT000001 86.0000 86.0000 56.0000 E2E-个 E2E-个 E2E-个 我方供料",
+      "4 E2E-成品A (MAT000001) MAT000001 86.0000 86.0000 56.0000 E2E-个 E2E-个 E2E-个 我方供料"
+    ],
+    "l3ColumnIdx": {
+      "material": 1,
+      "qty": 11
+    },
+    "l3HeaderBack": {
+      "物料": "E2E-成品A (MAT000001)",
+      "委外供应商": "E2E-供应商甲"
+    },
+    "l3CustomerItemHtml": "",
+    "l4QtyAfterFill": "7.0000",
+    "l4UrlBeforeSave": "https://kaiyu.pro/subcontract/orders/12",
+    "l4RowsBeforeSave": 4,
+    "l4SaveBtnCount": 1,
+    "l4SaveFeedback": "toast",
+    "l4Toasts": [
+      {
+        "kind": "success",
+        "text": "保存成功"
+      }
+    ],
+    "l4UrlAfterSave": "https://kaiyu.pro/subcontract/orders/12",
+    "l4UrlChangedBySave": false,
+    "l4RowsAfterSave": 4,
+    "l4UrlBeforeReload": "https://kaiyu.pro/subcontract/orders/12",
+    "l4AnchorResolved": true,
+    "l4UrlAfterReload": "https://kaiyu.pro/subcontract/orders/12",
+    "l4DetailTableVisible": true,
+    "l4DetailTableCount": 1,
+    "l4ElTableCount": 1,
+    "l4WaitDetailRows": {
+      "ok": true,
+      "rows": 4,
+      "waitedMs": 26
+    },
+    "l4HeaderAfterReload": {
+      "customer": null,
+      "saler": null,
+      "currency": null
+    },
+    "l4PageTextHead": "楷煜 委外管理 首页 / 编辑委外加工单 简体中文 新手教程 冒 冒烟-委外管理 工作台 编辑委外加工单 返回列表 委外加工单 SCO-20261111-0006 草稿 操作日志 下推 保存 提交 作废 删除 打印 复制 单据码 手机扫码打开 单据 来源单据 去向单据 基本信息 单据信息 委外单号 委外日期 状态 物料信息 物料 E2E-成品A (MAT000001) 单位 委外数量 供应商与工序",
+    "detailRowsAfterEdit": 4,
+    "detailUrlAfterEdit": "https://kaiyu.pro/subcontract/orders/12",
+    "l4QtyCell": "7.0000",
+    "l4Row2MaterialCell": "E2E-成品A (MAT000001)",
+    "l6SubmitBtnCount": 1,
+    "l6SubmitDisabled": false,
+    "l6SubmitFeedback": "toast",
+    "l6SubmitToasts": [
+      "info:提示 确认提交该委外订单？提交后单据将直接生效 取消 确定"
+    ],
+    "apiBase": "/api/subcontract/orders",
+    "detailId": "12",
+    "effectiveStatus": "3",
+    "effective": true
+  },
+  "ok": true,
+  "problems": []
+}

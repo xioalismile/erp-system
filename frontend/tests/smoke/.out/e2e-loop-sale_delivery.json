@@ -1,0 +1,395 @@
+{
+  "generatedAt": "2026-11-11T14:50:05.108Z",
+  "baseUrl": "https://kaiyu.pro",
+  "bill": "sale_delivery",
+  "name": "销售出库单",
+  "module": "sale",
+  "steps": {
+    "detailAnchorResolved": true,
+    "header_客户": "E2E-客户甲",
+    "header_仓库": "E2E-主仓",
+    "header_销售员": "E2E-销售员甲",
+    "header_币种": "E2E-测试币",
+    "header_出库日期": "2026-11-11",
+    "diagRowsOnEnter": 0,
+    "diagElTableCount": 1,
+    "diagAnchorCount": 1,
+    "diagAnchorCountFirst": 1,
+    "diagAddBtnCount": 1,
+    "diagAddBtnDisabled": false,
+    "diagRowsPerClick": [
+      {
+        "click": 1,
+        "rows": 1
+      },
+      {
+        "click": 2,
+        "rows": 2
+      }
+    ],
+    "detailRowsAfterAdd": 2,
+    "detailPreRows": 0,
+    "diagMatIdx": 1,
+    "diagQtyIdx": 14,
+    "diagHeaders": [
+      "#",
+      "商品名称",
+      "商品编号",
+      "库存量",
+      "可用量",
+      "预计可用量",
+      "图片",
+      "规格",
+      "BOM清单",
+      "BOM版本",
+      "单位",
+      "副单位",
+      "副单位数量",
+      "辅助数量",
+      "数量",
+      "单价",
+      "含税价",
+      "不含税价",
+      "税率%",
+      "计税方式",
+      "折扣率%",
+      "折扣额",
+      "金额",
+      "成本",
+      "税额",
+      "价税合计",
+      "仓库",
+      "货位",
+      "来源单号",
+      "生产日期",
+      "有效期至",
+      "操作"
+    ],
+    "diagTdCount": 32,
+    "diagStructure": {
+      "thCount": 32,
+      "rowCount": 2,
+      "tdCount": 32,
+      "consistent": true
+    },
+    "diagRow0Cells": [
+      {
+        "i": 0,
+        "sel": 0,
+        "input": 0,
+        "text": "1"
+      },
+      {
+        "i": 1,
+        "sel": 1,
+        "input": 1,
+        "text": "选择物料"
+      },
+      {
+        "i": 2,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 3,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 4,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 5,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 6,
+        "sel": 0,
+        "input": 0,
+        "text": "—"
+      },
+      {
+        "i": 7,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 8,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 9,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 10,
+        "sel": 1,
+        "input": 1,
+        "text": "单位"
+      },
+      {
+        "i": 11,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 12,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 13,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 14,
+        "sel": 0,
+        "input": 1,
+        "text": "1.0000"
+      },
+      {
+        "i": 15,
+        "sel": 0,
+        "input": 1,
+        "text": "0.0000"
+      },
+      {
+        "i": 16,
+        "sel": 0,
+        "input": 0,
+        "text": "0.0000"
+      },
+      {
+        "i": 17,
+        "sel": 0,
+        "input": 0,
+        "text": "0.0000"
+      },
+      {
+        "i": 18,
+        "sel": 0,
+        "input": 1,
+        "text": "13.00"
+      },
+      {
+        "i": 19,
+        "sel": 1,
+        "input": 1,
+        "text": "价外税"
+      },
+      {
+        "i": 20,
+        "sel": 0,
+        "input": 1,
+        "text": "0.00"
+      },
+      {
+        "i": 21,
+        "sel": 0,
+        "input": 0,
+        "text": "0.00"
+      },
+      {
+        "i": 22,
+        "sel": 0,
+        "input": 0,
+        "text": "0.00"
+      },
+      {
+        "i": 23,
+        "sel": 0,
+        "input": 0,
+        "text": "0.0000"
+      },
+      {
+        "i": 24,
+        "sel": 0,
+        "input": 0,
+        "text": "0.00"
+      },
+      {
+        "i": 25,
+        "sel": 0,
+        "input": 0,
+        "text": "0.00"
+      },
+      {
+        "i": 26,
+        "sel": 1,
+        "input": 1,
+        "text": "E2E-主仓"
+      },
+      {
+        "i": 27,
+        "sel": 1,
+        "input": 1,
+        "text": "请选择货位"
+      },
+      {
+        "i": 28,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      },
+      {
+        "i": 29,
+        "sel": 0,
+        "input": 0,
+        "text": "-"
+      },
+      {
+        "i": 30,
+        "sel": 0,
+        "input": 0,
+        "text": "-"
+      },
+      {
+        "i": 31,
+        "sel": 0,
+        "input": 0,
+        "text": ""
+      }
+    ],
+    "filledRows": [
+      {
+        "row": 1,
+        "code": "MAT000001",
+        "label": "MAT000001E2E-成品A",
+        "qty": 2,
+        "qtyActual": "2.0000",
+        "l3MaterialCell": "MAT000001 E2E-成品A",
+        "l3QtyCell": "2.0000"
+      },
+      {
+        "row": 2,
+        "code": "MAT000001",
+        "label": "MAT000001E2E-成品A",
+        "qty": 3,
+        "qtyActual": "3.0000",
+        "l3MaterialCell": "MAT000001 E2E-成品A",
+        "l3QtyCell": "3.0000"
+      }
+    ],
+    "numbersFilled": [
+      {
+        "row": 1,
+        "values": [
+          {
+            "header": "单价",
+            "actual": "100.0000"
+          }
+        ]
+      },
+      {
+        "row": 2,
+        "values": [
+          {
+            "header": "单价",
+            "actual": "100.0000"
+          }
+        ]
+      }
+    ],
+    "textsFilled": [],
+    "saveFeedback": "toast",
+    "saveToasts": [
+      {
+        "kind": "success",
+        "text": "保存成功"
+      }
+    ],
+    "docCode": "SOUT-20261111-0018",
+    "detailUrl": "https://kaiyu.pro/sale/deliveries/33",
+    "docCodeAfterReload": "SOUT-20261111-0018",
+    "listWait": {
+      "ok": true,
+      "waitedMs": 1361
+    },
+    "listHasCode": true,
+    "listFirstRow": "1 SOUT-20261111-0018 2026-11-11 E E2E-客户甲 E2E-主仓 ¥500.00 ¥65.00 ¥565.00 草稿 草稿 smoke_sale 2026-11-11 22:49:34 smoke_sale 2026-11-11 22:49:34",
+    "l3EntrySelector": ".order-no-text:has-text(\"SOUT-20261111-0018\")",
+    "statusAfterReopen": null,
+    "tagsAfterReopen": [
+      "草稿"
+    ],
+    "qtyInputDisabledAtL3": false,
+    "detailRowsAfterReopen": 2,
+    "detailRowsText": [
+      "1 MAT000001 E2E-成品A MAT000001 86.0000 86.0000 56.0000 — BOM-20261111-0001 V1.0 E2E-个 E2E-个 2.0000 113.0000 100.0000 价外税 0.00 200.00 0.0000 26.00 226.00 E2E-主仓 请选择货位 - -",
+      "2 MAT000001 E2E-成品A MAT000001 86.0000 86.0000 56.0000 — BOM-20261111-0001 V1.0 E2E-个 E2E-个 3.0000 113.0000 100.0000 价外税 0.00 300.00 0.0000 39.00 339.00 E2E-主仓 请选择货位 - -"
+    ],
+    "l3ColumnIdx": {
+      "material": 1,
+      "qty": 14
+    },
+    "l3HeaderBack": {
+      "客户": "E2E-客户甲",
+      "仓库": "E2E-主仓",
+      "销售员": "E2E-销售员甲",
+      "币种": "E2E-测试币"
+    },
+    "l3CustomerItemHtml": "<label id=\"el-id-8190-74\" for=\"el-id-8190-152\" class=\"el-form-item__label\" style=\"width: 70px;\">客户</label><div class=\"el-form-item__content\"><div data-v-8396d3b2=\"\" class=\"el-select field-input\"><div class=\"el-select__wrapper is-filterable el-tooltip__trigger el-tooltip__trigger\" tabindex=\"-1\"><!--v-if--><div class=\"el-select__selection\"><!--v-if--><div class=\"el-select__selected-item el-select__input-wrapper\"><input type=\"text\" class=\"el-select__input\" autocomplete=\"off\" tabindex=\"0\" role=\"combobox\" spellcheck=\"false\" aria-activedescendant=\"\" aria-controls=\"el-id-8190-75\" aria-expanded=\"false\" aria-autocomplete=\"none\" aria-haspopup=\"listbox\" value=\"\" style=\"min-width: 11px;\" id=\"el-id-8190-",
+    "l4QtyAfterFill": "7.0000",
+    "l4UrlBeforeSave": "https://kaiyu.pro/sale/deliveries/33",
+    "l4RowsBeforeSave": 2,
+    "l4SaveBtnCount": 1,
+    "l4SaveFeedback": "toast",
+    "l4Toasts": [
+      {
+        "kind": "success",
+        "text": "保存成功"
+      }
+    ],
+    "l4UrlAfterSave": "https://kaiyu.pro/sale/deliveries/33",
+    "l4UrlChangedBySave": false,
+    "l4RowsAfterSave": 2,
+    "l4UrlBeforeReload": "https://kaiyu.pro/sale/deliveries/33",
+    "l4AnchorResolved": true,
+    "l4UrlAfterReload": "https://kaiyu.pro/sale/deliveries/33",
+    "l4DetailTableVisible": true,
+    "l4DetailTableCount": 1,
+    "l4ElTableCount": 1,
+    "l4WaitDetailRows": {
+      "ok": true,
+      "rows": 2,
+      "waitedMs": 59
+    },
+    "l4HeaderAfterReload": {
+      "customer": "E2E-客户甲",
+      "saler": "E2E-销售员甲",
+      "currency": "E2E-测试币"
+    },
+    "l4PageTextHead": "楷煜 销售管理 首页 / 编辑出库单 简体中文 新手教程 冒 冒烟-销售管理 工作台 编辑出库单 返回列表 销售出库单 SOUT-20261111-0018 草稿 操作日志 保存 提交 作废 删除 打印 复制 单据码 手机扫码打开 单据 来源单据 去向单据 基本信息 单据信息 出库单号 出库日期 客户信息 客户 E2E-客户甲 客户编号 联系人 联系电话 收货地址 交易信息 销售员 E2E-销售员",
+    "detailRowsAfterEdit": 2,
+    "detailUrlAfterEdit": "https://kaiyu.pro/sale/deliveries/33",
+    "l4QtyCell": "7.0000",
+    "l4Row2MaterialCell": "MAT000001 E2E-成品A",
+    "l6SubmitBtnCount": 1,
+    "l6SubmitDisabled": false,
+    "l6SubmitFeedback": "dialog",
+    "l6SubmitToasts": [],
+    "l6DialogText": "提示 确认提交该销售出库单？提交后单据将直接生效 取消 确定",
+    "apiBase": "/api/sale/deliveries",
+    "detailId": "33",
+    "effectiveStatus": "已生效",
+    "effective": true
+  },
+  "ok": true,
+  "problems": []
+}

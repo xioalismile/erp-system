@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @TableName("production_receipt_item")
-public class ProductionReceiptItem {
+public class ProductionReceiptItem extends com.erp.common.bill.BillItemUnitFields {
 
     @TableId(value = "receipt_item_id", type = IdType.AUTO)
     private Long receiptItemId;
@@ -53,6 +53,21 @@ public class ProductionReceiptItem {
     @TableField("amount")
     private BigDecimal amount;
 
+    /** 价税合计（2026-11-23 补齐，口径见 deploy/sql/196） */
+    @TableField("net_amount")
+    private BigDecimal netAmount;
+
+    /** 含税价（按表头「计税方式」由单价换算得出，落库） */
+    @TableField("price_with_tax")
+    private BigDecimal priceWithTax;
+
+    /** 不含税价（按表头「计税方式」由单价换算得出，落库） */
+    @TableField("price_without_tax")
+    private BigDecimal priceWithoutTax;
+
+    @TableField("avg_cost")
+    private BigDecimal avgCost;
+
     @TableField("stock_id")
     private Long stockId;
 
@@ -74,8 +89,22 @@ public class ProductionReceiptItem {
     @TableField("operation_report_no")
     private String operationReportNo;
 
+    /** 来源工序行（work_order_operation.id）：该行由哪道入库类型工序产生，用于按行汇总已入库量 */
+    @TableField("source_operation_id")
+    private Long sourceOperationId;
+
     @TableField("remark")
     private String remark;
+
+    /** 不合格处理方式：RELEASE=放行 / RETURN=自动退货（生产不入库，工单保留可入库量）/ SCRAP=进报废仓 */
+    @TableField("handling_type")
+    private String handlingType;
+
+    @TableField("scrap_warehouse_id")
+    private Long scrapWarehouseId;
+
+    @TableField("scrap_warehouse_name")
+    private String scrapWarehouseName;
 
     @TableField(value = "created_at", fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
@@ -83,9 +112,9 @@ public class ProductionReceiptItem {
     @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updatedAt;
 
-    @TableField("created_by")
+    @TableField(value = "created_by", fill = FieldFill.INSERT)
     private String createdBy;
 
-    @TableField("updated_by")
+    @TableField(value = "updated_by", fill = FieldFill.INSERT_UPDATE)
     private String updatedBy;
 }

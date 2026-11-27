@@ -340,7 +340,6 @@ class CustomerControllerTest {
         customer.setStatus("正常");
         customer.setCreatedAt(LocalDateTime.now());
         customer.setCreatedBy("admin");
-        customer.setDeleted(0);
         return customer;
     }
 

@@ -1,28 +1,37 @@
 <template>
   <div class="erp-page">
-    <CrudTable
-      title="货位"
+    <CrudTable ref="tableRef"
+      :hide-buttons="['print']"
+      :title="$tt('货位')"
+      custom-field-entity="location"
       :columns="columns"
       :fetch-data="fetchData"
       :on-save="onSave"
       :on-delete="onDelete"
+      :on-batch-delete="onBatchDelete"
       :search-fields="searchFields"
-      :form-fields="formFields"
+      add-route="/basedata/location/new"
+      edit-route="/basedata/location/edit"
       id-field="binId"
       perm-add="basedata:location:add"
       perm-edit="basedata:location:edit"
       perm-delete="basedata:location:delete"
+      entity-name="location"
     >
       <template #statusSlot="{ row }">
-        <el-tag :type="row.status === '启用' ? 'success' : 'info'" size="small">{{ row.status }}</el-tag>
+        <el-tag :type="row.status === '启用' ? 'success' : 'info'" size="small">{{ $dt(row.status) }}</el-tag>
       </template>
     </CrudTable>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import { useAutoRefresh } from '@/composables/useAutoRefresh'
+const tableRef = ref(null)
+useAutoRefresh(() => tableRef.value?.loadData?.())
 import CrudTable from '@/components/CrudTable.vue'
-import { listLocation, saveLocation, updateLocation, deleteLocation } from '@/api/basedata/location'
+import { listLocation, saveLocation, updateLocation, deleteLocation, batchDeleteLocation } from '@/api/basedata/location'
 
 const searchFields = [
   { prop: 'keyword', label: '关键字', placeholder: '编码/名称' }
@@ -32,16 +41,8 @@ const columns = [
   { prop: 'binCode', label: '货位编码', minWidth: 140 },
   { prop: 'binName', label: '货位名称', minWidth: 140 },
   { prop: 'stockId', label: '仓库ID', minWidth: 100 },
-  { prop: 'status', label: '状态', width: 100, slot: 'statusSlot' }
-]
-
-const formFields = [
-  { prop: 'binCode', label: '货位编码', required: true, placeholder: '如 A-01-01' },
-  { prop: 'binName', label: '货位名称', required: true, placeholder: '如 A区1排1层' },
-  { prop: 'stockId', label: '所属仓库ID', type: 'number', required: true, placeholder: '仓库ID' },
-  { prop: 'status', label: '状态', type: 'select', required: true, default: '启用', options: [
-    { value: '启用', label: '启用' }, { value: '停用', label: '停用' }
-  ] }
+  { prop: 'status', label: '状态', width: 100, slot: 'statusSlot' },
+  { prop: 'remark', label: '备注', minWidth: 150, showOverflowTooltip: true }
 ]
 
 async function fetchData(params) {
@@ -54,5 +55,9 @@ async function onSave(data, isEdit) {
 }
 async function onDelete(row) {
   await deleteLocation(row.binId)
+}
+/** 批量删除（2026-09-20 接入：CrudTable 一次请求批量删，替代原先逐条循环） */
+async function onBatchDelete(rows) {
+  await batchDeleteLocation(rows.map(r => r.binId))
 }
 </script>

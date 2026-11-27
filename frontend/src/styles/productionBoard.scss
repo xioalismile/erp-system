@@ -1,0 +1,118 @@
+// ====================================================================
+// 车间看板公共样式（两个看板页共用：车间排程看板 + 车间进度跟踪）
+// 为什么抽公共：两页是同一套深色科技风页壳，若各写一份，改字号/配色要改两遍且必然漂移。
+// 字号硬预算：主/次均 11px，最小不低于 11px；数字等宽；文本一律 nowrap + ellipsis。
+// ====================================================================
+
+$mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+
+.mono { font-family: $mono; font-variant-numeric: tabular-nums; }
+
+/* ---------------- 深色科技风页壳（仅看板页，不动系统全局主题） ---------------- */
+.board-page {
+  position: relative;
+  padding: 20px 24px 40px;
+  /* 铺满可用高度：原来写 min-height: calc(100vh - 60px) —— 既没扣掉页签与内容区内边距（必然溢出），
+     内容不足时又会把整屏深色背景撑出来（用户反馈的"留那么多背景"）。改为撑满父级 + 内部滚动。 */
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  color: #E8F0FF;
+  font-size: 11px;
+  background-color: #070C1A;
+  background-image: radial-gradient(120% 140% at 0% 0%, #12204A 0%, #0B1224 45%, #070C1A 100%);
+}
+
+/* ---------------- 页头 ---------------- */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  .header-left { display: flex; align-items: center; gap: 16px; }
+
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #8FA4C8;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: rgba(130, 170, 255, .08);
+    border: 1px solid rgba(130, 170, 255, .14);
+    transition: all .2s;
+    &:hover { color: #35E6FF; border-color: rgba(53, 230, 255, .45); }
+  }
+
+  .title-group { display: flex; flex-direction: column; gap: 2px; }
+
+  .page-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #E8F0FF;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .title-badge {
+    font-size: 11px;
+    font-weight: 600;
+    color: #35E6FF;
+    background: rgba(53, 230, 255, .12);
+    border: 1px solid rgba(53, 230, 255, .3);
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+  }
+
+  .page-sub { font-size: 11px; color: #8FA4C8; }
+  .header-actions { display: flex; gap: 8px; }
+}
+
+/* ---------------- HUD 工具条 ---------------- */
+.hud {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  background: rgba(130, 170, 255, .08);
+  border-radius: 12px;
+  border: 1px solid rgba(130, 170, 255, .14);
+  font-size: 11px;
+
+  /* 顶栏各控件不参与收缩（否则 nowrap 文字会被压出容器） */
+  > * { flex-shrink: 0; }
+
+  .hud-label { font-size: 11px; color: #8FA4C8; }
+  .wc-select { width: 180px; }
+
+  .hud-metrics { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+  .metric {
+    flex: 0 0 auto;
+    font-size: 11px;
+    color: #8FA4C8;
+    white-space: nowrap;
+    b { font-family: $mono; font-variant-numeric: tabular-nums; color: #E8F0FF; font-size: 11px; }
+    &.warn b { color: #FF4D8D; }
+    &.unassigned b { color: #FFA53C; }
+  }
+  .total-info { font-size: 11px; color: #8FA4C8; margin-left: auto; }
+  .hud-actions { display: flex; align-items: center; gap: 8px; }
+}
+
+/* ---------------- 空态 ---------------- */
+.board-empty {
+  padding: 60px 0;
+  background: rgba(130, 170, 255, .06);
+  border-radius: 14px;
+  border: 1px dashed rgba(130, 170, 255, .2);
+  :deep(.el-empty__description) { color: #8FA4C8; }
+}
