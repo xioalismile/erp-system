@@ -88,7 +88,12 @@ build-version.txt
 # 所有非示例的环境文件一律不入库（只保留 .env.example 供他人照抄变量名）
 .env.*
 !.env.example
-# RSA 私钥 / 证书 / 密钥库
+# 构建配置例外：只含 VITE_ 公开构建开关（应用标题、接口前缀、隐藏哪些模块/单据），不含任何密钥。
+# 必须入库，否则换机器/重新克隆后 build:customer 会退回全量包，把客户不该有的功能发出去。
+!frontend/.env.customer
+!frontend/.env.production
+!frontend/.env.development
+# 私钥 / 证书 / 密钥库
 private_key*
 *_key_base64.txt
 public_key_base64.txt
@@ -170,3 +175,6 @@ asr-service/models/
 acquisition-service/screenshots/
 screenshots/
 
+
+# 冒烟测试运行产物（每次运行都会变化，不入库）
+frontend/tests/smoke/.out/
