@@ -3,7 +3,7 @@
 ## 一、仓库在哪
 
 - 本地仓库：`D:\erp\prodsrc\智能ERP-项目`（已经存在，不是新建的）
-- 远程仓库：Gitee `xioalismile/erp`
+- 远程仓库：GitHub `xioalismile/erp-system`（SSH 地址 `git@github.com:xioalismile/erp-system.git`）
 - 当前分支：`main`
 
 > 只有这个目录是仓库。`D:\erp` 下的其它产品（batch-record-system、温度互联、小程序等）不在此仓库内。
@@ -49,19 +49,19 @@ git branch                       # 列出本地分支
 
 ## 六、密钥与凭据
 
-- 远程地址已改为 `https://gitee.com/xioalismile/erp.git`，**不再包含令牌**。
-- 已配置凭据管理器（`credential.helper=manager`）：第一次 `git push` 会弹窗登录 Gitee，之后记住。
+- 远程地址：`git@github.com:xioalismile/erp-system.git`（SSH，不用令牌）。
+- 本机 SSH 密钥：`C:\Users\z\.ssh\id_ed25519`，对应公钥已加到 GitHub 账号；验证命令 `ssh -T git@github.com`，返回 `Hi xioalismile!` 即正常。
 - 数据库密码不再写在 `docker-compose.yml`：改为读取同目录 `.env` 里的 `POSTGRES_PASSWORD`，没设置会直接报错。
 - 部署脚本里的服务器密码是运行时提示输入，不落在文件里。
 
 ## 七、上传前确认
 
 ```powershell
-git remote -v                   # 确认远程地址（不应出现密码）
-git push                        # 推送到 Gitee
+git remote -v                   # 确认远程地址（应为 git@github.com:...）
+git push                        # 推送到 GitHub
 ```
 
-上传前请确认：Gitee 那个仓库是**私有**的；远程地址里没有令牌。
+上传前请确认：GitHub 那个仓库是**私有**的。
 
 ## 八、基线提交（一次性的起点）
 
