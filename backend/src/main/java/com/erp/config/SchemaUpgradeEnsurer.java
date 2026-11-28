@@ -448,6 +448,11 @@ public class SchemaUpgradeEnsurer {
         new String[]{"sale_invoice_item", "price_without_tax", "NUMERIC(18,6)"},
         new String[]{"sale_return_item", "price_with_tax", "NUMERIC(18,6)"},
         new String[]{"sale_return_item", "price_without_tax", "NUMERIC(18,6)"},
+        // 销售退货回库成本冻结（2026-11-28）：审核时记录原出库成本，反审/作废按原价冲回
+        // 等价脚本：db/201_sale_return_stock_effect.sql、deploy/sql/201_sale_return_stock_effect.sql。
+        new String[]{"sale_return_item", "avg_cost", "NUMERIC(18,6)"},
+        // 免费样品发货成本冻结（2026-11-28）：作废/删除按冻结成本退回库存
+        new String[]{"free_sample_order_item", "avg_cost", "NUMERIC(18,6)"},
         new String[]{"purchase_order_item", "price_with_tax", "NUMERIC(18,6)"},
         new String[]{"purchase_order_item", "price_without_tax", "NUMERIC(18,6)"},
         new String[]{"purchase_contract_item", "price_with_tax", "NUMERIC(18,6)"},
@@ -1523,6 +1528,12 @@ public class SchemaUpgradeEnsurer {
             target.execute("ALTER TABLE subcontract_return ADD COLUMN IF NOT EXISTS stock_effect SMALLINT DEFAULT 1");
             target.execute("UPDATE purchase_return SET stock_effect = 1 WHERE stock_effect IS NULL");
             target.execute("UPDATE subcontract_return SET stock_effect = 1 WHERE stock_effect IS NULL");
+            // 销售退货：1=回库增加库存；0=客户不寄回，仅登记与财务冲减（2026-11-28）
+            target.execute("ALTER TABLE sale_return ADD COLUMN IF NOT EXISTS stock_effect SMALLINT DEFAULT 1");
+            target.execute("UPDATE sale_return SET stock_effect = 1 WHERE stock_effect IS NULL");
+            // 免费样品单：发货是否已扣库存（2026-11-28），作废/删除据此决定是否冲回
+            target.execute("ALTER TABLE free_sample_order ADD COLUMN IF NOT EXISTS stock_deducted SMALLINT DEFAULT 0");
+            target.execute("UPDATE free_sample_order SET stock_deducted = 0 WHERE stock_deducted IS NULL");
 
             // 七、默认报废仓 + 参数（缺则补，不动已改值）
             target.execute("INSERT INTO warehouse (stock_code, stock_name, stock_type, warehouse_type, status,"

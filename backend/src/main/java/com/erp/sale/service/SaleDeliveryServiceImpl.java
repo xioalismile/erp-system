@@ -1289,7 +1289,30 @@ public class SaleDeliveryServiceImpl extends AbstractBillService<SaleDeliveryMap
     public void onApproved(SaleDelivery delivery) {
         String approver = delivery.getApprovedBy();
         applyStockAndOrderImpact(delivery);
-        // === 按配置直接生成收款单草稿（系统不生成应收单，设计图 v3） ===
+        createAutoReceiptIfConfigured(delivery);
+        log.info("销售出库单审核: {} 审核人: {}", delivery.getDeliveryNo(), approver);
+    }
+
+    /** 反作废：恢复到已生效，重新应用库存/订单/成本/指示，并按配置恢复自动收款单草稿 */
+    @Override
+    public void onUnvoided(SaleDelivery delivery) {
+        if (delivery == null || !"已生效".equals(delivery.getStatus())) return;
+        applyStockAndOrderImpact(delivery);
+        createAutoReceiptIfConfigured(delivery);
+        log.info("销售出库单反作废恢复完成: {}", delivery.getDeliveryNo());
+    }
+
+    /** 作废已生效单据：回冲库存/订单/成本/指示 + 清理自动收款单草稿（标准功能，2026-11-27） */
+    @Override
+    public void onVoided(SaleDelivery delivery) {
+        if (delivery == null) return;
+        reverseStockAndOrderImpact(delivery);
+        financeService.rollbackAutoReceiptBySource("销售出库单", delivery.getDeliveryNo());
+        log.info("销售出库单作废回冲完成: {}", delivery.getDeliveryNo());
+    }
+
+    /** 按设置中心「收款单生成方式」自动生成收款单草稿（幂等：已有未作废收款单则不重复生成） */
+    private void createAutoReceiptIfConfigured(SaleDelivery delivery) {
         try {
             String arSource = sysConfigService.getValue("finance.ar.source_bill_type", "none");
             if ("sale_delivery".equals(arSource)) {
@@ -1298,23 +1321,6 @@ public class SaleDeliveryServiceImpl extends AbstractBillService<SaleDeliveryMap
         } catch (Exception e) {
             log.warn("出库单审核生成收款单草稿失败，出库单: {}", delivery.getDeliveryNo(), e);
         }
-        log.info("销售出库单审核: {} 审核人: {}", delivery.getDeliveryNo(), approver);
-    }
-
-    /** 反作废：恢复到已生效，重新应用库存/订单/成本/指示；不重复生成收款单草稿 */
-    @Override
-    public void onUnvoided(SaleDelivery delivery) {
-        if (delivery == null || !"已生效".equals(delivery.getStatus())) return;
-        applyStockAndOrderImpact(delivery);
-        log.info("销售出库单反作废恢复完成: {}", delivery.getDeliveryNo());
-    }
-
-    /** 作废已生效单据：回冲库存/订单/成本/指示（标准功能，2026-11-27） */
-    @Override
-    public void onVoided(SaleDelivery delivery) {
-        if (delivery == null) return;
-        reverseStockAndOrderImpact(delivery);
-        log.info("销售出库单作废回冲完成: {}", delivery.getDeliveryNo());
     }
 
     /**
@@ -1418,10 +1424,11 @@ public class SaleDeliveryServiceImpl extends AbstractBillService<SaleDeliveryMap
         update(uw);
     }
 
-    /** 重置草稿影响：回冲库存（按审核冻结的实际出库成本）+ 减少销售订单已出库数量 + 指示已执行 - */
+    /** 重置草稿影响：回冲库存（按审核冻结的实际出库成本）+ 减少销售订单已出库数量 + 指示已执行 - + 清理自动收款单草稿 */
     @Override
     public void onReverseApproved(SaleDelivery delivery) {
         reverseStockAndOrderImpact(delivery);
+        financeService.rollbackAutoReceiptBySource("销售出库单", delivery.getDeliveryNo());
         log.info("销售出库单重置草稿回冲完成: {}", delivery.getDeliveryNo());
     }
 

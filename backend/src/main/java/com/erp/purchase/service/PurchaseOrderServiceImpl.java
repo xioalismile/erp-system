@@ -267,6 +267,22 @@ public class PurchaseOrderServiceImpl
         log.info("[采购订单重置草稿影响] 订单: {}", bill.getOrderNo());
     }
 
+    /** 作废（作废前为已生效）：与重置草稿严格镜像，清理自动预付款草稿（已生效则阻止作废） */
+    @Override
+    public void onVoided(PurchaseOrder bill) {
+        if (bill != null && bill.getOrderId() != null && purchasePrePaymentService != null) {
+            int n = purchasePrePaymentService.rollbackAutoByOrder(bill.getOrderId());
+            if (n > 0) log.info("采购订单作废联动删除自动预付草稿 {} 张，订单: {}", n, bill.getOrderNo());
+        }
+    }
+
+    /** 反作废（恢复为已生效）：恢复预付金额对应的自动预付款草稿 */
+    @Override
+    public void onUnvoided(PurchaseOrder bill) {
+        if (bill == null || bill.getOrderId() == null || purchasePrePaymentService == null) return;
+        purchasePrePaymentService.createFromPurchaseOrder(bill);
+    }
+
     @Override
     protected void validateStrictSubmit(PurchaseOrder bill) {
         List<PurchaseOrderItem> items;

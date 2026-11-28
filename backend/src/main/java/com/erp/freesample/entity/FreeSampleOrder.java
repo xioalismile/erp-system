@@ -49,6 +49,10 @@ public class FreeSampleOrder {
     @TableField("warehouse_name")
     private String warehouseName;
 
+    /** 发货是否已扣库存：1=已扣（作废/删除时按冻结成本冲回）；0=未扣 */
+    @TableField("stock_deducted")
+    private Integer stockDeducted;
+
     @TableField("express_no")
     private String expressNo;
 

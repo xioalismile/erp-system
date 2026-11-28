@@ -83,6 +83,10 @@ public class SaleReturnItem extends com.erp.common.bill.BillItemUnitFields {
     @TableField("batch_no")
     private String batchNo;
 
+    /** 回库成本：审核时冻结的原出库成本，反审/作废按此成本原价冲回 */
+    @TableField("avg_cost")
+    private BigDecimal avgCost;
+
     /** 行级 BOM（2026-11-06）：按物料主 BOM 自动带出 */
     @TableField("bom_id")
     private Long bomId;

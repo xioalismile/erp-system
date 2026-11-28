@@ -391,6 +391,20 @@ public class SubcontractPickServiceImpl extends AbstractBillService<SubcontractP
         movePickStock(pick, pick.getApprovedBy(), false);
     }
 
+    /** 作废（作废前为已生效）：与重置草稿严格镜像，退回已发料库存并回滚加工单实发数量 */
+    @Override
+    @Transactional
+    public void onVoided(SubcontractPick pick) {
+        movePickStock(pick, pick.getApprovedBy(), false);
+    }
+
+    /** 反作废（恢复为已生效）：重新扣减库存并回写加工单实发数量 */
+    @Override
+    @Transactional
+    public void onUnvoided(SubcontractPick pick) {
+        movePickStock(pick, pick.getApprovedBy(), true);
+    }
+
     /** 发料单库存动作：outbound=true 扣减，false 退回 */
     private void movePickStock(SubcontractPick pick, String operator, boolean outbound) {
         List<SubcontractPickItem> items = itemMapper.selectList(

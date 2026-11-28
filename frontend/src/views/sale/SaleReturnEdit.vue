@@ -72,6 +72,12 @@
               <el-form-item :label="$tf('退货日期')" prop="returnDate" required>
                 <el-date-picker v-model="form.returnDate" type="date" value-format="YYYY-MM-DD" class="field-input" :disabled="!isDraft" />
               </el-form-item>
+              <el-form-item :label="$tf('退货处理')">
+                <el-radio-group v-model="form.stockEffect" :disabled="!isDraft">
+                  <el-radio :label="1">{{ $tt('回库') }}</el-radio>
+                  <el-radio :label="0">{{ $tt('不回库') }}</el-radio>
+                </el-radio-group>
+              </el-form-item>
             </div>
           </div>
 
@@ -719,6 +725,7 @@ const form = reactive({
   deliveryAddress: '',
   warehouseId: null,
   warehouseName: '',
+  stockEffect: 1,
   salerId: null,
   currencyId: null,
   currencyCode: 'CNY',
@@ -1208,12 +1215,14 @@ async function onSubmit() {
     return
   }
   // 无论新建还是已有草稿，提交前一律先静默保存（把当前页面所见落库，避免提交旧数据）
-  // 2026-11-07：入库以明细行仓库为准，逐行精确提示
-  for (let i = 0; i < form.items.length; i++) {
-    const row = form.items[i]
-    if (!row.stockId) {
-      ElMessage.warning(`${tt('第')}${i + 1}${tt('行')}${row.materialCode || ''} ${row.materialName || ''}${tt('未选择仓库，请选择仓库')}`)
-      return
+  // 2026-11-07：入库以明细行仓库为准，逐行精确提示；2026-11-28：不回库时不需要仓库
+  if (form.stockEffect !== 0) {
+    for (let i = 0; i < form.items.length; i++) {
+      const row = form.items[i]
+      if (!row.stockId) {
+        ElMessage.warning(`${tt('第')}${i + 1}${tt('行')}${row.materialCode || ''} ${row.materialName || ''}${tt('未选择仓库，请选择仓库')}`)
+        return
+      }
     }
   }
   const saved = await onSave(true, { skipRouteSync: true })
@@ -1235,7 +1244,10 @@ async function onSubmit() {
 
 async function confirmApprove() {
   try {
-    await ElMessageBox.confirm(tt('确认审核该退货单? 审核后将回退库存且不可修改'), tt('提示'), {
+    const approveTip = form.stockEffect === 0
+      ? tt('确认审核该退货单? 不回库只做单据与财务冲减，审核后不可修改')
+      : tt('确认审核该退货单? 审核后将回库增加库存且不可修改')
+    await ElMessageBox.confirm(approveTip, tt('提示'), {
       confirmButtonText: tt('确定'),
       cancelButtonText: tt('取消'),
       type: 'warning'
@@ -1287,6 +1299,8 @@ async function load() {
     try {
       const res = await getSaleReturn(__detailId)
       Object.assign(form, res)
+      // 历史单据没有「退货处理」列：按回库处理
+      if (form.stockEffect === null || form.stockEffect === undefined) form.stockEffect = 1
       if (headerCustomFieldMap.size > 0 && res.returnId) {
         const headerValues = await loadCustomFieldValues('sale_return', res.returnId)
         Object.assign(form, headerValues)

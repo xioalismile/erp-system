@@ -1085,7 +1085,25 @@ public class SaleInvoiceServiceImpl extends AbstractBillService<SaleInvoiceMappe
                     item.getSourceId(), item.getSourceItemId(), nvlAmount(item.getNetAmount()).negate());
             }
         }
+        // 清理按配置自动生成的收款单草稿（已生效/待审核的收款单会抛业务异常阻止回退）
+        financeService.rollbackAutoReceiptBySource("销售发票", bill.getInvoiceNo());
         log.info("销售发票重置草稿(已回滚已开票数量): {} 操作人: {}", bill.getInvoiceNo(), bill.getApprovedBy());
+    }
+
+    /** 作废（作废前为已生效）：与重置草稿严格镜像，回滚已开票数量/金额并清理自动收款单草稿 */
+    @Override
+    @Transactional
+    public void onVoided(SaleInvoice bill) {
+        onReverseApproved(bill);
+        log.info("销售发票作废回滚完成: {}", bill.getInvoiceNo());
+    }
+
+    /** 反作废（恢复为已生效）：与审核严格镜像，重新回写已开票数量/金额并按配置恢复收款单草稿 */
+    @Override
+    @Transactional
+    public void onUnvoided(SaleInvoice bill) {
+        onApproved(bill);
+        log.info("销售发票反作废恢复完成: {}", bill.getInvoiceNo());
     }
 
     @Override

@@ -39,6 +39,10 @@ public class SaleReturn {
     @ExportField(label = "仓库ID", order = 6)
     private Long warehouseId;
 
+    /** 退货处理：1=回库（审核增加库存）；0=不回库（客户不寄回，仅登记与财务冲减） */
+    @TableField("stock_effect")
+    private Integer stockEffect;
+
     @TableField("saler_id")
     @ExportField(label = "销售员ID", order = 7)
     private Long salerId;

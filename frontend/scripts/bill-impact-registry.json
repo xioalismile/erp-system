@@ -1,0 +1,31 @@
+{
+  "_comment": "单据影响登记表（唯一事实来源）。stock: in=审核增加库存 / out=审核扣减库存 / both=一增一减 / none=不直接影响库存 / via=通过其他单据落地。source 写业务依据，改口径先改这里。",
+  "bills": [
+    { "service": "SaleQuote", "label": "销售报价单", "stock": "none", "source": "业务设计文档 3.1" },
+    { "service": "SaleOrder", "label": "销售订单", "stock": "none", "source": "业务设计文档 3.1：无库存影响，仅占可用量" },
+    { "service": "SaleDelivery", "label": "销售出库单", "stock": "out", "source": "业务设计文档 3.1：审核扣减库存" },
+    { "service": "SaleReturn", "label": "销售退货单", "stock": "in", "source": "业务设计文档 3.6.2：审核增加库存 SALE_RETURN_IN" },
+    { "service": "SaleInvoice", "label": "销售发票", "stock": "none", "source": "业务设计文档 3.1：无库存影响" },
+    { "service": "SaleExchange", "label": "销售换货单", "stock": "via", "source": "换出生成销售出库单，库存随出库单审核" },
+    { "service": "SaleRepair", "label": "售后维修单", "stock": "via", "source": "维修收件/领用生成其他入库/出库单草稿" },
+    { "service": "SaleContract", "label": "销售合同", "stock": "none", "source": "业务设计文档 3.1" },
+    { "service": "PurchaseRequest", "label": "采购申请单", "stock": "none", "source": "业务设计文档 4.1" },
+    { "service": "PurchaseOrder", "label": "采购订单", "stock": "none", "source": "业务设计文档 4.1" },
+    { "service": "PurchaseInbound", "label": "采购入库单", "stock": "in", "source": "业务设计文档 4.1/4.3：审核增加库存" },
+    { "service": "PurchaseReturn", "label": "采购退货单", "stock": "out", "source": "业务设计文档 4.1：审核扣减库存" },
+    { "service": "PurchaseInvoice", "label": "采购发票", "stock": "none", "source": "业务设计文档 4.1" },
+    { "service": "MaterialRequisition", "label": "生产领料单", "stock": "out", "source": "库存单据：审核领料出库" },
+    { "service": "OtherReceipt", "label": "其他入库单", "stock": "in", "source": "库存单据：审核入库" },
+    { "service": "OtherIssue", "label": "其他出库单", "stock": "out", "source": "库存单据：审核出库" },
+    { "service": "StockTransfer", "label": "库存调拨单", "stock": "both", "source": "库存单据：调出仓扣减、调入仓增加" },
+    { "service": "StockCheck", "label": "库存盘点单", "stock": "both", "source": "库存单据：盘盈增加、盘亏扣减" },
+    { "service": "ProductionReceipt", "label": "生产入库单", "stock": "in", "source": "生产单据：审核成品入库" },
+    { "service": "ProduceAssemble", "label": "生产组装单", "stock": "both", "source": "生产单据：子件出、成品入" },
+    { "service": "ProduceDisassemble", "label": "生产拆卸单", "stock": "both", "source": "生产单据：成品出、子件入" },
+    { "service": "SubcontractPick", "label": "委外发料单", "stock": "out", "source": "委外单据：审核发料出库" },
+    { "service": "SubcontractReturn", "label": "委外退料单", "stock": "in", "source": "委外单据：审核退料入库" },
+    { "service": "SubcontractSupplement", "label": "委外补料单", "stock": "out", "source": "委外单据：审核补料出库" },
+    { "service": "SubcontractInbound", "label": "委外入库单", "stock": "in", "source": "委外单据：审核成品入库" },
+    { "service": "FreeSampleOrder", "label": "免费样品订单", "stock": "out", "source": "免费样品发货扣减库存（ship 动作）" }
+  ]
+}

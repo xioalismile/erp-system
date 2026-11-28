@@ -393,12 +393,25 @@ public class SaleOrderServiceImpl
         log.info("[销售订单重置草稿影响] 订单: {}", bill.getOrderNo());
     }
 
-    /** 订单作废：替换发货指示级联取消 */
+    /** 订单作废：替换发货指示级联取消 + 清理定金自动生成的预收款草稿（已生效则阻止作废） */
     @Override
     @Transactional
     public void onVoided(SaleOrder bill) {
         if (bill != null && bill.getOrderId() != null) {
             saleOrderSubstitutePlanService.cancelByOrder(bill.getOrderId(), "订单作废", "system");
+            if (salePreReceiptService != null) {
+                salePreReceiptService.rollbackAutoByOrder(bill.getOrderId());
+            }
+        }
+    }
+
+    /** 反作废（恢复为已生效）：重新应用审核影响中可恢复的部分（定金自动预收款草稿） */
+    @Override
+    @Transactional
+    public void onUnvoided(SaleOrder bill) {
+        if (bill == null || bill.getOrderId() == null) return;
+        if (salePreReceiptService != null) {
+            salePreReceiptService.createFromSaleOrder(bill);
         }
     }
 

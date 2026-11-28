@@ -763,6 +763,13 @@ public class SaleExchangeServiceImpl extends AbstractBillService<SaleExchangeMap
         releaseGeneratedDelivery(bill);
     }
 
+    /** 反作废（恢复为已生效）：与审核严格镜像，重新生成替换货出库单并回写已转出库数量 */
+    @Override
+    @Transactional
+    public void onUnvoided(SaleExchange bill) {
+        onApproved(bill);
+    }
+
     private void releaseGeneratedDelivery(SaleExchange bill) {
         if (bill.getGeneratedDeliveryId() == null) return;
         SaleDelivery delivery = saleDeliveryService.getById(bill.getGeneratedDeliveryId());

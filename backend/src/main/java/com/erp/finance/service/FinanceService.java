@@ -116,6 +116,14 @@ public interface FinanceService extends IService<AccountsReceivable> {
     PaymentReceipt createReceiptDraftFromSource(String sourceType, Long sourceId);
 
     /**
+     * 回滚按来源自动生成的收款单草稿（源单反审/作废用）。
+     * 草稿直接删除；待审核/已确认抛出业务异常，避免源单与收款单状态不一致。
+     *
+     * @return 删除的草稿数量
+     */
+    int rollbackAutoReceiptBySource(String sourceType, String sourceNo);
+
+    /**
      * 按主键读取收款单（含明细，明细可为空）。
      * 销售侧售后维修单用它判断自动生成的收款单当前状态（草稿可直接删、已生效需先处理）。
      */

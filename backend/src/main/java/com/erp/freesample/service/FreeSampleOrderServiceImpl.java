@@ -105,22 +105,53 @@ public class FreeSampleOrderServiceImpl extends AbstractBillService<FreeSampleOr
         log.info("免费样品订单审核: {} 审核人: {}", bill.getOrderNo(), bill.getApprovedBy());
     }
 
-    /** 重置草稿影响：与 onApproved 严格镜像（当前无正向影响，无需冲回） */
+    /** 重置草稿影响：已发货的按冻结成本退回库存（未发货无影响） */
     @Override
     public void onReverseApproved(FreeSampleOrder bill) {
+        reverseShippedStock(bill);
         log.info("免费样品订单重置草稿回冲完成: {} 操作人: {}", bill.getOrderNo(), bill.getApprovedBy());
     }
 
-    /** 作废影响：与重置草稿严格镜像 */
+    /** 作废影响：与重置草稿严格镜像（已发货的退回库存） */
     @Override
     public void onVoided(FreeSampleOrder bill) {
         onReverseApproved(bill);
     }
 
-    /** 反作废影响（2026-11-09）：与 onVoided 严格镜像（当前无正向影响，仅留审核日志） */
+    /** 反作废影响：恢复为已生效；库存已在作废时退回，不重复扣减（需要出库时重新发货） */
     @Override
     public void onUnvoided(FreeSampleOrder bill) {
-        onApproved(bill);
+        log.info("免费样品订单反作废恢复: {} 操作人: {}", bill.getOrderNo(), bill.getApprovedBy());
+    }
+
+    /** 已发货单据退回库存：按发货时冻结的出库成本原价加回，随后清掉已扣库存标记 */
+    private void reverseShippedStock(FreeSampleOrder bill) {
+        if (bill == null || bill.getOrderId() == null) return;
+        if (bill.getStockDeducted() == null || bill.getStockDeducted() != 1) return;
+        Long stockId = bill.getWarehouseId();
+        if (stockId == null) return;
+        String operator = bill.getApprovedBy() != null && !bill.getApprovedBy().isBlank()
+                ? bill.getApprovedBy() : "系统";
+        List<FreeSampleOrderItem> items = itemMapper.selectList(
+                new QueryWrapper<FreeSampleOrderItem>().eq("order_id", bill.getOrderId()).orderByAsc("line_no"));
+        if (items != null) {
+            for (FreeSampleOrderItem item : items) {
+                if (item.getMaterialId() == null) continue;
+                BigDecimal qty = item.getQuantity() != null ? item.getQuantity() : BigDecimal.ZERO;
+                if (qty.compareTo(BigDecimal.ZERO) <= 0) continue;
+                BigDecimal stockQty = item.effectiveBaseQuantity() != null ? item.effectiveBaseQuantity() : qty;
+                BigDecimal cost = item.getAvgCost() != null ? item.getAvgCost() : BigDecimal.ZERO;
+                inventoryService.addStock(
+                        stockId, item.getBinId(), item.getMaterialId(), null,
+                        stockQty, cost,
+                        bill.getOrderNo(), "FREE_SAMPLE_ISSUE_REVERSE",
+                        "FREE_SAMPLE_ORDER", bill.getOrderNo(), operator);
+            }
+        }
+        update(new UpdateWrapper<FreeSampleOrder>().eq("order_id", bill.getOrderId())
+                .set("stock_deducted", 0));
+        bill.setStockDeducted(0);
+        log.info("免费样品订单退回库存: {}", bill.getOrderNo());
     }
 
 
@@ -397,36 +428,40 @@ public class FreeSampleOrderServiceImpl extends AbstractBillService<FreeSampleOr
                 .set("updated_at", LocalDateTime.now());
         update(uw);
 
-        // 根据明细自动调用库存出库，如不可用则跳过库存扣减，仅记录状态
-        try {
-            List<FreeSampleOrderItem> items = itemMapper.selectList(
-                    new QueryWrapper<FreeSampleOrderItem>().eq("order_id", id).orderByAsc("line_no"));
-            if (items != null && !items.isEmpty() && order.getWarehouseId() != null) {
-                int deducted = 0;
-                for (FreeSampleOrderItem item : items) {
-                    if (item.getMaterialId() == null) continue;
-                    BigDecimal qty = item.getQuantity() != null ? item.getQuantity() : BigDecimal.ZERO;
-                    if (qty.compareTo(BigDecimal.ZERO) <= 0) continue;
-                    inventoryService.deductStock(
-                            order.getWarehouseId(),
-                            item.getBinId(),
-                            item.getMaterialId(),
-                            null,
-                            qty,
-                            order.getOrderNo(),
-                            "FREE_SAMPLE_ISSUE",
-                            "FREE_SAMPLE_ORDER",
-                            order.getOrderNo(),
-                            operator);
-                    deducted += 1;
-                }
-                log.info("免费样品订单发货并扣减库存: {} 明细{}项 扣减{}项",
-                        order.getOrderNo(), items.size(), deducted);
-            } else {
-                log.info("免费样品订单发货（无明细或无仓库，跳过库存扣减）: {}", order.getOrderNo());
+        // 根据明细扣减库存：成本按出库时冻结，作废/删除按同一成本退回；扣减失败整单回滚，不再吞异常
+        List<FreeSampleOrderItem> items = itemMapper.selectList(
+                new QueryWrapper<FreeSampleOrderItem>().eq("order_id", id).orderByAsc("line_no"));
+        if (items != null && !items.isEmpty() && order.getWarehouseId() != null) {
+            int deducted = 0;
+            for (FreeSampleOrderItem item : items) {
+                if (item.getMaterialId() == null) continue;
+                BigDecimal qty = item.getQuantity() != null ? item.getQuantity() : BigDecimal.ZERO;
+                if (qty.compareTo(BigDecimal.ZERO) <= 0) continue;
+                // 库存记账只认基本单位数量（多单位由 baseQuantity 折算）
+                BigDecimal stockQty = item.effectiveBaseQuantity() != null ? item.effectiveBaseQuantity() : qty;
+                BigDecimal unitCost = inventoryService.getOutUnitCost(
+                        order.getWarehouseId(), item.getBinId(), item.getMaterialId(), null);
+                item.setAvgCost(unitCost);
+                itemMapper.updateById(item);
+                inventoryService.deductStock(
+                        order.getWarehouseId(),
+                        item.getBinId(),
+                        item.getMaterialId(),
+                        null,
+                        stockQty,
+                        order.getOrderNo(),
+                        "FREE_SAMPLE_ISSUE",
+                        "FREE_SAMPLE_ORDER",
+                        order.getOrderNo(),
+                        operator);
+                deducted += 1;
             }
-        } catch (Exception e) {
-            log.warn("免费样品订单发货库存扣减失败，仅记录状态: {} 原因: {}", order.getOrderNo(), e.getMessage());
+            update(new UpdateWrapper<FreeSampleOrder>().eq("order_id", id)
+                    .set("stock_deducted", deducted > 0 ? 1 : 0));
+            log.info("免费样品订单发货并扣减库存: {} 明细{}项 扣减{}项",
+                    order.getOrderNo(), items.size(), deducted);
+        } else {
+            log.info("免费样品订单发货（无明细或无仓库，跳过库存扣减）: {}", order.getOrderNo());
         }
         log.info("免费样品订单发货: {} 快递: {} {} 操作人: {}",
                 order.getOrderNo(), expressCompany, expressNo, operator);

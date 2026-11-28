@@ -385,6 +385,20 @@ public class SubcontractSupplementServiceImpl extends AbstractBillService<Subcon
         moveStock(supplement, supplement.getApprovedBy(), false);
     }
 
+    /** 作废（作废前为已生效）：与重置草稿严格镜像，按冻结成本把料退回库存 */
+    @Override
+    @Transactional
+    public void onVoided(SubcontractSupplement supplement) {
+        moveStock(supplement, supplement.getApprovedBy(), false);
+    }
+
+    /** 反作废（恢复为已生效）：重新扣减补料库存 */
+    @Override
+    @Transactional
+    public void onUnvoided(SubcontractSupplement supplement) {
+        moveStock(supplement, supplement.getApprovedBy(), true);
+    }
+
     /** 补料库存动作：outbound=true 扣减，false 退回 */
     private void moveStock(SubcontractSupplement supplement, String operator, boolean outbound) {
         List<SubcontractSupplementItem> items = itemMapper.selectList(

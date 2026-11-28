@@ -1,0 +1,44 @@
+[
+  {
+    "service": "SaleReturn",
+    "rule": "R5",
+    "status": "accepted",
+    "reason": "退货审核自动生成红字发票；已生效红票由统一下游引用校验拦截，未生效红票由退货单反向守卫拦截并提示先在发票页处理，不会静默留下孤儿红票"
+  },
+  {
+    "service": "SaleContract",
+    "rule": "R2",
+    "status": "accepted",
+    "reason": "销售合同审核自动下推的销售订单直接生效，并已登记为下游单据；反审/作废/删除会先被统一下游校验拦截，不会出现合同回退而订单悬空"
+  },
+  {
+    "service": "SaleContract",
+    "rule": "R3",
+    "status": "accepted",
+    "reason": "同上：自动下推订单已生效，作废/反作废被下游引用校验拦截，需先处理下游订单"
+  },
+  {
+    "service": "SaleContract",
+    "rule": "R5",
+    "status": "accepted",
+    "reason": "自动生成的销售订单已生效且登记为下游，清理必须由用户先作废下游订单，框架不允许静默删除"
+  },
+  {
+    "service": "PurchaseRequest",
+    "rule": "R2",
+    "status": "accepted",
+    "reason": "采购申请审核只是给未填审批数量的明细补默认值，没有库存/数量/衍生单据影响，反审无需冲回"
+  },
+  {
+    "service": "PurchaseRequest",
+    "rule": "R3",
+    "status": "accepted",
+    "reason": "同上，作废/反作废无需业务影响钩子"
+  },
+  {
+    "service": "WorkOrder",
+    "rule": "R2",
+    "status": "accepted",
+    "reason": "生产工单生效只生成工序实例、不产生库存/成本移动；反审保留工序实例是明确口径（避免丢进度）"
+  }
+]

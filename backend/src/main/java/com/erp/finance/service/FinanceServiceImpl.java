@@ -955,8 +955,36 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
         return saved;
     }
 
-    private static Long toLong(Object v) {
-        if (v == null) return null;
+    /**
+     * 回滚按来源自动生成的收款单草稿（源单反审/作废用）。
+     * 草稿直接删除；待审核/已确认抛出业务异常，避免源单已回退而收款单仍在流转。
+     */
+    @Override
+    @Transactional
+    public int rollbackAutoReceiptBySource(String sourceType, String sourceNo) {
+        if (sourceType == null || sourceNo == null || sourceNo.isBlank()) return 0;
+        List<PaymentReceipt> list = receiptMapper.selectList(new QueryWrapper<PaymentReceipt>()
+                .eq("source_bill_type", sourceType)
+                .eq("source_bill_no", sourceNo)
+                .eq("source_type", "系统自动生成")
+                .ne("status", "已作废"));
+        if (list == null || list.isEmpty()) return 0;
+        for (PaymentReceipt r : list) {
+            if (!BillStatusEnum.isDraftClass(BillStatusUtils.toNumber(r.getStatus()))) {
+                throw new BusinessException("该单据自动生成的收款单[" + r.getReceiptNo() + "]当前状态：" + r.getStatus()
+                        + "，请先在财务模块处理该收款单后再操作");
+            }
+        }
+        int removed = 0;
+        for (PaymentReceipt r : list) {
+            deleteReceipt(r.getReceiptId());
+            removed++;
+        }
+        log.info("回滚自动收款单草稿 {} 张，来源: {}#{}", removed, sourceType, sourceNo);
+        return removed;
+    }
+
+    private static Long toLong(Object v) {        if (v == null) return null;
         if (v instanceof Number) return ((Number) v).longValue();
         try {
             return Long.valueOf(String.valueOf(v).trim());

@@ -367,6 +367,20 @@ public class SubcontractReturnServiceImpl extends AbstractBillService<Subcontrac
         moveStock(returnBill, returnBill.getApprovedBy(), false);
     }
 
+    /** 作废（作废前为已生效）：与重置草稿严格镜像，按原入库成本红字冲回 */
+    @Override
+    @Transactional
+    public void onVoided(SubcontractReturn returnBill) {
+        moveStock(returnBill, returnBill.getApprovedBy(), false);
+    }
+
+    /** 反作废（恢复为已生效）：按退料口径重新加回库存 */
+    @Override
+    @Transactional
+    public void onUnvoided(SubcontractReturn returnBill) {
+        moveStock(returnBill, returnBill.getApprovedBy(), true);
+    }
+
     /** 退料库存动作：inbound=true 加库存，false 红字冲回 */
     private void moveStock(SubcontractReturn returnBill, String operator, boolean inbound) {
         // stock_effect=0 表示质检自动退货（不合格品从未入库），只走单据，不产生库存移动

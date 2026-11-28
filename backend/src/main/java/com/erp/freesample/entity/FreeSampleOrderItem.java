@@ -55,4 +55,8 @@ public class FreeSampleOrderItem extends com.erp.common.bill.BillItemUnitFields 
 
     @TableField("remark")
     private String remark;
+
+    /** 发货时冻结的出库成本，作废/删除按此成本退回库存 */
+    @TableField("avg_cost")
+    private BigDecimal avgCost;
 }

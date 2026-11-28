@@ -24,6 +24,8 @@ import com.erp.common.bill.BillStatusUtils;
 import com.erp.common.query.BillHeaderFilterSupport;
 import com.erp.config.BusinessException;
 import com.erp.config.SysParamValidator;
+import com.erp.inventory.service.InventoryService;
+import com.erp.inventory.service.MaterialCostService;
 import com.erp.serialno.service.SysSerialNoConfigService;
 import com.erp.masterdata.entity.Customer;
 import com.erp.masterdata.entity.Material;
@@ -158,6 +160,9 @@ public class SaleReturnServiceImpl extends AbstractBillService<SaleReturnMapper,
     private final SysParamValidator sysParamValidator;
     private final SaleOverQtyGuardService saleOverQtyGuardService;
     private final SysSerialNoConfigService sysSerialNoConfigService;
+    /** 回库库存动作（2026-11-28）：回库=审核增加库存，反审/作废按冻结的原出库成本冲回 */
+    private final InventoryService inventoryService;
+    private final MaterialCostService materialCostService;
 
     /** 下游引用校验（2026-11-09 统一状态机）：重置草稿/作废/删除前禁止存在已生效下游 */
     @Lazy
@@ -243,6 +248,8 @@ public class SaleReturnServiceImpl extends AbstractBillService<SaleReturnMapper,
             saleReturn.setApprovalStatus("草稿");
         }
         if (saleReturn.getExchangeRate() == null) saleReturn.setExchangeRate(BigDecimal.ONE);
+        // 退货处理：未传时按回库处理（历史单据默认为 1，与建表默认值一致）
+        if (saleReturn.getStockEffect() == null) saleReturn.setStockEffect(1);
         if (saleReturn.getDiscountRate() == null) saleReturn.setDiscountRate(BigDecimal.ZERO);
         if (saleReturn.getDiscountAmount() == null) saleReturn.setDiscountAmount(BigDecimal.ZERO);
         if (saleReturn.getTotalAmount() == null) saleReturn.setTotalAmount(BigDecimal.ZERO);
@@ -563,6 +570,8 @@ public class SaleReturnServiceImpl extends AbstractBillService<SaleReturnMapper,
         // 设置中心：来源单号必填（sale.return.require.source）
         sysParamValidator.validateRequireSource("sale.return.require.source", "销售退货单", saleReturn.getSourceBillNo());
 
+        // 2026-11-28：不回库（仅登记）时明细不需要仓库；回库才校验仓库
+        boolean needStock = saleReturn.getStockEffect() == null || saleReturn.getStockEffect() != 0;
         for (int i = 0; i < items.size(); i++) {
             SaleReturnItem item = items.get(i);
             int lineNo = i + 1;
@@ -575,11 +584,13 @@ public class SaleReturnServiceImpl extends AbstractBillService<SaleReturnMapper,
             }
             String matInfo = (mat.getMaterialCode() != null ? mat.getMaterialCode() : "")
                     + " " + (mat.getMaterialName() != null ? mat.getMaterialName() : "");
-            if (item.getStockId() == null) {
-                throw new BusinessException("第" + lineNo + "行[" + matInfo.trim() + "]未选择仓库，请选择仓库");
-            }
-            if (warehouseService.getById(item.getStockId()) == null) {
-                throw new BusinessException("第" + lineNo + "行[" + matInfo.trim() + "]所选仓库不存在，请重新选择");
+            if (needStock) {
+                if (item.getStockId() == null) {
+                    throw new BusinessException("第" + lineNo + "行[" + matInfo.trim() + "]未选择仓库，请选择仓库");
+                }
+                if (warehouseService.getById(item.getStockId()) == null) {
+                    throw new BusinessException("第" + lineNo + "行[" + matInfo.trim() + "]所选仓库不存在，请重新选择");
+                }
             }
             if (item.getUnitId() != null) {
                 UnitOfMeasure uom = unitOfMeasureService.getById(item.getUnitId());
@@ -626,31 +637,16 @@ public class SaleReturnServiceImpl extends AbstractBillService<SaleReturnMapper,
         approve((Object) id, approver);
     }
 
-    /** 审核通过影响：回写订单已退货数量 + 自动生成红字发票 */
+    /** 审核通过影响：回写订单已退货数量 + 回库增加库存 + 自动生成红字发票 */
     @Override
     public void onApproved(SaleReturn saleReturn) {
         Long id = saleReturn.getReturnId();
         List<SaleReturnItem> items = itemMapper.selectList(
             new QueryWrapper<SaleReturnItem>().eq("return_id", id));
 
-        for (SaleReturnItem item : items) {
-            if (item.getSourceId() != null && item.getSourceItemId() != null) {
-                // 【2026-10-14 修复】按来源分支：从出库单退货时 sourceItemId 是出库明细ID，
-                //   必须经出库明细回溯源订单明细再回写（此前直接当订单明细ID查 → "订单明细不存在"，退货冲减从未生效）。
-                if ("销售出库单".equals(item.getSourceBillType()) || "销售出库".equals(item.getSourceBillType())) {
-                    SaleDeliveryItem di = saleDeliveryItemMapper.selectById(item.getSourceItemId());
-                    if (di != null && di.getSourceId() != null && di.getSourceItemId() != null) {
-                        saleOrderService.updateTurnedQuantity(
-                            di.getSourceId(), di.getSourceItemId(),
-                            item.getQuantity(), "return");
-                    }
-                } else {
-                    saleOrderService.updateTurnedQuantity(
-                        item.getSourceId(), item.getSourceItemId(),
-                        item.getQuantity(), "return");
-                }
-            }
-        }
+        applyReturnedQtyWriteback(items, true);
+        // 2026-11-28：回库才增加库存；不回库（客户不寄回）只做单据与财务冲减
+        applyStockImpact(saleReturn, items, true, false);
 
         // === 审核通过后自动生成红字发票（关联原蓝字发票） ===
         try {
@@ -869,31 +865,149 @@ public class SaleReturnServiceImpl extends AbstractBillService<SaleReturnMapper,
         update(uw);
     }
 
-    /** 重置草稿影响：负数回冲订单「已退货数量」（与审核回写逐字镜像，防止净发货被多扣） */
+    /** 重置草稿影响：负数回冲订单「已退货数量」+ 按冻结成本红字冲回库存（与审核逐字镜像） */
     @Override
     public void onReverseApproved(SaleReturn bill) {
+        assertNoPendingRedInvoice(bill);
         List<SaleReturnItem> items = itemMapper.selectList(
             new QueryWrapper<SaleReturnItem>().eq("return_id", bill.getReturnId()));
-        if (items != null) {
-            for (SaleReturnItem item : items) {
-                if (item.getSourceId() == null || item.getSourceItemId() == null) continue;
-                java.math.BigDecimal qty = item.getQuantity() != null ? item.getQuantity() : java.math.BigDecimal.ZERO;
-                // 【2026-10-14】与审核回写同口径：按来源分支，出库来源经出库明细回溯订单明细后负数回冲
-                if ("销售出库单".equals(item.getSourceBillType()) || "销售出库".equals(item.getSourceBillType())) {
-                    SaleDeliveryItem di = saleDeliveryItemMapper.selectById(item.getSourceItemId());
-                    if (di != null && di.getSourceId() != null && di.getSourceItemId() != null) {
-                        saleOrderService.updateTurnedQuantity(
-                            di.getSourceId(), di.getSourceItemId(),
-                            qty.negate(), "return");
-                    }
-                } else {
+        applyStockImpact(bill, items, false, false);
+        applyReturnedQtyWriteback(items, false);
+        log.info("销售退货单重置草稿勾稽回冲完成: {}", bill.getReturnNo());
+    }
+
+    /** 作废（作废前为已生效）：与重置草稿严格镜像，冲回库存与订单已退货数量 */
+    @Override
+    @Transactional
+    public void onVoided(SaleReturn bill) {
+        assertNoPendingRedInvoice(bill);
+        List<SaleReturnItem> items = itemMapper.selectList(
+            new QueryWrapper<SaleReturnItem>().eq("return_id", bill.getReturnId()));
+        applyStockImpact(bill, items, false, false);
+        applyReturnedQtyWriteback(items, false);
+        log.info("销售退货单作废冲回完成: {}", bill.getReturnNo());
+    }
+
+    /** 反作废（恢复为已生效）：与审核严格镜像，重新增加库存并回写订单已退货数量 */
+    @Override
+    @Transactional
+    public void onUnvoided(SaleReturn bill) {
+        List<SaleReturnItem> items = itemMapper.selectList(
+            new QueryWrapper<SaleReturnItem>().eq("return_id", bill.getReturnId()));
+        applyReturnedQtyWriteback(items, true);
+        applyStockImpact(bill, items, true, true);
+        log.info("销售退货单反作废恢复完成: {}", bill.getReturnNo());
+    }
+
+    /**
+     * 反向操作守卫：退货审核会自动生成红字发票。已生效红票由统一的下游引用校验拦截；
+     * 未生效红票（草稿/待审核/已驳回）不在下游校验范围内，若不拦截会在反审后变成孤儿单据。
+     */
+    private void assertNoPendingRedInvoice(SaleReturn bill) {
+        Long count = saleInvoiceMapper.selectCount(new QueryWrapper<SaleInvoice>()
+                .eq("source_bill_no", bill.getReturnNo())
+                .eq("is_red_invoice", 1)
+                .in("status", "草稿", "待审核", "已驳回"));
+        if (count != null && count > 0) {
+            throw new BusinessException("退货单已生成未生效的红字发票，请先在销售发票中处理后再反审或作废");
+        }
+    }
+
+    /**
+     * 回写/回冲销售订单「已退货数量」。
+     * forward=true 审核/反作废；false 反审/作废。
+     * 【2026-10-14 修复】从出库单退货时 sourceItemId 是出库明细ID，必须经出库明细回溯源订单明细再回写
+     * （此前直接当订单明细ID查 → "订单明细不存在"，退货冲减从未生效）。
+     */
+    private void applyReturnedQtyWriteback(List<SaleReturnItem> items, boolean forward) {
+        if (items == null) return;
+        for (SaleReturnItem item : items) {
+            if (item.getSourceId() == null || item.getSourceItemId() == null) continue;
+            BigDecimal qty = item.getQuantity() != null ? item.getQuantity() : BigDecimal.ZERO;
+            BigDecimal delta = forward ? qty : qty.negate();
+            if ("销售出库单".equals(item.getSourceBillType()) || "销售出库".equals(item.getSourceBillType())) {
+                SaleDeliveryItem di = saleDeliveryItemMapper.selectById(item.getSourceItemId());
+                if (di != null && di.getSourceId() != null && di.getSourceItemId() != null) {
                     saleOrderService.updateTurnedQuantity(
-                        item.getSourceId(), item.getSourceItemId(),
-                        qty.negate(), "return");
+                        di.getSourceId(), di.getSourceItemId(), delta, "return");
                 }
+            } else {
+                saleOrderService.updateTurnedQuantity(
+                    item.getSourceId(), item.getSourceItemId(), delta, "return");
             }
         }
-        log.info("销售退货单重置草稿勾稽回冲完成: {}", bill.getReturnNo());
+    }
+
+    /**
+     * 回库库存动作（2026-11-28）：forward=true 审核增加库存；false 反审/作废按冻结成本原价冲回。
+     * 表头 stock_effect=0（不回库，客户不寄回）时不动库存，只保留单据与财务冲减。
+     * 库存记账只认基本单位数量（多单位由 baseQuantity 折算，未启用时回落到行数量）。
+     */
+    private void applyStockImpact(SaleReturn bill, List<SaleReturnItem> items, boolean forward, boolean requireFrozenCost) {
+        if (bill.getStockEffect() != null && bill.getStockEffect() == 0) return;
+        if (items == null || items.isEmpty()) return;
+        String operator = bill.getApprovedBy() != null && !bill.getApprovedBy().isBlank()
+                ? bill.getApprovedBy() : "系统";
+        for (SaleReturnItem item : items) {
+            Long stockId = item.getStockId() != null ? item.getStockId() : bill.getWarehouseId();
+            if (stockId == null || item.getMaterialId() == null) continue;
+            // 历史单据（本功能上线前审核）没有冻结成本：既没加过库存，反审/作废也不该扣；反作废同理不补
+            if (requireFrozenCost && item.getAvgCost() == null) continue;
+            BigDecimal stockQty = item.effectiveBaseQuantity() != null
+                    ? item.effectiveBaseQuantity()
+                    : (item.getQuantity() != null ? item.getQuantity() : BigDecimal.ZERO);
+            if (stockQty.compareTo(BigDecimal.ZERO) <= 0) continue;
+            if (forward) {
+                BigDecimal unitCost = resolveReturnUnitCost(item, stockId);
+                item.setAvgCost(unitCost);
+                itemMapper.updateById(item);
+                inventoryService.addStock(
+                        stockId, item.getBinId(), item.getMaterialId(), item.getBatchNo(),
+                        stockQty, unitCost,
+                        bill.getReturnNo(), "SALE_RETURN_IN",
+                        "SaleReturn", bill.getReturnNo(), operator);
+            } else {
+                if (item.getAvgCost() == null) continue;
+                inventoryService.deductStockAtCost(
+                        stockId, item.getBinId(), item.getMaterialId(), item.getBatchNo(),
+                        stockQty, item.getAvgCost(),
+                        bill.getReturnNo(), "SALE_RETURN_IN_REVERSE",
+                        "SaleReturn", bill.getReturnNo(), operator);
+            }
+        }
+    }
+
+    /**
+     * 回库成本：优先取原出库明细冻结的平均成本（销售出库审核时写入），
+     * 取不到再按当前出库成本、物料最新核算成本回落；始终不使用退货单价（销售价）记库存。
+     */
+    private BigDecimal resolveReturnUnitCost(SaleReturnItem item, Long stockId) {
+        // 1) 来源就是出库单：直接读该出库明细冻结成本
+        if (item.getSourceItemId() != null
+                && ("销售出库单".equals(item.getSourceBillType()) || "销售出库".equals(item.getSourceBillType()))) {
+            SaleDeliveryItem di = saleDeliveryItemMapper.selectById(item.getSourceItemId());
+            if (di != null && di.getAvgCost() != null && di.getAvgCost().compareTo(BigDecimal.ZERO) > 0) {
+                return di.getAvgCost();
+            }
+        }
+        // 2) 来源是订单/发票：按订单明细行找最近一次已出库成本
+        if (item.getSourceId() != null && item.getSourceItemId() != null) {
+            SaleDeliveryItem di = saleDeliveryItemMapper.selectOne(new QueryWrapper<SaleDeliveryItem>()
+                    .eq("source_id", item.getSourceId())
+                    .eq("source_item_id", item.getSourceItemId())
+                    .isNotNull("avg_cost")
+                    .gt("avg_cost", BigDecimal.ZERO)
+                    .orderByDesc("delivery_id")
+                    .last("LIMIT 1"));
+            if (di != null && di.getAvgCost() != null && di.getAvgCost().compareTo(BigDecimal.ZERO) > 0) {
+                return di.getAvgCost();
+            }
+        }
+        // 3) 回落：当前出库成本 → 物料最新核算成本
+        BigDecimal outCost = inventoryService.getOutUnitCost(stockId, item.getBinId(), item.getMaterialId(), item.getBatchNo());
+        if (outCost != null && outCost.compareTo(BigDecimal.ZERO) > 0) return outCost;
+        BigDecimal calcCost = materialCostService.getLatestCalcCost(item.getMaterialId());
+        return calcCost != null ? calcCost : BigDecimal.ZERO;
     }
 
     @Override
