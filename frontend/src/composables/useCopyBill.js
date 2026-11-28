@@ -19,12 +19,20 @@
  *     await loadDetail()   // 非复制模式，走正常加载逻辑
  *   }
  *
- * 边界（2026-10-13 口径：复制 = 百分百同步上一张单，用户确认）：
+ * 边界（2026-11-27 口径：复制只保留"当前单据本身"的信息，用户确认）：
  * - 仅当 route.query.copy 存在时执行
  * - 深拷贝源单数据，避免引用联动
- * - 清空（唯一不继承项）：表头主键、明细主键、唯一编号（单号/税票号码——同号即假数据）、
- *   状态(重置草稿)、审批状态、结案状态、审计时间（系统记录，非业务内容）
- * - 随复制同步：附件URL、来源单信息（表头+明细）、全部业务字段、自定义字段值
+ * - 清空（不继承项）：
+ *   ① 表头主键、明细主键、唯一编号（单号/税票号码——同号即假数据）；
+ *   ② 状态/审批状态/结案状态、审计时间；
+ *   ③ 回写类字段：turned*（已发/已退/已开票等）、deliveredQuantity/deliveredLineNo、
+ *      detailCloseStatus、hasEffectiveDelivery/manualClosed/hasPendingReturn、
+ *      replaceableTotalQuantity、pendingReturnQuantity；
+ *   ④ 下推/来源链字段：source*（来源单类型/单号/明细行）、replacePlanId/replacedFrom*、
+ *      substitutePlans、replaceDeliveryInfo、orderHasActivePlan；
+ *   ⑤ 审核/结案/作废审计字段：approved 系列、closed 系列、voided 系列、billBeforeStatus、createdAt/updatedAt/createdBy/updatedBy。
+ * - 当前单据的业务字段保留：客户、销售员、价格、数量、税率、折扣、仓库/批次、附件、备注、自定义字段值。
+ *   销售员按设置保留同一个，不清空。
  */
 import { ElMessage } from 'element-plus'
 import { tt } from '@/i18n'
@@ -32,6 +40,66 @@ import { loadCustomFieldValues, batchLoadCustomFieldValues } from '@/composables
 
 // 通用明细主键字段名，用于自动清空
 const COMMON_ITEM_ID_FIELDS = ['id', 'itemId', 'detailId', 'lineId', 'contractItemId', 'orderItemId', 'receiptItemId', 'returnItemId', 'invoiceItemId', 'deliveryItemId', 'quoteItemId', 'requestItemId', 'transferItemId', 'checkItemId', 'requisitionItemId', 'sampleItemId']
+
+// 复制永不继承的「回写 / 下推 / 审计」字段（2026-11-27）
+const DOWNSTREAM_PATTERNS = [
+  /^turned/i,
+  /^totalTurned/i,
+  /^deliveredQuantity$/i,
+  /^deliveredLineNo$/i,
+  /^detailCloseStatus$/i,
+  /^approved/i,
+  /^closed/i,
+  /^voided/i,
+  /^billBeforeStatus$/i,
+  /^source/i,
+  /^replacePlanId$/i,
+  /^replacedFrom/i,
+  /^replaceDeliveryInfo$/i,
+  /^replaceableTotalQuantity$/i,
+  /^pendingReturnQuantity$/i,
+  /^substitutePlans$/i,
+  /^hasEffectiveDelivery$/i,
+  /^manualClosed$/i,
+  /^hasPendingReturn$/i,
+  /^orderHasActivePlan$/i,
+  /^createdAt$/i,
+  /^updatedAt$/i,
+  /^createdBy$/i,
+  /^updatedBy$/i
+]
+const DOWNSTREAM_ZERO_PATTERNS = [
+  /^turned/i,
+  /^totalTurned/i,
+  /^deliveredQuantity$/i,
+  /^deliveredLineNo$/i,
+  /^detailCloseStatus$/i,
+  /^replaceableTotalQuantity$/i,
+  /^pendingReturnQuantity$/i
+]
+const DOWNSTREAM_BOOL_PATTERNS = [
+  /^hasEffectiveDelivery$/i,
+  /^manualClosed$/i,
+  /^hasPendingReturn$/i,
+  /^orderHasActivePlan$/i
+]
+
+/** 复制时清掉源单的回写/下推/审计字段，只保留当前单据业务信息 */
+function clearDownstreamFields(obj) {
+  if (!obj || typeof obj !== 'object') return
+  Object.keys(obj).forEach(key => {
+    if (!DOWNSTREAM_PATTERNS.some(re => re.test(key))) return
+    if (/^substitutePlans$/i.test(key)) {
+      obj[key] = []
+    } else if (DOWNSTREAM_ZERO_PATTERNS.some(re => re.test(key))) {
+      obj[key] = 0
+    } else if (DOWNSTREAM_BOOL_PATTERNS.some(re => re.test(key))) {
+      obj[key] = false
+    } else {
+      obj[key] = null
+    }
+  })
+}
 
 // 外键字段名（不以这些结尾的才是单号）
 const FOREIGN_KEY_SUFFIXES = ['customerNo', 'supplierNo', 'employeeNo', 'materialNo', 'departmentNo', 'warehouseNo']
@@ -70,6 +138,13 @@ export function useCopyBill(opts) {
       // 深拷贝，避免与源单共用引用
       const data = JSON.parse(JSON.stringify(res))
       const target = getFormTarget()
+
+      // 0. 回写/下推/审计字段一律不继承（2026-11-27 用户口径）；
+      //    在读取自定义字段值之前做，避免把源单下游状态带进新单。
+      clearDownstreamFields(data)
+      if (Array.isArray(data[itemsField])) {
+        data[itemsField].forEach(clearDownstreamFields)
+      }
 
       // 1. 清空表头主键
       if (idField) {
@@ -144,12 +219,12 @@ export function useCopyBill(opts) {
       data.approvalStatus = typeof data.approvalStatus === 'number' ? null : ''
       data.closeStatus = (numericStatus || typeof data.closeStatus === 'number') ? 0 : ''
 
-      // 4. 清空不可复用的关联字段（2026-10-13 百分百同步口径：附件与来源随复制带出，不再清空）
+      // 4. 清空不可复用的关联字段（2026-11-27：附件保留；来源链已在第 0 步剥离）
       data.auditTime = ''
       data.approvalTime = ''
       data.createTime = ''
 
-      // 5. 清空明细主键行（来源勾稽字段按百分百同步口径随复制保留）
+      // 5. 清空明细主键行（来源勾稽字段已在第 0 步剥离）
       const items = data[itemsField]
       if (Array.isArray(items)) {
         items.forEach(row => {

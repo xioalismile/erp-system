@@ -248,6 +248,9 @@ public class ExcelServiceImpl implements ExcelService {
     private final com.erp.sale.mapper.SaleRepairPartMapper saleRepairPartMapper;
     // 售后维修单导入保存（复用页面同一条 saveRepairWithItems 链路）
     private final com.erp.sale.service.SaleRepairService saleRepairService;
+    // 打样单 / 免费样品订单导入保存（2026-11-27 补导入导出）
+    private final com.erp.sample.service.SampleOrderService sampleOrderService;
+    private final com.erp.freesample.service.FreeSampleOrderService freeSampleOrderService;
 
     /** 按登记表声明的 mapperClass 解析 Mapper bean（见 getMapper），避免再手写实体→Mapper 清单 */
     private final org.springframework.context.ApplicationContext applicationContext;
@@ -307,6 +310,11 @@ public class ExcelServiceImpl implements ExcelService {
         AUTO_CODE_DOC_TYPE.put("purchasePrePayment", "PURCHASE_PRE_PAYMENT");
         AUTO_CODE_DOC_TYPE.put("salePreReceipt", "SALE_PRE_RECEIPT");
         AUTO_CODE_DOC_TYPE.put("operationExpense", "OPERATION_EXPENSE");
+        // 打样单 / 免费样品单（2026-11-27 补导入导出时漏登记）：两张单的"打样单号/订单号"列声明了
+        // @ExportField(required=true)，不在此表登记 → 导入必填校验把单号当必填，模板里单号留空（正常用法，
+        // 保存时由服务自动取号 SAM-/FS-）会整单失败；手填单号又绕过自动编号并在唯一索引上冲突。
+        AUTO_CODE_DOC_TYPE.put("sampleOrder", "SAMPLE_ORDER");
+        AUTO_CODE_DOC_TYPE.put("freeSampleOrder", "FREE_SAMPLE_ORDER");
     }
 
     /**
@@ -419,6 +427,8 @@ public class ExcelServiceImpl implements ExcelService {
                 java.util.Map.entry("saleReturn", this::importSaleReturns),
                 java.util.Map.entry("saleInvoice", this::importSaleInvoices),
                 java.util.Map.entry("saleRepair", this::importSaleRepairs),
+                java.util.Map.entry("sampleOrder", this::importSampleOrders),
+                java.util.Map.entry("freeSampleOrder", this::importFreeSampleOrders),
                 java.util.Map.entry("purchaseRequest", this::importPurchaseRequests),
                 java.util.Map.entry("purchaseOrder", this::importPurchaseOrders),
                 java.util.Map.entry("purchaseContract", this::importPurchaseContracts),
@@ -1550,6 +1560,13 @@ public class ExcelServiceImpl implements ExcelService {
         return result;
     }
 
+    /**
+     * 模板里追加明细列的实体（表头 + 明细单 sheet 导入）：组装/拆卸（2026-11-14），
+     * 打样单/免费样品订单（2026-11-27 补导入导出）。其余单据的模板仍只出表头列。
+     */
+    private static final java.util.Set<String> GENERIC_ITEM_TEMPLATE_ENTITIES =
+            java.util.Set.of("produceAssemble", "produceDisassemble", "sampleOrder", "freeSampleOrder");
+
     @Override
     public void exportTemplate(String entityName, HttpServletResponse response) {
         // BOM实体：统一用合并后的18列模板（支持一级+多级），不再反射Bom实体列生成30+废模板
@@ -1579,7 +1596,7 @@ public class ExcelServiceImpl implements ExcelService {
         // 只在有专用导入实现的实体上追加（produceAssemble / produceDisassemble），
         // 避免给"没有主子表导入"的单据生成看得见却导不进的明细列。
         BillItemSpec importItemSpec = BILL_ITEM_SPECS.get(entityName);
-        if (importItemSpec != null && ("produceAssemble".equals(entityName) || "produceDisassemble".equals(entityName))) {
+        if (importItemSpec != null && GENERIC_ITEM_TEMPLATE_ENTITIES.contains(entityName)) {
             List<String> itemLabels = new ArrayList<>();
             for (BillItemColumn bc : importItemSpec.columns()) itemLabels.add(bc.label());
             appendAutoItemLabels(itemLabels, importItemSpec.itemClass());
@@ -3675,6 +3692,19 @@ public class ExcelServiceImpl implements ExcelService {
             col("工时", "laborHours"), col("收件数量", "receivedQuantity"), col("已返还数量", "returnedQuantity"),
             col("明细备注", "remark"));
 
+    /** 打样单明细列（打样子件清单：用量/损耗/供应类型/单价） */
+    private static final List<BillItemColumn> SAMPLE_ITEM_COLUMNS = List.of(
+            col("物料编码", "childMaterialCode"), col("物料名称", "childMaterialName"),
+            col("规格型号", "specification"), col("用量", "baseQty"), col("用量类型", "qtyType"),
+            col("损耗率(%)", "scrapRate"), col("供应类型", "supplyType"), col("单价", "unitPrice"),
+            col("金额", "amount"), col("备注", "remark"));
+
+    /** 免费样品订单明细列 */
+    private static final List<BillItemColumn> FREE_SAMPLE_ITEM_COLUMNS = List.of(
+            col("物料编码", "materialCode"), col("物料名称", "materialName"), col("规格型号", "model"),
+            col("颜色", "color"), col("数量", "quantity"), col("单位", "unitName"),
+            col("库位名称", "binName"), col("备注", "remark"));
+
     /** 采购明细列（与采购导入模板明细列同口径；申请单为专用列，见下） */
     private static final List<BillItemColumn> PURCHASE_ITEM_COLUMNS = List.of(
             col("物料编码", "materialCode"), col("物料名称", "materialName"), col("规格型号", "specification"),
@@ -3785,6 +3815,9 @@ public class ExcelServiceImpl implements ExcelService {
         // 2026-11-19 新增：销售换货单 / 售后维修单（导出带明细行；维修配件领用行为独立从表，见交付说明）
         BILL_ITEM_SPECS.put("saleExchange", new BillItemSpec(com.erp.sale.entity.SaleExchangeItem.class, "exchangeId", SALE_EXCHANGE_ITEM_COLUMNS, "sale_exchange_item"));
         BILL_ITEM_SPECS.put("saleRepair", new BillItemSpec(com.erp.sale.entity.SaleRepairItem.class, "repairId", SALE_REPAIR_ITEM_COLUMNS, "sale_repair_item"));
+        // 打样单 / 免费样品订单（2026-11-27 补导入导出）：表头 + 子件明细
+        BILL_ITEM_SPECS.put("sampleOrder", new BillItemSpec(com.erp.sample.entity.SampleOrderItem.class, "sampleId", SAMPLE_ITEM_COLUMNS, "sample_order_item"));
+        BILL_ITEM_SPECS.put("freeSampleOrder", new BillItemSpec(com.erp.freesample.entity.FreeSampleOrderItem.class, "orderId", FREE_SAMPLE_ITEM_COLUMNS, "free_sample_order_item"));
         BILL_ITEM_SPECS.put("purchaseRequest", new BillItemSpec(com.erp.purchase.entity.PurchaseRequestItem.class, "requestId", PURCHASE_REQUEST_ITEM_COLUMNS, "purchase_request_item"));
         BILL_ITEM_SPECS.put("purchaseOrder", new BillItemSpec(com.erp.purchase.entity.PurchaseOrderItem.class, "orderId", PURCHASE_ITEM_COLUMNS, "purchase_order_item"));
         BILL_ITEM_SPECS.put("purchaseContract", new BillItemSpec(com.erp.purchase.entity.PurchaseContractItem.class, "contractId", PURCHASE_ITEM_COLUMNS, "purchase_contract_item"));
@@ -3824,6 +3857,8 @@ public class ExcelServiceImpl implements ExcelService {
         m.put("saleReturn", com.erp.sale.entity.SaleReturnItem.class);
         m.put("saleInvoice", com.erp.sale.entity.SaleInvoiceItem.class);
         m.put("saleRepair", com.erp.sale.entity.SaleRepairItem.class);
+        m.put("sampleOrder", com.erp.sample.entity.SampleOrderItem.class);
+        m.put("freeSampleOrder", com.erp.freesample.entity.FreeSampleOrderItem.class);
         m.put("purchaseRequest", com.erp.purchase.entity.PurchaseRequestItem.class);
         m.put("purchaseOrder", com.erp.purchase.entity.PurchaseOrderItem.class);
         m.put("purchaseContract", com.erp.purchase.entity.PurchaseContractItem.class);
@@ -4772,6 +4807,82 @@ public class ExcelServiceImpl implements ExcelService {
         if (hasValue(cells, "维修方案")) item.setRepairPlan(cells.get("维修方案"));
         if (hasValue(cells, "工时")) item.setLaborHours(parseBigDecimal(cells, "工时", rowIndex, false));
         if (hasValue(cells, "明细备注")) item.setRemark(cells.get("明细备注"));
+        return item;
+    }
+
+    // ==================== 打样单 / 免费样品订单导入（2026-11-27 补） ====================
+    @Override
+    public ImportResultDTO importSampleOrders(MultipartFile file) {
+        return importSaleBill(file, "打样单号", "sample_order", "sample_order_item",
+                (cells, customerCache, rowIndex) -> {
+                    com.erp.sample.entity.SampleOrder h = new com.erp.sample.entity.SampleOrder();
+                    Customer customer = resolveCustomer(cells, customerCache, rowIndex);
+                    h.setCustomerId(customer.getCustomerId());
+                    h.setCustomerName(customer.getCustomerName());
+                    return h;
+                },
+                this::buildSampleItem,
+                (header, items) -> sampleOrderService.saveSampleWithItems(
+                        (com.erp.sample.entity.SampleOrder) header,
+                        (List<com.erp.sample.entity.SampleOrderItem>) items));
+    }
+
+    private Object buildSampleItem(Map<String, String> cells, Map<String, Material> materialCache, int rowIndex) {
+        Material material = resolveMaterial(cells, materialCache, rowIndex);
+        com.erp.sample.entity.SampleOrderItem item = new com.erp.sample.entity.SampleOrderItem();
+        item.setChildMaterialId(material.getMaterialId());
+        item.setChildMaterialCode(material.getMaterialCode());
+        item.setChildMaterialName(hasValue(cells, "物料名称") ? cells.get("物料名称") : material.getMaterialName());
+        item.setSpecification(hasValue(cells, "规格型号") ? cells.get("规格型号") : material.getModel());
+        item.setBaseQty(parseBigDecimal(cells, "用量", rowIndex, true));
+        if (hasValue(cells, "用量类型")) item.setQtyType(cells.get("用量类型"));
+        if (hasValue(cells, "损耗率(%)")) item.setScrapRate(parseBigDecimal(cells, "损耗率(%)", rowIndex, false));
+        if (hasValue(cells, "供应类型")) item.setSupplyType(cells.get("供应类型"));
+        if (hasValue(cells, "单价")) item.setUnitPrice(parseBigDecimal(cells, "单价", rowIndex, false));
+        if (hasValue(cells, "金额")) item.setAmount(parseBigDecimal(cells, "金额", rowIndex, false));
+        if (hasValue(cells, "备注")) item.setRemark(cells.get("备注"));
+        return item;
+    }
+
+    @Override
+    public ImportResultDTO importFreeSampleOrders(MultipartFile file) {
+        Map<String, com.erp.basedata.entity.Warehouse> whCache = new HashMap<>();
+        return importSaleBill(file, "订单号", "free_sample_order", "free_sample_order_item",
+                (cells, customerCache, rowIndex) -> {
+                    com.erp.freesample.entity.FreeSampleOrder h = new com.erp.freesample.entity.FreeSampleOrder();
+                    Customer customer = resolveCustomer(cells, customerCache, rowIndex);
+                    h.setCustomerId(customer.getCustomerId());
+                    h.setCustomerName(customer.getCustomerName());
+                    if (hasValue(cells, "仓库")) {
+                        com.erp.basedata.entity.Warehouse wh = resolveWarehouseByName(cells, whCache, rowIndex, "仓库");
+                        h.setWarehouseId(wh.getStockId());
+                        h.setWarehouseName(wh.getStockName());
+                    }
+                    return h;
+                },
+                this::buildFreeSampleItem,
+                (header, items) -> {
+                    com.erp.freesample.entity.FreeSampleOrder h = (com.erp.freesample.entity.FreeSampleOrder) header;
+                    h.setItems((List<com.erp.freesample.entity.FreeSampleOrderItem>) items);
+                    freeSampleOrderService.saveWithItems(h);
+                });
+    }
+
+    private Object buildFreeSampleItem(Map<String, String> cells, Map<String, Material> materialCache, int rowIndex) {
+        Material material = resolveMaterial(cells, materialCache, rowIndex);
+        com.erp.freesample.entity.FreeSampleOrderItem item = new com.erp.freesample.entity.FreeSampleOrderItem();
+        item.setMaterialId(material.getMaterialId());
+        item.setMaterialCode(material.getMaterialCode());
+        item.setMaterialName(hasValue(cells, "物料名称") ? cells.get("物料名称") : material.getMaterialName());
+        item.setModel(hasValue(cells, "规格型号") ? cells.get("规格型号") : material.getModel());
+        if (hasValue(cells, "颜色")) item.setColor(cells.get("颜色"));
+        item.setQuantity(parseBigDecimal(cells, "数量", rowIndex, true));
+        if (hasValue(cells, "单位")) {
+            item.setUnitName(cells.get("单位"));
+            item.setUnitId(resolveUnitIdByName(cells.get("单位")));
+        }
+        if (hasValue(cells, "库位名称")) item.setBinName(cells.get("库位名称"));
+        if (hasValue(cells, "备注")) item.setRemark(cells.get("备注"));
         return item;
     }
 
@@ -8206,8 +8317,9 @@ public class ExcelServiceImpl implements ExcelService {
      * 口径：@ExportField(required=true)；自动编码开启时"编码/号"结尾列不加 *（导入时自动生成）。
      * 说明：与"字段权限必填"分工不重叠——权限那一半仍由 findMissingStaticLabels 负责，两者取并集即为模板星号口径。
      * 纯反射、不查库，可在导入逐行循环内安全调用。
+     * 包级可见：供 {@code ExcelImportRequiredLabelTest} 直接断言"单号列是否被自动编码豁免"。
      */
-    private static Set<String> entityRequiredLabels(Class<?> entityClass, boolean autoCode) {
+    static Set<String> entityRequiredLabels(Class<?> entityClass, boolean autoCode) {
         Set<String> labels = new java.util.LinkedHashSet<>();
         if (entityClass == null) return labels;
         for (java.lang.reflect.Field f : entityClass.getDeclaredFields()) {

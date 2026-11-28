@@ -163,6 +163,12 @@ public interface ExcelService {
     /** 售后维修单专用导入：主子表聚合，客户三选一，物料按编码，存草稿 */
     ImportResultDTO importSaleRepairs(MultipartFile file);
 
+    /** 打样单专用导入：表头 + 子件明细，客户三选一，物料按编码（2026-11-27 补） */
+    ImportResultDTO importSampleOrders(MultipartFile file);
+
+    /** 免费样品订单专用导入：表头 + 明细，客户三选一，物料按编码（2026-11-27 补） */
+    ImportResultDTO importFreeSampleOrders(MultipartFile file);
+
     /** 采购单据模板字段清单（通用） */
     java.util.Map<String, List<String>> getPurchaseTemplateFields(String entityName);
 

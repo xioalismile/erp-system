@@ -35,6 +35,12 @@ export default defineConfig({
       }
     }
   ],
+  // Vitest：只跑 src 下的单测；根目录 tests/ 是 Playwright 用例（含 test.describe），
+  // 被 Vitest 误加载会让 `npm run test` 整体失败（2026-11-27 修复）。
+  // 注意：不能写 **/tests/**，会把 src/tests 单测一起排除。
+  test: {
+    exclude: ['**/node_modules/**', '**/dist/**', 'tests/**']
+  },
   define: {
     // 运行时常量，前端代码可通过 __BUILD_VERSION__ 访问（如显示在"关于"页面）
     __BUILD_VERSION__: JSON.stringify(BUILD_VERSION)

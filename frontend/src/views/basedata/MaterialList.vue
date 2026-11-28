@@ -42,7 +42,6 @@
             :initial-index="0"
             preview-teleported
             hide-on-click-modal
-            :preview-teleported="true"
             @click.stop
           />
           <div v-else class="img-placeholder">

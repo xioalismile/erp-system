@@ -87,10 +87,16 @@ export function startMonitors(page) {
   }
 }
 
+/** 相对路径拼成绝对 URL：Playwright 的 baseURL 在部分调用方式下不生效（实测 page.goto('/login') 被当成本地文件） */
+function appUrl(p) {
+  const t = String(p || '')
+  return (t.startsWith('http://') || t.startsWith('https://')) ? t : cfg.baseUrl + t
+}
+
 /** 打开系统入口页（不能用 '/'：8cloud 根路径是官网宣传页） */
 export async function gotoApp(page, pathSuffix = '') {
   const url = pathSuffix ? pathSuffix : cfg.entryPath
-  await page.goto(url, { waitUntil: 'domcontentloaded' })
+  await page.goto(appUrl(url), { waitUntil: 'domcontentloaded' })
 }
 
 /**
@@ -106,7 +112,7 @@ export async function gotoApp(page, pathSuffix = '') {
  */
 export async function loginByUi(page, username, password) {
   // 先清残留登录态，保证是干净登录
-  await page.goto(cfg.entryPath, { waitUntil: 'domcontentloaded' })
+  await page.goto(appUrl(cfg.entryPath), { waitUntil: 'domcontentloaded' })
   await page.evaluate(() => {
     try {
       localStorage.removeItem('token')
@@ -121,10 +127,12 @@ export async function loginByUi(page, username, password) {
       localStorage.removeItem('pendingTenants')
     } catch (_) { /* 忽略隐私模式等异常 */ }
   })
-  await page.goto(cfg.entryPath, { waitUntil: 'domcontentloaded' })
+  await page.goto(appUrl(cfg.entryPath), { waitUntil: 'domcontentloaded' })
 
-  // 未登录会被路由守卫送到 /login
+  // 未登录会被路由守卫送到 /login；带旧 token 时先落到业务页再被清态踢回，
+  // 这里必须等到登录页真正就绪再填表（2026-11-27 实测：偶发未等到就填，导致提交无请求）
   await page.waitForURL(u => u.pathname.includes('/login'), { timeout: 30000 }).catch(() => {})
+  await page.waitForSelector('input[placeholder="用户名"], input[placeholder*="用户名"], input[placeholder*="账号"]', { state: 'visible', timeout: 20000 }).catch(() => {})
 
   const userInput = page.locator('input[placeholder="用户名"], input[placeholder*="用户名"], input[placeholder*="账号"]').first()
   const pwdInput = page.locator('input[placeholder="密码"], input[placeholder*="密码"]').first()
@@ -134,8 +142,19 @@ export async function loginByUi(page, username, password) {
   await pwdInput.fill('')
   await pwdInput.fill(password)
 
-  const loginBtn = page.locator('button:has-text("登")').first()
-  await loginBtn.click()
+  // 提交登录：新版登录页是"缩放画布 + 双布局（设计图版/卡片版）"，
+  // 按文本点「登 录」可能点到隐藏副本、坐标点击也受缩放影响（2026-11-27 实测：点击无请求）。
+  // 直接触发表单 submit，与按钮 native-type=submit 同一条路径；没有 form 时回退为点击。
+  const submitted = await page.evaluate(() => {
+    const form = document.querySelector('form')
+    if (!form || typeof form.requestSubmit !== 'function') return false
+    form.requestSubmit()
+    return true
+  })
+  if (!submitted) {
+    const loginBtn = page.locator('button:has-text("登")').first()
+    await loginBtn.click()
+  }
 
   // 等待离开登录页（失败会停在 /login 并弹错误提示）
   try {
@@ -290,7 +309,7 @@ export async function readSidebar(page) {
 
 /** 未授权页面直访应被踢到 /403 */
 export async function expectForbiddenOrDashboard(page, path) {
-  await page.goto(path, { waitUntil: 'domcontentloaded' })
+  await page.goto(appUrl(path), { waitUntil: 'domcontentloaded' })
   await page.waitForTimeout(1200)
   const url = new URL(page.url())
   return { pathname: url.pathname, kickedTo403: url.pathname.startsWith('/403') }

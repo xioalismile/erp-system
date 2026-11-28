@@ -1133,7 +1133,8 @@ public class CostCalculationServiceImpl extends com.erp.common.bill.AbstractBill
                         .le("trans_date", periodEnd)
                         .select("DISTINCT material_id"));
         for (InventoryTransaction t : allTrans) {
-            if (t.getMaterialId() != null) materialIds.add(t.getMaterialId());
+            // 所选列 material_id 为空的行，MyBatis 可能映射成 null 元素（同 WorkstationController 的坑）
+            if (t != null && t.getMaterialId() != null) materialIds.add(t.getMaterialId());
         }
 
         // 获取物料详情

@@ -140,6 +140,23 @@ public final class FinanceBillDetailReportConfigs {
         c.add(new Col("itemSpecialFee", "行特殊服务费", G_ITEM, "amount", "i.special_service_fee", false, null, false));
         c.add(new Col("itemCommission", "行销售提成", G_ITEM, "amount", "i.commission", false, null, false));
         c.add(new Col("itemRemark", "行备注", G_ITEM, "text", "i.remark", false, null, false));
+        // 【2026-11-27 用户口径 + 标准 ERP 口径】合并明细里收款账户是「单据级字段每行重复」：
+        // 标准 ERP（金蝶账号页签 / 畅捷通多结算明细）账户属于收款明细行，核销行本身不带账户；
+        // 列表明细模式把两张明细合并后，单据级字段在每行重复显示，按单据取该单收款账户，
+        // 多账户按「、」聚合；收款明细也无账户时回退表头银行账户。
+        c.add(new Col("receiptItemAccount", "收款账户（明细）", G_DOC, "text",
+                "COALESCE((SELECT string_agg(DISTINCT COALESCE(NULLIF(ci.account_name, ''), ba2.account_name, NULLIF(ci.bank_account, '')), '、')"
+                        + " FROM cash_receipt_item ci LEFT JOIN bank_account ba2 ON ba2.account_id = ci.account_id"
+                        + " WHERE ci.receipt_id = o.receipt_id"
+                        + " AND (ci.account_id IS NOT NULL OR COALESCE(ci.account_name, '') <> '' OR COALESCE(ci.bank_account, '') <> '')),"
+                        + " NULLIF(o.bank_account, ''))",
+                false, null, false));
+        c.add(new Col("receiptItemAccountNo", "银行账号（明细）", G_DOC, "text",
+                "COALESCE((SELECT string_agg(DISTINCT COALESCE(NULLIF(ci.bank_account, ''), ci.account_no), '、')"
+                        + " FROM cash_receipt_item ci"
+                        + " WHERE ci.receipt_id = o.receipt_id"
+                        + " AND COALESCE(NULLIF(ci.bank_account, ''), ci.account_no) IS NOT NULL), '')",
+                false, null, false));
 
         c.itemTotalKeys.addAll(java.util.List.of("writeoffAmount", "itemTaxExcluded", "itemCommission"));
         c.docTotalKeys.addAll(java.util.List.of("totalAmount", "docAmount", "discountAmount", "receivedAmount"));
@@ -224,6 +241,20 @@ public final class FinanceBillDetailReportConfigs {
         c.add(new Col("settledQty", "冲销状态", G_ITEM, "text", "i.settled_qty", false, null, false));
         c.add(new Col("writeoffDate", "核销日期", G_ITEM, "date", "i.writeoff_date", false, null, false));
         c.add(new Col("itemRemark", "行备注", G_ITEM, "text", "i.remark", false, null, false));
+        // 【2026-11-27 用户口径 + 标准 ERP 口径】合并明细里付款账户是「单据级字段每行重复」（同收款单口径）
+        c.add(new Col("paymentItemAccount", "付款账户（明细）", G_DOC, "text",
+                "COALESCE((SELECT string_agg(DISTINCT COALESCE(NULLIF(ci.account_name, ''), ba2.account_name, NULLIF(ci.bank_account, '')), '、')"
+                        + " FROM cash_payment_item ci LEFT JOIN bank_account ba2 ON ba2.account_id = ci.account_id"
+                        + " WHERE ci.payment_id = o.payment_id"
+                        + " AND (ci.account_id IS NOT NULL OR COALESCE(ci.account_name, '') <> '' OR COALESCE(ci.bank_account, '') <> '')),"
+                        + " NULLIF(o.bank_account, ''))",
+                false, null, false));
+        c.add(new Col("paymentItemAccountNo", "银行账号（明细）", G_DOC, "text",
+                "COALESCE((SELECT string_agg(DISTINCT COALESCE(NULLIF(ci.bank_account, ''), ci.account_no), '、')"
+                        + " FROM cash_payment_item ci"
+                        + " WHERE ci.payment_id = o.payment_id"
+                        + " AND COALESCE(NULLIF(ci.bank_account, ''), ci.account_no) IS NOT NULL), '')",
+                false, null, false));
 
         c.itemTotalKeys.addAll(java.util.List.of("writeoffAmount"));
         c.docTotalKeys.addAll(java.util.List.of("totalAmount", "docAmount", "discountAmount", "paidAmount"));
@@ -531,9 +562,12 @@ public final class FinanceBillDetailReportConfigs {
         c.extraJoins.addAll(docSource.extraJoins);
         c.extraJoins.add(JOIN_ITEM_ACCOUNT);
         copyDocColumns(docSource, c);
+        // 【2026-11-28 用户口径·方案A】明细模式以核销行为主：有核销的单只出核销行，
+        // 收款明细行仅在该单没有任何核销明细时兜底出现（类型=收款），保证纯收款/预收不漏单。
+        c.fixedWhere.add("NOT EXISTS (SELECT 1 FROM bill_writeoff_detail w WHERE w.bill_type = '收款单' AND w.bill_id = o.receipt_id)");
 
         c.add(new Col("receiptItemAccount", "收款账户（明细）", G_ITEM, "text",
-                "COALESCE(NULLIF(i.account_name, ''), ba.account_name)", false, null, false));
+                "COALESCE(NULLIF(i.account_name, ''), ba.account_name, NULLIF(i.bank_account, ''))", false, null, false));
         c.add(new Col("receiptItemAccountNo", "银行账号（明细）", G_ITEM, "text",
                 "COALESCE(NULLIF(i.bank_account, ''), i.account_no)", false, null, false));
         c.add(new Col("receiptItemAmount", "收款金额（明细）", G_ITEM, "amount", "i.amount", false, null, true));
@@ -566,9 +600,11 @@ public final class FinanceBillDetailReportConfigs {
         c.extraJoins.addAll(docSource.extraJoins);
         c.extraJoins.add(JOIN_ITEM_ACCOUNT);
         copyDocColumns(docSource, c);
+        // 【2026-11-28 用户口径·方案A】付款单同口径：有核销只出核销行，付款明细仅无核销时兜底出现。
+        c.fixedWhere.add("NOT EXISTS (SELECT 1 FROM bill_writeoff_detail w WHERE w.bill_type = '付款单' AND w.bill_id = o.payment_id)");
 
         c.add(new Col("paymentItemAccount", "付款账户（明细）", G_ITEM, "text",
-                "COALESCE(NULLIF(i.account_name, ''), ba.account_name)", false, null, false));
+                "COALESCE(NULLIF(i.account_name, ''), ba.account_name, NULLIF(i.bank_account, ''))", false, null, false));
         c.add(new Col("paymentItemAccountNo", "银行账号（明细）", G_ITEM, "text",
                 "COALESCE(NULLIF(i.bank_account, ''), i.account_no)", false, null, false));
         c.add(new Col("paymentItemAmount", "付款金额（明细）", G_ITEM, "amount", "i.amount", false, null, true));

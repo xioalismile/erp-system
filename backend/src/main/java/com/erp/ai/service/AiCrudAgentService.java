@@ -962,6 +962,17 @@ public class AiCrudAgentService {
      * 按属性名拼出来就是错的列名 —— 故必须逐条对库核验。
      * 口径：只打印、不抛异常、不阻断启动（避免影响线上）。
      */
+    /**
+     * 是否非落库字段（@TableField(exist=false)）：只读展示载体，不参与 SQL 列名校验。
+     */
+    private boolean isNonPersistentField(Class<?> clazz, String name) {
+        Field f = findField(clazz, name);
+        if (f == null) return false;
+        com.baomidou.mybatisplus.annotation.TableField tf =
+                f.getAnnotation(com.baomidou.mybatisplus.annotation.TableField.class);
+        return tf != null && !tf.exist();
+    }
+
     private void validateColumnsAgainstDb() {
         int checked = 0;
         int bad = 0;
@@ -986,8 +997,16 @@ public class AiCrudAgentService {
             if (cfg.getNameField() != null) fields.add(cfg.getNameField());
             if (cfg.getCodeField() != null) fields.add(cfg.getCodeField());
             if (cfg.getSearchFields() != null) fields.addAll(cfg.getSearchFields());
-            if (cfg.getDisplayFields() != null) fields.addAll(cfg.getDisplayFields());
             if (cfg.getFilterFields() != null) fields.addAll(cfg.getFilterFields());
+            // SQL 侧字段（名称/编码/搜索/筛选）必须真实落库；展示字段允许 @TableField(exist=false) 的只读载体
+            Set<String> sqlSideFields = new HashSet<>(fields);
+            if (cfg.getDisplayFields() != null) {
+                for (String f : cfg.getDisplayFields()) {
+                    if (f == null || f.isBlank()) continue;
+                    if (!sqlSideFields.contains(f) && isNonPersistentField(cfg.getEntityClass(), f)) continue;
+                    fields.add(f);
+                }
+            }
             for (String field : fields) {
                 if (field == null || field.isBlank()) continue;
                 if (FOREIGN_NAME_KEYS.contains(field)) continue;
@@ -2990,7 +3009,8 @@ public class AiCrudAgentService {
         }
     }
 
-    private Field findField(Class<?> clazz, String fieldName) {
+    /** 反射查找字段（含父类）；纯函数，静态上下文/启动自检可直接调用 */
+    private static Field findField(Class<?> clazz, String fieldName) {
         Class<?> current = clazz;
         while (current != null && current != Object.class) {
             try {

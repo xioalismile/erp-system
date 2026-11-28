@@ -212,6 +212,8 @@ public class SysRoleFieldPermissionServiceImpl extends ServiceImpl<SysRoleFieldP
                 .eq("role_id", roleId)
                 .select("page_key"));
         return rows.stream()
+                // 单列投影下 page_key 为空的行会映射成 null 元素（MyBatis 行为，见 WorkstationController 同类修复）
+                .filter(java.util.Objects::nonNull)
                 .map(SysRoleFieldPermission::getPageKey)
                 .filter(k -> k != null && !k.isBlank())
                 .collect(Collectors.toSet());

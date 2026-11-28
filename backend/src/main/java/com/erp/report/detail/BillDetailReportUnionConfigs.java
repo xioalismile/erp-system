@@ -44,21 +44,24 @@ public final class BillDetailReportUnionConfigs {
         ));
     }
 
-    /** 收款单：核销明细 + 收款明细 */
+    /** 收款单：核销明细 + 收款明细（【2026-11-28 用户口径·方案A】有核销只出核销行，无核销才出收款行） */
     public static BillDetailReportConfig receipt(JdbcTemplate jdbcTemplate) {
+        BillDetailReportConfig writeoff = FinanceBillDetailReportConfigs.receiptConfig();
+        // 核销分支只保留"确实有核销明细"的单据（否则引擎 LEFT JOIN 会为无核销单据补一行空核销行）
+        writeoff.fixedWhere.add("EXISTS (SELECT 1 FROM bill_writeoff_detail w WHERE w.bill_type = '收款单' AND w.bill_id = o.receipt_id)");
         return BillDetailReportUnion.build(jdbcTemplate, List.of(
-                new BillDetailReportUnion.Source("核销", "writeoff",
-                        FinanceBillDetailReportConfigs.receiptConfig()),
+                new BillDetailReportUnion.Source("核销", "writeoff", writeoff),
                 new BillDetailReportUnion.Source("收款", "receipt",
                         FinanceBillDetailReportConfigs.receiptItemConfig())
         ));
     }
 
-    /** 付款单：核销明细 + 付款明细 */
+    /** 付款单：核销明细 + 付款明细（同收款单口径） */
     public static BillDetailReportConfig voucher(JdbcTemplate jdbcTemplate) {
+        BillDetailReportConfig writeoff = FinanceBillDetailReportConfigs.voucherConfig();
+        writeoff.fixedWhere.add("EXISTS (SELECT 1 FROM bill_writeoff_detail w WHERE w.bill_type = '付款单' AND w.bill_id = o.payment_id)");
         return BillDetailReportUnion.build(jdbcTemplate, List.of(
-                new BillDetailReportUnion.Source("核销", "writeoff",
-                        FinanceBillDetailReportConfigs.voucherConfig()),
+                new BillDetailReportUnion.Source("核销", "writeoff", writeoff),
                 new BillDetailReportUnion.Source("付款", "payment",
                         FinanceBillDetailReportConfigs.paymentItemConfig())
         ));

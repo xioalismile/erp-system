@@ -1862,11 +1862,50 @@ async function handleDelete () {
 }
 
 // ===== 复制功能 =====
+// 2026-11-27 口径：复制只保留"当前单据本身"的信息；回写（已发/已退/已开票/已收/成本/结案）
+// 和下推来源链（来源单号/商机/报价/明细来源行）一律不复制。销售员按设定保留同一个。
+function clearCopiedOrderWriteBack () {
+  const headerNull = [
+    'sourceBillType', 'sourceBillNo', 'sourceType', 'sourceId', 'sourceDocId',
+    'opportunityId', 'opportunityNo', 'quoteNo',
+    'approvedBy', 'approvedAt', 'closedBy', 'closedAt', 'closedReason',
+    'billBeforeStatus', 'voidedBy', 'voidedAt', 'voidReason',
+    'createdAt', 'updatedAt', 'createdBy', 'updatedBy'
+  ]
+  headerNull.forEach(k => { if (k in form) form[k] = null })
+  form.receivedAmount = 0
+  form.hasEffectiveDelivery = false
+  form.manualClosed = false
+  form.hasPendingReturn = false
+  form.replaceableTotalQuantity = 0
+
+  form.items.forEach(row => {
+    ;[
+      'turnedOutputQuantity', 'turnedReturnQuantity', 'turnedInvoiceQuantity',
+      'turnedInvoiceAmount', 'turnedProduceQuantity', 'turnedSubcontractQuantity',
+      'deliveredQuantity', 'receivedAmount', 'avgCost', 'detailCloseStatus',
+      'pendingReturnQuantity'
+    ].forEach(k => { if (k in row) row[k] = 0 })
+    ;[
+      'deliveredLineNo', 'sourceLineNo', 'sourceId', 'sourceItemId', 'sourceDocId',
+      'sourceType', 'sourceBillType', 'sourceBillNo',
+      'replacePlanId', 'replacedFromMaterialId', 'replacedFromMaterialCode',
+      'replacedFromMaterialName', 'orderCostBefore',
+      'sourceMaterialId', 'sourceMaterialCode', 'sourceMaterialName',
+      'replaceDeliveryInfo', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'
+    ].forEach(k => { if (k in row) row[k] = null })
+    if ('substitutePlans' in row) row.substitutePlans = []
+    if ('orderHasActivePlan' in row) row.orderHasActivePlan = false
+  })
+}
+
 const { applyCopy } = useCopyBill({
   route,
   loadFn: getSaleOrder,
   form,
   afterCopy: () => {
+    // 先剥离回写/下推字段，再按源单库值补显示并汇总
+    clearCopiedOrderWriteBack()
     // 复制装入源单：明细保持源单库值原样（含两列缺失时的补显示），不按"单价×数量"重算，
     // 避免复制反算失真的老单时价税合计漂移（与 loadDetail 同口径，2026-10-13）
     form.items.forEach(row => {

@@ -139,12 +139,21 @@ export async function loadMenuGroups() {
   // 只替换 import.meta.env，其余原样；stub 值决定 platform 等条件分组的取舍
   const stub = {
     VITE_HIDDEN_MODULES: envStr('E2E_VITE_HIDDEN_MODULES', ''),
+    VITE_HIDDEN_BILLS: envStr('E2E_VITE_HIDDEN_BILLS', ''),
     VITE_PLATFORM_ADMIN: envStr('E2E_VITE_PLATFORM_ADMIN', ''),
     VITE_DEPLOY_ADMIN: envStr('E2E_VITE_DEPLOY_ADMIN', '')
   }
+  // menuConfig 只从 hiddenBills 取 isBillHidden；临时文件在同级没有该模块，
+  // 这里按同样口径内联一份，避免求值时报 "Cannot find module ./hiddenBills"
+  const inlineDeps =
+    `const __HIDDEN_BILLS__ = new Set(String(__ENV__.VITE_HIDDEN_BILLS || '').split(',').map(s => s.trim().toUpperCase()).filter(Boolean));\n` +
+    `const isBillHidden = (code) => !!code && __HIDDEN_BILLS__.has(String(code).trim().toUpperCase());\n`
   const patched =
     `const __ENV__ = ${JSON.stringify(stub)};\n` +
-    src.replace(/import\.meta\.env/g, '__ENV__')
+    inlineDeps +
+    src
+      .replace(/import\s*\{[^}]*\}\s*from\s*['"]\.\/hiddenBills['"];?\s*/g, '')
+      .replace(/import\.meta\.env/g, '__ENV__')
 
   fs.mkdirSync(OUT_DIR, { recursive: true })
   const tmp = path.join(OUT_DIR, `_menuconfig.tmp.${Date.now()}.mjs`)

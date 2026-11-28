@@ -550,7 +550,7 @@ async function chainProduction(token, base, registry) {
   const d = today()
   // 1. BOM（链头；字段证据：BomEdit rules bomDate/materialId/unitId/quantity + 子件 materialId/quantity）
   let bom = await findOneByKeyword(token, PROD.bom.path, `${P}成品A`, PROD.bom.listStyle)
-  const bomId = rid(bom, PROD.bom)
+  let bomId = rid(bom, PROD.bom)
   if (bomId) {
     step('BOM（复用已有）', true, `id=${bomId}`)
   } else {
@@ -565,9 +565,10 @@ async function chainProduction(token, base, registry) {
     const r = await createBill(token, PROD.bom.path, body, 'BOM')
     if (!r) return false
     bom = await findOneByKeyword(token, PROD.bom.path, `${P}成品A`, PROD.bom.listStyle)
-    if (!rid(bom, PROD.bom)) { step('BOM 回查', false, '创建成功但列表查不到'); return false }
-    registry.push({ chain: 'production', name: 'BOM', path: PROD.bom.path, id: rid(bom, PROD.bom) })
-    step('创建 BOM', true, `id=${rid(bom, PROD.bom)}`)
+    bomId = rid(bom, PROD.bom) // 回查后必须回写：否则下面的详情自检会拿 undefined 去 GET（2026-11-27 实测误报）
+    if (!bomId) { step('BOM 回查', false, '创建成功但列表查不到'); return false }
+    registry.push({ chain: 'production', name: 'BOM', path: PROD.bom.path, id: bomId })
+    step('创建 BOM', true, `id=${bomId}`)
   }
   // 自检必须用详情（列表摘要不含子件明细）
   bom = (await getDetail(token, PROD.bom.path, bomId)) || bom

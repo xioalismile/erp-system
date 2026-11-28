@@ -14,6 +14,7 @@
     "check:relations": "node scripts/check-push-relations.cjs",
     "check:capabilities": "node scripts/check-bill-capabilities.cjs",
     "check:permissions": "node scripts/check-permissions.cjs",
+    "check:lowlevel": "node scripts/check-lowlevel.cjs",
     "check:bill-impact": "node scripts/check-bill-impact.cjs",
     "lint:fix": "eslint \"src/**/*.{js,vue}\" --fix",
     "test": "vitest run",
@@ -31,7 +32,9 @@
     "test:smoke:isolation": "playwright test --config=playwright.smoke.config.js 02-isolation --reporter=list",
     "test:smoke:loop": "playwright test --config=playwright.smoke.config.js 03-e2e-loop --reporter=list",
     "test:smoke:pages": "playwright test --config=playwright.smoke.config.js 05-pages --reporter=list",
-    "test:smoke:gradual": "playwright test --config=playwright.smoke.config.js 06-gradual --reporter=list"
+    "test:smoke:lowlevel": "playwright test --config=playwright.smoke.config.js 07-lowlevel --reporter=list",
+    "test:smoke:gradual": "playwright test --config=playwright.smoke.config.js 06-gradual --reporter=list",
+    "check:pages": "node scripts/check-pages-live.mjs"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",

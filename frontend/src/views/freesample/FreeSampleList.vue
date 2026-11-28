@@ -41,9 +41,9 @@
         perm-prefix=""
         :add-text="$tt('新增样品单')"
         :show-print="false"
-        :show-export="false"
-        :show-import="false"
         @add="handleAdd"
+        @export="handleExport"
+        @import="importVisible = true"
       />
     </template>
 
@@ -70,6 +70,9 @@
     </template>
     <AuditColumns />
   </BillListPage>
+
+  <!-- 导入（表头 + 明细，模板来自通用登记表） -->
+  <BillImportDialog v-model="importVisible" entity-name="freeSampleOrder" :title="$tf('免费样品订单导入')" @done="loadData" />
 
   <!-- 发货弹窗 -->
   <el-dialog v-model="shipVisible" :title="$tf('发货登记')" width="450px">
@@ -102,6 +105,8 @@ import {
 } from '@/api/freesample/freeSample'
 import BillListPage from '@/components/bill/BillListPage.vue'
 import BillHeaderActions from '@/components/bill/BillHeaderActions.vue'
+import BillImportDialog from '@/components/bill/BillImportDialog.vue'
+import { exportListAsSeen } from '@/utils/exportUtil'
 import AuditColumns from '@/components/AuditColumns.vue'
 import { useColumnSetting } from '@/composables/useColumnSetting'
 import { useTableSort } from '@/composables/useTableSort'
@@ -178,6 +183,35 @@ const columns = [
 const { columnSettingVisible, isColVisible, getColFixed, configVersion, sortedColumns } = useColumnSetting('FreeSampleList', columns)
 // 可见且按列设置拖拽顺序排列的列（v-for 渲染用，避免 v-for+v-if 反模式）
 const visibleSortedColumns = computed(() => sortedColumns.value.filter(col => isColVisible(col.prop)))
+const importVisible = ref(false)
+
+/** 导出当前筛选结果（与列表同口径，含当前可见列）；行字段先按列表口径映射（orderNo→sampleNo） */
+async function handleExport() {
+  const mapRows = (res) => ({
+    ...res,
+    records: (res.records || []).map(r => ({
+      ...r,
+      sampleId: r.orderId ?? r.sampleId ?? r.id,
+      sampleNo: r.orderNo ?? r.sampleNo ?? ''
+    }))
+  })
+  try {
+    await exportListAsSeen({
+      entityName: 'freeSampleOrder',
+      columns: visibleSortedColumns.value,
+      fetchPage: async (params) => mapRows(await pageFreeSample(params)),
+      params: {
+        keyword: search.keyword || undefined,
+        status: search.status || undefined,
+        ...getSortParams(),
+        ...(headerFilterState.value.params || {}),
+        ...(headerFilterState.value.customSearch ? { customSearch: headerFilterState.value.customSearch } : {})
+      },
+      idField: 'sampleId'
+    })
+    ElMessage.success(tt('导出成功'))
+  } catch (e) { /* 失败原因已由 exportUtil 统一提示 */ }
+}
 
 const loading = ref(false)
 const saving = ref(false)

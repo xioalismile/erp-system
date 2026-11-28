@@ -45,6 +45,19 @@ export default defineConfig({
     video: 'off'
   },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } }
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        // 本机离线环境可指定已有 Chromium，避免版本号不匹配时重新下载（如 PLAYWRIGHT_CHROMIUM_EXECUTABLE=...\chrome.exe）
+        // 本地/内网联调常被系统代理拦截 localhost：统一禁用代理（2026-11-27 实测导航 45s 超时）
+        launchOptions: {
+          args: ['--no-proxy-server'],
+          ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE
+            ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE }
+            : {})
+        }
+      }
+    }
   ]
 })

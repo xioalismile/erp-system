@@ -33,7 +33,7 @@ export const MORPHEMES = {
   仓库: 'Warehouse', 货位: 'Location', 币种: 'Currency', 计量单位: 'Unit', 单位: 'Unit',
   价格等级: 'Price Level', 结算方式: 'Settlement Method', 银行账户: 'Bank Account', 账户: 'Account',
   物料分类: 'Material Category', 分类: 'Category', 类别: 'Category', 类型: 'Type',
-  工艺路线: 'Routing', 工序: 'Process', BOM: 'BOM', 批次: 'Batch', 序列: 'Serial',
+  工艺路线: 'Routing', BOM: 'BOM', 批次: 'Batch', 序列: 'Serial',
 
   // ===== 金额/数量 =====
   未开票金额: 'Uninvoiced Amount', 开票金额: 'Invoiced Amount', 未收金额: 'Outstanding Amount',
@@ -46,19 +46,18 @@ export const MORPHEMES = {
   账面数量: 'Book Qty', 差异数量: 'Variance Qty', 库存数量: 'Stock Qty',
   合计: 'Total', 小计: 'Subtotal', 总计: 'Grand Total', 税额: 'Tax Amount', 税率: 'Tax Rate',
   折扣: 'Discount', 折扣率: 'Discount Rate', 余额: 'Balance', 应收: 'Receivable', 应付: 'Payable',
-  账龄: 'Aging', 费用: 'Expense', 成本: 'Cost', 利润: 'Profit', 毛利: 'Gross Profit',
+  账龄: 'Aging', 费用: 'Expense', 毛利: 'Gross Profit',
   净额: 'Net Amount', 净值: 'Net Value', 预付款: 'Prepayment', 预收款: 'Prepayment',
   信用额度: 'Credit Limit', 额度: 'Quota', 授信: 'Credit', 账期: 'Credit Term',
 
   // ===== 数量/单位/规格 =====
-  规格型号: 'Spec/Model', 规格: 'Spec', 型号: 'Model', 净重: 'Net Weight', 毛重: 'Gross Weight',
-  体积: 'Volume', 长: 'Length', 宽: 'Width', 高: 'Height', 颜色: 'Color', 材质: 'Material',
+  规格型号: 'Spec/Model', 规格: 'Spec', 型号: 'Model', 体积: 'Volume', 长: 'Length', 宽: 'Width', 颜色: 'Color', 材质: 'Material',
 
   // ===== 状态/流程 =====
-  已生效: 'Approved', 待审核: 'Pending', 未审核: 'Not Approved', 已作废: 'Voided', 已关闭: 'Closed',
+  待审核: 'Pending', 未审核: 'Not Approved', 已作废: 'Voided', 已关闭: 'Closed',
   已完成: 'Completed', 未完成: 'Incomplete', 进行中: 'In Progress', 已提交: 'Submitted',
   已确认: 'Confirmed', 已结案: 'Settled', 已核销: 'Written Off', 已生效: 'Effective',
-  草稿: 'Draft', 驳回: 'Rejected', 已驳回: 'Rejected', 逾期: 'Overdue',
+  草稿: 'Draft', 已驳回: 'Rejected', 逾期: 'Overdue',
   审批状态: 'Approval Status', 单据状态: 'Bill Status', 状态: 'Status',
   审批人: 'Approver', 审批时间: 'Approval Time', 审批意见: 'Approval Comment',
   提交人: 'Submitted By', 审核人: 'Approved By', 作废人: 'Voided By', 作废原因: 'Void Reason',
@@ -80,29 +79,27 @@ export const MORPHEMES = {
   邮箱: 'Email', 地址: 'Address', 收货地址: 'Delivery Address', 所在地: 'Location',
 
   // ===== 备注/说明 =====
-  备注: 'Remark', 说明: 'Description', 描述: 'Description', 摘要: 'Summary', 原因: 'Reason',
+  描述: 'Description', 摘要: 'Summary', 原因: 'Reason',
   用途: 'Purpose', 附件: 'Attachment', 附件数: 'Attachments', 图片: 'Image',
 
   // ===== 报表/看板 =====
   报表: 'Report', 看板: 'Dashboard', 明细: 'Details', 明细表: 'Details', 汇总: 'Summary',
   汇总表: 'Summary', 统计: 'Statistics', 分析: 'Analysis', 对比: 'Comparison', 趋势: 'Trend',
-  占比: 'Share', 排名: 'Ranking', 环比: 'MoM', 同比: 'YoY', 目标: 'Target', 实际: 'Actual',
+  占比: 'Share', 排名: 'Ranking', 环比: 'MoM', 同比: 'YoY', 实际: 'Actual',
   完成率: 'Completion Rate', 达成率: 'Achievement Rate', 笔数: 'Count', 张数: 'Count',
   单据数: 'Bill Count', 客户数: 'Customer Count', 数量合计: 'Total Qty',
   渠道: 'Channel', 微信: 'WeChat', 支付宝: 'Alipay', 现金: 'Cash', 银行: 'Bank',
   转账: 'Transfer', 支票: 'Cheque', 汇票: 'Draft', 刷卡: 'Card',
 
   // ===== 库存/生产 =====
-  库存: 'Stock', 即时库存: 'Stock on Hand', 可用库存: 'Available Stock', 安全库存: 'Safety Stock',
-  库存预警: 'Stock Alert', 上限: 'Max', 下限: 'Min', 在途: 'In Transit', 冻结: 'Frozen',
-  产成品: 'Finished Goods', 半成品: 'Semi-finished', 原材料: 'Raw Material', 辅料: 'Auxiliary Material',
+  库存: 'Stock', 即时库存: 'Stock on Hand', 可用库存: 'Available Stock', 库存预警: 'Stock Alert', 上限: 'Max', 下限: 'Min', 冻结: 'Frozen',
+  产成品: 'Finished Goods', 原材料: 'Raw Material', 辅料: 'Auxiliary Material',
   工序名称: 'Process Name', 工时: 'Work Hours', 标准工时: 'Std. Hours', 报工: 'Work Report',
   计划数量: 'Planned Qty', 实际数量: 'Actual Qty', 损耗: 'Loss', 良品: 'Good Qty', 不良品: 'Defect Qty',
 
   // ===== 销售/采购 =====
-  销售员: 'Salesperson', 销售部门: 'Sales Dept.', 采购员: 'Buyer', 客户订单号: 'Customer PO No.',
-  发货方式: 'Shipping Method', 承运商: 'Carrier', 物流单号: 'Tracking No.', 物流公司: 'Logistics Company',
-  收货人: 'Consignee', 付款方式: 'Payment Method', 付款条件: 'Payment Terms',
+  销售部门: 'Sales Dept.', 客户订单号: 'Customer PO No.',
+  付款方式: 'Payment Method', 付款条件: 'Payment Terms',
   付款管控分类: 'Payment Category', 现结: 'Cash', 月结: 'Monthly',
 
   // ===== 通用词 =====
@@ -110,9 +107,8 @@ export const MORPHEMES = {
   版本: 'Version', 来源: 'Source', 目标: 'Target', 结果: 'Result', 操作: 'Action',
   新增: 'Add', 编辑: 'Edit', 删除: 'Delete', 查看: 'View', 详情: 'Details', 查询: 'Search',
   导入: 'Import', 导出: 'Export', 打印: 'Print', 预览: 'Preview', 下载: 'Download',
-  上传: 'Upload', 复制: 'Copy', 提交: 'Submit', 保存: 'Save', 取消: 'Cancel', 关闭: 'Close',
-  确认: 'Confirm', 重置: 'Reset', 刷新: 'Refresh', 返回: 'Back', 全部: 'All', 其他: 'Other',
-  备注信息: 'Remarks', 基础信息: 'Basic Info', 基本信息: 'Basic Info', 高级: 'Advanced',
+  上传: 'Upload', 复制: 'Copy', 保存: 'Save', 取消: 'Cancel', 重置: 'Reset', 刷新: 'Refresh', 返回: 'Back', 全部: 'All', 其他: 'Other',
+  基础信息: 'Basic Info', 基本信息: 'Basic Info', 高级: 'Advanced',
   参数: 'Parameter', 设置: 'Settings', 配置: 'Config', 属性: 'Attribute', 值: 'Value',
   权限: 'Permission', 菜单: 'Menu', 数据: 'Data', 系统: 'System', 平台: 'Platform',
   自定义: 'Custom', 默认: 'Default', 标准: 'Standard', 模板: 'Template', 语言: 'Language',
@@ -197,7 +193,7 @@ export const MORPHEMES = {
   客户地址: 'Customer Address', 供应商地址: 'Supplier Address', 发货日期: 'Ship Date',
   结算日期: 'Settlement Date', 对账日期: 'Reconciliation Date', 发票日期: 'Invoice Date',
   收款日期: 'Receipt Date', 付款日期: 'Payment Date', 入库日期: 'Receipt Date', 出库日期: 'Delivery Date',
-  生产日期: 'Production Date', 有效期: 'Valid Until', 失效日期: 'Expiry Date',
+  生产日期: 'Production Date', 失效日期: 'Expiry Date',
   净额合计: 'Total Net Amount', 含税合计: 'Total (Tax Incl.)', 不含税合计: 'Total (Tax Excl.)',
   税额合计: 'Total Tax', 数量小计: 'Qty Subtotal', 金额小计: 'Amount Subtotal',
   应收余额: 'AR Balance', 应付余额: 'AP Balance', 期初余额: 'Opening Balance', 期末余额: 'Closing Balance',
@@ -237,8 +233,7 @@ export const MORPHEMES = {
   本月入库: 'Receipt This Month', 应发数量: 'To Issue Qty', 位置: 'Location',
   行备注: 'Line Remark', 微信支付: 'WeChat Pay', 预付金额: 'Prepayment Amount',
   实际达成: 'Actual', 差距: 'Gap', 计划完成: 'Planned Completion', 等于: 'Equal To',
-  不等于: 'Not Equal To', 基础资料: 'Master Data', 重置草稿: 'Un-approve',
-  统一社会信用代码: 'Unified Social Credit Code', 法人代表: 'Legal Representative',
+  不等于: 'Not Equal To', 基础资料: 'Master Data', 统一社会信用代码: 'Unified Social Credit Code', 法人代表: 'Legal Representative',
   成立日期: 'Established Date', 注册资本: 'Registered Capital', 所属地区: 'Region',
   注册地址: 'Registered Address', 通信地址: 'Mailing Address', 经营范围: 'Business Scope',
   已通过: 'Passed', 运行中: 'Running', 租户编码: 'Tenant Code', 管理员账号: 'Admin Account',

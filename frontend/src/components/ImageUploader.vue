@@ -2,8 +2,8 @@
   <!--
     通用图片上传组件 - 支持多图上传 + 主图设置
     用法:
-      <ImageUploader v-model="form.imageUrls" :main-image.sync="form.mainImage" :type="'material'" :disabled="false" />
-      v-model 绑定逗号分隔的URL字符串, :main-image.sync 绑定主图URL
+      <ImageUploader v-model="form.imageUrls" v-model:main-image="form.mainImage" :type="'material'" :disabled="false" />
+      v-model 绑定逗号分隔的URL字符串, v-model:main-image 绑定主图URL（Vue 3 不支持 :main-image.sync，写了会静默失效）
   -->
   <div class="image-uploader">
     <el-upload

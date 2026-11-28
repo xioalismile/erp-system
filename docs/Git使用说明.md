@@ -4,7 +4,6 @@
 
 - 本地仓库：`D:\erp\prodsrc\智能ERP-项目`（已经存在，不是新建的）
 - 远程仓库：GitHub `xioalismile/erp-system`（SSH 地址 `git@github.com:xioalismile/erp-system.git`）
-- 旧 Gitee 仓库 `xioalismile/erp`：**已停用**，仅以 remote 名称 `gitee` 留作记录，推送地址已设为 `no_push`，防止误推。
 - 当前分支：`main`
 
 > 只有这个目录是仓库。`D:\erp` 下的其它产品（batch-record-system、温度互联、小程序等）不在此仓库内。

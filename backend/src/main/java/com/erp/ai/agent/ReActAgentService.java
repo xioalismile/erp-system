@@ -750,6 +750,26 @@ public class ReActAgentService {
      * 4. 零命中时回退全量清单（能力兜底，宁可慢不可缺）
      */
     @SuppressWarnings("unchecked")
+    /**
+     * 工具清单装不进上下文预算时的降级集合（2026-11-27）：
+     * 保留常驻工具 + 常驻查询 + 全部只读 query_* + 单据只读清单工具。
+     * 丢掉设置中心/写操作/导入等大块头，保证"还能正常对话与查数"，而不是直接报上下文用尽。
+     */
+    private static List<Map<String, Object>> narrowToolsForBudget(List<Map<String, Object>> allTools) {
+        List<Map<String, Object>> out = new ArrayList<>();
+        for (Map<String, Object> tool : allTools) {
+            Object fn = tool.get("function");
+            if (!(fn instanceof Map<?, ?> function)) continue;
+            String name = String.valueOf(function.get("name"));
+            if (ALWAYS_TOOLS.contains(name) || BASELINE_QUERY_TOOLS.contains(name)
+                    || name.startsWith("query_")
+                    || "bill_action_list".equals(name) || "bill_item_list".equals(name)) {
+                out.add(tool);
+            }
+        }
+        return out;
+    }
+
     private List<Map<String, Object>> filterToolsByUserInput(String userInput, List<Map<String, Object>> allTools) {
         if (userInput == null || userInput.isBlank() || allTools.isEmpty()) {
             return allTools;
@@ -900,9 +920,20 @@ public class ReActAgentService {
             // 历史从最新一条往前累加，装不下就停（老对话仍永久保留在库里，只是不再灌进模型）。
             int promptTokens = estimateTokens(buildSystemPrompt(knowledgeCtx, request.getFiles(),
                     request.getImageUrls(), request.getContext()));
-            int toolTokens = estimateJsonTokens(tools);
             int outputReserve = Math.max(1024, aiConfigService.getChatMaxTokens());
             int userTokens = estimateTokens(userInput) + 8;
+            int toolTokens = estimateJsonTokens(tools);
+            // 工具清单预算保护（2026-11-27）：关键词零命中会回退全量（管理员账号 438 个工具 ≈ 112k tokens），
+            // 直接把上下文撑爆 → 用户看到"上下文空间已用完"。工具装不下时改用核心读查询集，保证还能正常对话。
+            int toolBudget = Math.max(8000, contextLimit - promptTokens - outputReserve - userTokens - 8000);
+            if (toolTokens > toolBudget) {
+                int beforeCount = tools.size();
+                int beforeTokens = toolTokens;
+                tools = narrowToolsForBudget(fullTools);
+                toolTokens = estimateJsonTokens(tools);
+                log.warn("[Agent] 工具清单超预算：{} 个 / {} tokens > 可用 {}，改用核心读查询集 {} 个 / {} tokens",
+                        beforeCount, beforeTokens, toolBudget, tools.size(), toolTokens);
+            }
             int historyBudget = Math.max(0, contextLimit - promptTokens - toolTokens - outputReserve - userTokens);
             // 「会话记忆轮数」保留为安全边界（配置仍在，默认 60 轮），与 token 预算取更严格的一方
             int windowSize = maxHistory() * 2;

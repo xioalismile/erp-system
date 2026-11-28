@@ -214,10 +214,14 @@ public final class BillExcelRegistry {
         // ==================== 后端已有、但导入导出不开放（exportable=false 显式标记） ====================
         // 分两类，别混淆：
 
-        // 【A 类·待补导出列】有前端页面、已确认要补导入导出，但实体零个 @ExportField，
-        // 通用反射导出只会得到空表头 → 需像库存现存量那样补一套专用导出列，补齐后把 exportable 改 true。
-        putNoExportNoImport(m, "sampleOrder", "打样单", com.erp.sample.entity.SampleOrder.class, com.erp.sample.mapper.SampleOrderMapper.class, Group.OTHER);
-        putNoExportNoImport(m, "freeSampleOrder", "免费样品单", com.erp.freesample.entity.FreeSampleOrder.class, com.erp.freesample.mapper.FreeSampleOrderMapper.class, Group.OTHER);
+        // 【A 类·待补导出列】原为"有页面、待补导出列"的占位；打样单/免费样品单已于 2026-11-27 补齐
+        // （表头 @ExportField + 子件明细列 + 专用导入，下面的 putScoped 即正式开放）。
+        // 保留此说明供后续同类补齐时参考：实体零个 @ExportField 时通用反射导出只会得到空表头。
+
+        // 打样单 / 免费样品订单（2026-11-27 用户口径：补缺失的 Excel 导入导出）
+        // 列表口径按 created_by 过滤，导出/导入同口径
+        putScoped(m, "sampleOrder", "打样单", com.erp.sample.entity.SampleOrder.class, com.erp.sample.mapper.SampleOrderMapper.class, Group.OTHER, null, "created_by", WhitelistKind.NONE);
+        putScoped(m, "freeSampleOrder", "免费样品单", com.erp.freesample.entity.FreeSampleOrder.class, com.erp.freesample.mapper.FreeSampleOrderMapper.class, Group.OTHER, null, "created_by", WhitelistKind.NONE);
 
         // 【B 类·无前端入口，按设计不开放（用户 2026-09-15 拍板：保留后端、不补入口）】
         // 这些单据的金额被 DataBoardServiceImpl 的「净利润 = 毛利 − 销售费用 − 采购费用 − 税金」

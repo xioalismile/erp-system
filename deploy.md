@@ -127,9 +127,9 @@ sudo apt install docker-compose-plugin
 
 ### 2.1 上传项目代码
 ```bash
-# 方式一: 从Git克隆(需先配置Gitee/GitHub访问)
+# 方式一: 从 GitHub 克隆
 cd /opt
-git clone https://gitee.com/xioalismile/erp.git smart-erp
+git clone https://github.com/xioalismile/erp-system.git smart-erp
 cd smart-erp
 
 # 方式二: 上传项目压缩包

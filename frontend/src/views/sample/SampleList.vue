@@ -41,9 +41,9 @@
         perm-prefix=""
         :add-text="$tt('新增打样单')"
         :show-print="false"
-        :show-export="false"
-        :show-import="false"
         @add="onAdd"
+        @export="handleExport"
+        @import="importVisible = true"
       />
     </template>
 
@@ -83,6 +83,9 @@
     </template>
     <AuditColumns />
   </BillListPage>
+
+  <!-- 导入（表头 + 子件明细，模板来自通用登记表） -->
+  <BillImportDialog v-model="importVisible" entity-name="sampleOrder" :title="$tf('打样单导入')" @done="loadData" />
 </template>
 
 <script setup>
@@ -97,6 +100,8 @@ import {
 } from '@/api/sample/sample'
 import BillListPage from '@/components/bill/BillListPage.vue'
 import BillHeaderActions from '@/components/bill/BillHeaderActions.vue'
+import BillImportDialog from '@/components/bill/BillImportDialog.vue'
+import { exportListAsSeen } from '@/utils/exportUtil'
 import AuditColumns from '@/components/AuditColumns.vue'
 import { useColumnSetting } from '@/composables/useColumnSetting'
 import { confirmSubmit, submitSuccessMessage } from '@/utils/submit-confirm'
@@ -172,6 +177,27 @@ const columns = [
 const { columnSettingVisible, isColVisible, getColFixed, configVersion, sortedColumns } = useColumnSetting('SampleList', columns)
 // 可见且按列设置拖拽顺序排列的列（v-for 渲染用，避免 v-for+v-if 反模式）
 const visibleSortedColumns = computed(() => sortedColumns.value.filter(col => isColVisible(col.prop)))
+const importVisible = ref(false)
+
+/** 导出当前筛选结果（与列表同口径，含当前可见列） */
+async function handleExport() {
+  try {
+    await exportListAsSeen({
+      entityName: 'sampleOrder',
+      columns: visibleSortedColumns.value,
+      fetchPage: pageSample,
+      params: {
+        keyword: search.keyword || undefined,
+        status: search.status || undefined,
+        ...getSortParams(),
+        ...(headerFilterState.value.params || {}),
+        ...(headerFilterState.value.customSearch ? { customSearch: headerFilterState.value.customSearch } : {})
+      },
+      idField: 'sampleId'
+    })
+    ElMessage.success(tt('导出成功'))
+  } catch (e) { /* 失败原因已由 exportUtil 统一提示 */ }
+}
 
 const loading = ref(false)
 const tableData = ref([])

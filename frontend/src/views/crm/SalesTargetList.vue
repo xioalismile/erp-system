@@ -66,7 +66,7 @@
               <el-button :icon="Setting" circle v-permission="perm('columnSetting')" @click="openColumnSetting" />
             </el-tooltip>
           </div>
-          <el-table :data="companyList" v-loading="companyLoading" border stripe :key="configVersion" @sort-change="onCompanySortChange">
+          <el-table :data="companyList" v-loading="companyLoading" border stripe :key="configVersion" @sort-change="handleSortChange">
             <!-- 动态列渲染：列顺序由列设置拖拽配置驱动（sortedColumns），单元格按 col.type 分支渲染 -->
             <template v-for="col in companyVisibleColumns" :key="col.prop">
               <el-table-column
@@ -123,7 +123,7 @@
               <el-button :icon="Setting" circle v-permission="perm('columnSetting')" @click="openColumnSetting" />
             </el-tooltip>
           </div>
-          <el-table :data="employeeList" v-loading="empLoading" border stripe :key="configVersion" @sort-change="onEmpSortChange"
+          <el-table :data="employeeList" v-loading="empLoading" border stripe :key="configVersion" @sort-change="handleEmpSortChange"
                     show-summary :summary-method="employeeSummary" :summary-row-style="{fontWeight: 600, background: '#f0f9eb'}">
             <!-- 动态列渲染：列顺序由列设置拖拽配置驱动（sortedColumns），单元格按 col.type 分支渲染 -->
             <template v-for="col in employeeVisibleColumns" :key="col.prop">

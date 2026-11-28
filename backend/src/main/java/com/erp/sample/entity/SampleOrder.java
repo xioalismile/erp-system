@@ -1,6 +1,7 @@
 package com.erp.sample.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.erp.export.annotation.ExportField;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -22,53 +23,66 @@ public class SampleOrder {
 
     /** 打样单号 SAM-yyyyMMdd-0001 */
     @TableField("sample_no")
+    @ExportField(label = "打样单号", order = 1, required = true)
     private String sampleNo;
 
     @TableField("sample_name")
+    @ExportField(label = "样品名称", order = 2)
     private String sampleName;
 
     /** 样品类型: 新产品/改进产品/来料打样/内部研发 */
     @TableField("sample_type")
+    @ExportField(label = "样品类型", order = 3)
     private String sampleType;
 
     /** 打样阶段: 原样/初样/确认样/大货样 */
     @TableField("sample_stage")
+    @ExportField(label = "打样阶段", order = 4)
     private String sampleStage;
 
     @TableField("customer_id")
     private Long customerId;
 
     @TableField("customer_name")
+    @ExportField(label = "客户名称", order = 5, required = true)
     private String customerName;
 
     @TableField("contact_person")
+    @ExportField(label = "联系人", order = 6)
     private String contactPerson;
 
     @TableField("contact_phone")
+    @ExportField(label = "联系电话", order = 7)
     private String contactPhone;
 
     @TableField("material_id")
     private Long materialId;
 
     @TableField("material_code")
+    @ExportField(label = "样品物料编码", order = 8)
     private String materialCode;
 
     @TableField("material_name")
+    @ExportField(label = "样品物料名称", order = 9)
     private String materialName;
 
     @TableField("specification")
+    @ExportField(label = "样品规格", order = 10)
     private String specification;
 
     @TableField("unit_id")
     private Long unitId;
 
     @TableField("sample_qty")
+    @ExportField(label = "样品数量", order = 11)
     private BigDecimal sampleQty;
 
     @TableField("demand_date")
+    @ExportField(label = "需求日期", order = 12)
     private LocalDate demandDate;
 
     @TableField("plan_finish_date")
+    @ExportField(label = "计划完成日期", order = 13)
     private LocalDate planFinishDate;
 
     @TableField("actual_finish_date")
@@ -82,13 +96,16 @@ public class SampleOrder {
 
     /** 优先级: 紧急/高/普通/低 */
     @TableField("priority")
+    @ExportField(label = "优先级", order = 14)
     private String priority;
 
     @TableField("cost_amount")
+    @ExportField(label = "成本金额", order = 15)
     private BigDecimal costAmount;
 
     /** 价税合计（2026-11-23 补齐，口径见 deploy/sql/196） */
     @TableField("net_amount")
+    @ExportField(label = "整单价税合计", order = 16)
     private BigDecimal netAmount;
 
     /** 状态: 草稿/待审核/已生效/打样中/已完成/已确认/已转BOM/已取消 */
@@ -122,6 +139,7 @@ public class SampleOrder {
 
     /** 打样进度: 自定义文本，如"图纸设计/物料准备/加工中/组装调试/待验收" */
     @TableField("sample_progress")
+    @ExportField(label = "打样进度", order = 17)
     private String progress;
 
     /** 是否已转BOM: 0-未转, 1-已转 */
@@ -132,6 +150,7 @@ public class SampleOrder {
     private Long generatedBomId;
 
     @TableField("remark")
+    @ExportField(label = "单据备注", order = 18)
     private String remark;
 
     @TableField(value = "created_by", fill = FieldFill.INSERT)

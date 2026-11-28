@@ -69,7 +69,7 @@
         '--my': mouse.y + 'px',
         '--mvx': (mouse.x - mouse.lx) * 0.015 + 'px',
         '--mvy': (mouse.y - mouse.ly) * 0.015 + 'px',
-      } as any"
+      }"
     >
       <!-- 1. 深色渐变基底（墨黑→深蓝→墨绿） -->
       <div class="bg-gradient" />
@@ -213,7 +213,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElNotification } from 'element-plus'
@@ -286,7 +286,7 @@ const mouse = reactive({
   ly: typeof window !== 'undefined' ? window.innerHeight / 2 : 540,
   active: false,
 })
-function onMouseMove(e: MouseEvent) {
+function onMouseMove(e) {
   mouse.lx = mouse.x; mouse.ly = mouse.y
   mouse.x = e.clientX; mouse.y = e.clientY
   mouse.active = true
@@ -316,11 +316,11 @@ function toggleRemember() {
 
 /* ========== 数字雨：字符位置 & 渲染 ========== */
 const DIGITS = '0123456789ABCDEF⊕⊗⌬⎔⏚⏛⍟<>{}/\\|:;=()[]█▓▒░'
-function matrixChar(col: number, i: number) {
+function matrixChar(col, i) {
   const seed = col * 97 + i * 131
   return DIGITS[seed % DIGITS.length]
 }
-function matrixCharStyle(col: number, i: number) {
+function matrixCharStyle(col, i) {
   const primes = [53, 97, 131, 179, 229, 277, 331, 383, 439, 491, 547, 599, 653, 709, 761, 811, 863, 919, 967, 1009]
   const p = primes[(i + col * 3) % primes.length]
   const size = 12 + (p % 8)
@@ -340,7 +340,7 @@ function matrixCharStyle(col: number, i: number) {
 }
 
 /* ========== 脉冲点阵圆周 ========== */
-function pulseDotStyle(ring: 'a' | 'b', i: number) {
+function pulseDotStyle(ring, i) {
   const n = ring === 'a' ? 32 : 24
   const angle = (i / n) * Math.PI * 2
   const radius = ring === 'a' ? 210 : 320
@@ -361,7 +361,7 @@ function pulseDotStyle(ring: 'a' | 'b', i: number) {
 }
 
 /* ========== 浮动光点（28 个 + 视差） ========== */
-function dotStyle(i: number) {
+function dotStyle(i) {
   const primes = [53, 97, 131, 179, 229, 277, 331, 383, 439, 491, 547, 599, 653, 709, 761, 811, 863, 919, 967, 1009, 1061, 1091, 1151, 1193, 1259, 1291, 1373, 1409]
   const p = primes[i - 1]
   const sz = 2 + ((p % 50) / 10)
@@ -387,7 +387,7 @@ function dotStyle(i: number) {
 function initNetwork() {
   const canvas = networkCanvas.value
   if (!canvas) return
-  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+  const ctx = canvas.getContext('2d')
   function resize() {
     canvas.width = window.innerWidth * window.devicePixelRatio
     canvas.height = window.innerHeight * window.devicePixelRatio

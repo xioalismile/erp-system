@@ -49,6 +49,8 @@ public class WorkstationController {
         List<Workstation> typeRows = workstationService.list(
                 new QueryWrapper<Workstation>().select("DISTINCT workstation_type"));
         long typeCount = typeRows.stream()
+                // MyBatis 对「所选列全为 NULL」的行会映射成 null 元素（实测 workstation_type 为空时 NPE）
+                .filter(java.util.Objects::nonNull)
                 .map(Workstation::getWorkstationType)
                 .filter(t -> t != null && !t.isBlank())
                 .distinct()

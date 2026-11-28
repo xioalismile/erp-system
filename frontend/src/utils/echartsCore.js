@@ -5,7 +5,7 @@
 // 新页面要画新图型（仪表盘/散点/雷达等）时，必须先在下面 use([...]) 补登记，
 // 否则该图会静默空白（控制台不报错）。
 import * as echarts from 'echarts/core'
-import { BarChart, LineChart, PieChart, FunnelChart } from 'echarts/charts'
+import { BarChart, LineChart, PieChart, FunnelChart, GaugeChart } from 'echarts/charts'
 import {
   GridComponent,
   TooltipComponent,
@@ -23,6 +23,8 @@ echarts.use([
   LineChart,
   PieChart,
   FunnelChart,
+  // 仪表盘（销售报表中心「年度目标完成率」2026-11-27 补登记：漏登记时图表静默空白并报错）
+  GaugeChart,
   GridComponent,
   TooltipComponent,
   LegendComponent,

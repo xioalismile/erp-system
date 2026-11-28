@@ -113,10 +113,16 @@ const ACTION_TYPE_ALIAS = {
   MATERIAL_SUPPLEMENT: 'PRODUCTION_SUPPLEMENT'
 }
 
-// Excel 导入导出（BillExcelRegistry 两种登记方式：putScoped / new Bill）
+// Excel 导入导出（BillExcelRegistry 登记方式：put / putScoped / putNoImport / putNoImportScoped / new Bill）
+// putNoExportNoImport 表示显式未开放，不算 Excel 能力
 const excelTxt = beFile('export/registry/BillExcelRegistry.java')
 const excelCodes = uniq([
-  ...[...excelTxt.matchAll(/putScoped\(m,\s*"([^"]+)"/g)].map((m) => m[1]),
+  ...[...excelTxt.matchAll(/put(?:Scoped|NoImport|NoImportScoped)?\(m,\s*"([^"]+)"/g)].map((m) => m[1]),
+  ...[...excelTxt.matchAll(/new Bill\("([^"]+)"/g)].map((m) => m[1])
+])
+// 可导入 = put / putScoped（putNoImport* 是"只导出不导入"）
+const excelImportCodes = uniq([
+  ...[...excelTxt.matchAll(/put(?:Scoped)?\(m,\s*"([^"]+)"/g)].map((m) => m[1]),
   ...[...excelTxt.matchAll(/new Bill\("([^"]+)"/g)].map((m) => m[1])
 ])
 
@@ -137,10 +143,11 @@ const EXCEL_CODE_ALIAS = {
   MATERIAL_REQUISITION: 'materialRequisition',
   MATERIAL_RETURN: 'materialRequisition',
   MATERIAL_SUPPLEMENT: 'materialRequisition',
-  FREE_SAMPLE: 'freeSample',
+  FREE_SAMPLE: 'freeSampleOrder',
   SALE_EXCHANGE: 'saleExchange',
   SAMPLE_ORDER: 'sampleOrder',
-  WAGE_SETTLEMENT: 'wageSettlement'
+  WAGE_SETTLEMENT: 'wageSettlement',
+  SUBCONTRACT_ORDER: 'subcontract'
 }
 
 // 明细报表控制器（只认继承明细报表基类的；报表中心的通用控制器不算）
@@ -179,6 +186,13 @@ const PAGE_BILL_ALIAS = {
 
 /** 不是单据的页面（台账/基础资料），不参与后端单据登记检查 */
 const NON_BILL_PAGES = new Set(['StockFlowList', 'QcTemplateList', 'RoutingList', 'WorkCenterList', 'WorkstationList'])
+/** 报表页面（数据由单据/运算生成，不是业务单据；不套单据登记检查） */
+const REPORT_PAGES = new Set(['WageSettlementList'])
+/**
+ * 自定义字段「不适用」：这些页面本身不定义自定义字段，
+ * 编辑页明细里的物料会带出物料档案的自定义字段（用户 2026-11-27 口径）。
+ */
+const CUSTOM_FIELD_NA = new Set(['MrpPlanList', 'OperationExpenseList'])
 
 function matchBill(page) {
   const alias = PAGE_BILL_ALIAS[page.page]
@@ -198,7 +212,9 @@ function matchBill(page) {
 }
 
 for (const p of pages) {
-  p.isBill = !NON_BILL_PAGES.has(p.page)
+  p.isReport = REPORT_PAGES.has(p.page)
+  p.isBill = !NON_BILL_PAGES.has(p.page) && !p.isReport
+  p.pageType = p.isBill ? '单据' : (p.isReport ? '报表' : '台账/主档')
   const bill = p.isBill ? matchBill(p) : null
   p.billType = bill ? bill.billType : ''
   p.billName = bill ? bill.name : ''
@@ -211,6 +227,7 @@ for (const p of pages) {
     ? (EXCEL_CODE_ALIAS[bill.billType] || bill.table.replace(/_([a-z])/g, (_, c) => c.toUpperCase()))
     : ''
   p.excel = excelCode ? excelCodes.includes(excelCode) : false
+  p.excelImport = excelCode ? excelImportCodes.includes(excelCode) : false
   p.excelShared = ['MATERIAL_RETURN', 'MATERIAL_SUPPLEMENT'].includes(p.billType) && p.excel
   p.fieldPermBackend = bill ? fpPageKeys.includes(bill.table) : false
 }
@@ -218,11 +235,12 @@ for (const p of pages) {
 // ==================== 汇总 ====================
 
 const billPages = pages.filter((p) => p.isBill)
-const nonBillPages = pages.filter((p) => !p.isBill)
+const reportPages = pages.filter((p) => p.isReport)
+const nonBillPages = pages.filter((p) => !p.isBill && !p.isReport)
 const matchedBills = billPages.filter((p) => p.billType)
 
 const missingDetailBills = billPages.filter((p) => !p.detail && !p.detailManual)
-const missingCf = billPages.filter((p) => !p.customFields)
+const missingCf = billPages.filter((p) => !p.customFields && !CUSTOM_FIELD_NA.has(p.page))
 const missingFp = billPages.filter((p) => !p.fieldPerm && !p.autoPerm)
 const unmatchedBills = billPages.filter((p) => !p.billType)
 const noDetailFilter = billPages.filter((p) => (p.detail || p.detailManual) && !p.detailFilterDefs)
@@ -243,12 +261,12 @@ push('> 口径：以《单据与页面登记》第 4 栏为"应该有"，扫描�
 push('')
 push('## 汇总')
 push('')
-push(`- 使用标准列表页的页面：**${pages.length}**（单据 ${billPages.length} / 台账·主档 ${nonBillPages.length}）`)
+push(`- 使用标准列表页的页面：**${pages.length}**（单据 ${billPages.length} / 报表 ${reportPages.length} / 台账·主档 ${nonBillPages.length}）`)
 push(`- 已登记明细模式：**${billPages.filter((p) => p.detail || p.detailManual).length}**（自动 ${billPages.filter((p) => p.detail).length} / 手动 ${billPages.filter((p) => p.detailManual).length}）`)
 push(`- 单据未接明细模式：**${missingDetailBills.length}**（见下方清单；台账/主档不要求）`)
-push(`- 列表自定义字段列：单据已登记 **${billPages.filter((p) => p.customFields).length}** / 未登记 **${missingCf.length}**`)
+push(`- 列表自定义字段列：单据已登记 **${billPages.filter((p) => p.customFields).length}** / 未登记 **${missingCf.length}**（不适用 ${billPages.filter((p) => CUSTOM_FIELD_NA.has(p.page)).length} 页：随明细带出物料字段）`)
 push(`- 页面字段权限：显式 ${pages.filter((p) => p.fieldPerm).length} / 自动 ${pages.filter((p) => !p.fieldPerm && p.autoPerm).length} / 未覆盖 ${missingFp.length}`)
-push(`- 后端登记：来源/去向 **${links.length}** 类；级联删除 **${cascadeTables.length}** 张表；Excel **${excelCodes.length}** 个；AI 动作 **${actionBills.length}** 个；汇总取数 **${summaryBills.length}** 个`)
+push(`- 后端登记：来源/去向 **${links.length}** 类；级联删除 **${cascadeTables.length}** 张表；Excel 导出 **${excelCodes.length}** 个（可导入 ${excelImportCodes.length} 个）；AI 动作 **${actionBills.length}** 个；汇总取数 **${summaryBills.length}** 个`)
 push(`- 明细报表控制器：**${reportCtrls.length}**；字段权限按报表主表自动对应（2026-11-27 起无需逐条登记）`)
 push('')
 push('## 一、页面 × 前端能力')
@@ -256,7 +274,8 @@ push('')
 push('| 页面 | 业务名 | 页面类型 | 明细模式 | 自定义字段列 | 字段权限键 | 筛选(汇总/明细) | 批量动作 |')
 push('|---|---|---|---|---|---|---|---|')
 for (const p of pages) {
-  push(`| ${p.page} | ${p.title || '—'} | ${p.isBill ? '单据' : '台账/主档'} | ${p.detail ? '✅登记' : p.detailManual ? '✅手动' : (p.isBill ? '❌' : '—')} | ${p.isBill ? yes(p.customFields) : '—'} | ${p.fieldPerm || (p.autoPerm ? '✅自动' : '❌')} | ${p.filterDefs ? '✅' : '❌'} / ${p.detailFilterDefs ? '✅' : '—'} | ${p.batchActions ? '✅' : '—'} |`)
+  const cfCell = p.isBill ? (CUSTOM_FIELD_NA.has(p.page) ? '—（随明细带物料字段）' : yes(p.customFields)) : '—'
+  push(`| ${p.page} | ${p.title || '—'} | ${p.pageType} | ${p.detail ? '✅登记' : p.detailManual ? '✅手动' : (p.isBill ? '❌' : '—')} | ${cfCell} | ${p.fieldPerm || (p.autoPerm ? '✅自动' : '❌')} | ${p.filterDefs ? '✅' : '❌'} / ${p.detailFilterDefs ? '✅' : '—'} | ${p.batchActions ? '✅' : '—'} |`)
 }
 push('')
 push('### 需要处理的页面')
@@ -291,24 +310,32 @@ if (nonBillPages.length) {
   for (const p of nonBillPages) push(`- ${p.page}（${p.title || '—'}）`)
   push('')
 }
+if (reportPages.length) {
+  push('**报表页面（数据由单据/运算生成，不按业务单据登记，已打标签）：**')
+  for (const p of reportPages) push(`- ${p.page}（${p.title || '—'}）`)
+  push('')
+}
 
 push('## 二、页面 × 后端登记（按单据类型）')
 push('')
 push('| 页面 | 单据类型 | 表 | 来源去向 | 级联删除 | Excel | 汇总取数 | AI 动作 | 字段权限 |')
 push('|---|---|---|---|---|---|---|---|---|')
 for (const p of matchedBills) {
-  push(`| ${p.page} | ${p.billType} | ${p.table} | ${yes(p.link)} | ${yes(p.cascade)} | ${p.excelShared ? '✅共享' : yes(p.excel)} | ${p.summary ? '✅' : '—'} | ${yes(p.action)} | ${yes(p.fieldPermBackend)} |`)
+  const excelCell = p.excelShared ? '✅共享' : (p.excel ? (p.excelImport ? '✅' : '✅导出') : '❌')
+  push(`| ${p.page} | ${p.billType} | ${p.table} | ${yes(p.link)} | ${yes(p.cascade)} | ${excelCell} | ${p.summary ? '✅' : '—'} | ${yes(p.action)} | ${yes(p.fieldPermBackend)} |`)
 }
 push('')
-push('> Excel："共享"=生产退料/补料与生产领料共用同一份导入导出登记；"—"=未登记汇总取数（看板未用，不代表错误）。')
+push('> Excel："共享"=生产退料/补料与生产领料共用同一份导入导出登记；"✅导出"=只导出不导入（如换货单必须由销售订单生成）；"—"=未登记汇总取数（看板未用，不代表错误）。')
 push('')
 
 push('## 三、后端登记表缺口')
 push('')
-for (const [label, key] of [['级联删除', 'cascade'], ['Excel 导入导出', 'excel'], ['AI 单据动作', 'action'], ['字段权限', 'fieldPermBackend']]) {
+for (const [label, key] of [['级联删除', 'cascade'], ['Excel 导出', 'excel'], ['AI 单据动作', 'action'], ['字段权限', 'fieldPermBackend']]) {
   const missing = matchedBills.filter((p) => !p[key])
   push(`- **${label}** 未覆盖：${missing.length ? missing.map((p) => `${p.title || p.page}(${p.billType})`).join('、') : '无'}`)
 }
+const exportOnly = matchedBills.filter((p) => p.excel && !p.excelImport)
+push(`- **Excel 导入**：${exportOnly.length ? exportOnly.map((p) => `${p.title || p.page}(只导出)`).join('、') : '全部可导入'}`)
 const noSummary = matchedBills.filter((p) => !p.summary)
 push(`- **汇总取数**（看板按需，不算错误）：未登记 ${noSummary.length} 个：${noSummary.map((p) => p.title || p.page).join('、')}`)
 push('')
@@ -327,9 +354,10 @@ push('')
 
 push('## 五、结论与建议')
 push('')
-push(`- ✅ 达标：标准列表页覆盖 ${pages.length} 页；单据明细模式 ${billPages.filter((p) => p.detail || p.detailManual).length}/${billPages.length}；来源去向 ${links.length} 类；AI 动作 ${actionBills.length} 个。`)
+push(`- ✅ 达标：标准列表页覆盖 ${pages.length} 页（单据 ${billPages.length} / 报表 ${reportPages.length} / 台账·主档 ${nonBillPages.length}）；单据明细模式 ${billPages.filter((p) => p.detail || p.detailManual).length}/${billPages.length}；来源去向 ${links.length} 类；AI 动作 ${actionBills.length} 个。`)
 push(`- ❌ 优先修：`)
-push(`  1. 列表自定义字段列：单据 ${missingCf.length} 页未登记（${missingCf.map((p) => p.title || p.page).join('、')}）。`)
+if (missingCf.length) push(`  1. 列表自定义字段列：单据 ${missingCf.length} 页未登记（${missingCf.map((p) => p.title || p.page).join('、')}）。`)
+else push(`  1. 列表自定义字段列：无未登记（MRP计划/费用分摊按口径不适用，随明细带出物料字段）。`)
 if (noDetailFilter.length) push(`  3. 明细模式缺明细专属筛选条件：${noDetailFilter.map((p) => p.title || p.page).join('、')}。`)
 push('  4. 静态核对只能证明"登记了"；权限效果以第二层运行体检为准（npm run check:permissions）。')
 push('')

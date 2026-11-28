@@ -1,6 +1,7 @@
 package com.erp.freesample.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.erp.export.annotation.ExportField;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -22,12 +23,14 @@ public class FreeSampleOrder {
 
     /** 单号 FS-yyyyMMdd-0001，连字符分隔 */
     @TableField("order_no")
+    @ExportField(label = "订单号", order = 1, required = true)
     private String orderNo;
 
     @TableField("customer_id")
     private Long customerId;
 
     @TableField("customer_name")
+    @ExportField(label = "客户名称", order = 2, required = true)
     private String customerName;
 
     /** 关联客户跟进记录ID */
@@ -38,15 +41,18 @@ public class FreeSampleOrder {
     private Long salesId;
 
     @TableField("sales_name")
+    @ExportField(label = "销售员", order = 3)
     private String salesName;
 
     @TableField("order_date")
+    @ExportField(label = "订单日期", order = 4)
     private LocalDate orderDate;
 
     @TableField("warehouse_id")
     private Long warehouseId;
 
     @TableField("warehouse_name")
+    @ExportField(label = "仓库", order = 5)
     private String warehouseName;
 
     /** 发货是否已扣库存：1=已扣（作废/删除时按冻结成本冲回）；0=未扣 */
@@ -54,16 +60,20 @@ public class FreeSampleOrder {
     private Integer stockDeducted;
 
     @TableField("express_no")
+    @ExportField(label = "快递单号", order = 6)
     private String expressNo;
 
     @TableField("express_company")
+    @ExportField(label = "快递公司", order = 7)
     private String expressCompany;
 
     @TableField("total_quantity")
+    @ExportField(label = "合计数量", order = 8)
     private BigDecimal totalQuantity;
 
     /** 订单金额：免费样品强制为 0.00 */
     @TableField("total_amount")
+    @ExportField(label = "订单金额", order = 9)
     private BigDecimal totalAmount;
 
     /** 状态: 草稿/待审核/已生效/已发货/已完成 */
@@ -109,6 +119,7 @@ public class FreeSampleOrder {
     private String closedReason;
 
     @TableField("remark")
+    @ExportField(label = "单据备注", order = 10)
     private String remark;
 
     /** 附件URL列表（多附件以逗号分隔，2026-09-20 补列：打通免费样品订单页的附件上传） */

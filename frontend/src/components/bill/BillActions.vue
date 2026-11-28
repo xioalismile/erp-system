@@ -127,7 +127,7 @@ export default {
       gateLoading: true,
       // null=未确认 true=当前用户是该单审批人 false=不是（2026-11-19：待审核状态下按此隐藏 审核/驳回 按钮）
       isApprover: null,
-      _approverCache: null,        // {key: 'type:id', status} 同单同状态不重复查询
+      approverCache: null,         // {key: 'type:id', status} 同单同状态不重复查询（不要用 _ 前缀：Vue 3 不代理 _ 开头的 data 键）
       // —— 折叠模式状态 ——
       foldedKeys: [],              // 已收进「更多」的动作 key（渲染顺序 = 从右往左依次折）
       qrHidden: false,             // 折到极限仍放不下时，二维码临时让位
@@ -325,12 +325,12 @@ export default {
         const id = this.$route && this.$route.params ? this.$route.params.id : ''
         if (!this.billType || !id || String(this.status) !== '待审核') {
           this.isApprover = null
-          this._approverCache = null
+          this.approverCache = null
           return
         }
         const key = this.billType + ':' + id
-        if (this._approverCache && this._approverCache.key === key && this._approverCache.status === String(this.status)) return
-        this._approverCache = { key, status: String(this.status) }
+        if (this.approverCache && this.approverCache.key === key && this.approverCache.status === String(this.status)) return
+        this.approverCache = { key, status: String(this.status) }
         this.isApprover = await isBillApprover(this.billType, id)
       } catch (e) {
         // 查询失败走保守显示（按钮出现，后端引擎仍会校验兜底）

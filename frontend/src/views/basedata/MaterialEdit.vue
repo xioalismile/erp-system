@@ -336,7 +336,7 @@
         <el-form-item :label="$tf('产品图片')" :disabled="form.status !== '正常'" :required="isRequiredField('imageUrls')">
           <ImageUploader
             v-model="form.imageUrls"
-            :main-image.sync="form.mainImage"
+            v-model:main-image="form.mainImage"
             :type="'material'"
             :disabled="form.status !== '正常'"
           />
