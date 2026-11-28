@@ -1604,7 +1604,8 @@ public class SaleDeliveryServiceImpl extends AbstractBillService<SaleDeliveryMap
         invoice.setDeliveryNo(delivery.getDeliveryNo());
         invoice.setRemark("由销售出库单 " + delivery.getDeliveryNo() + " 下推生成");
         invoice.setStatus("草稿");
-        invoice.setApprovalStatus("待审核");
+        // 下推统一口径（2026-11-28）：下推只生成草稿，审核动作由用户单独完成
+        invoice.setApprovalStatus("草稿");
 
         List<SaleInvoiceItem> invoiceItems = new ArrayList<>();
         int lineNo = 1;
@@ -1635,10 +1636,7 @@ public class SaleDeliveryServiceImpl extends AbstractBillService<SaleDeliveryMap
         }
 
         saleInvoiceService.saveInvoiceWithItems(invoice, invoiceItems);
-        // 开关判断：发票免审批时，下推生成后自动审核生效
-        if (!approvalGateHelper.needApproval("SALE_INVOICE")) {
-            saleInvoiceService.approve(invoice.getInvoiceId(), "系统(免审批)");
-        }
+        // 下推统一口径（2026-11-28）：只生成草稿，不再按免审批开关自动审核生效
         return invoice;
     }
 }

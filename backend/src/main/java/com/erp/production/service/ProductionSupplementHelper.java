@@ -96,7 +96,8 @@ public class ProductionSupplementHelper {
         MaterialRequisition requisition = new MaterialRequisition();
         requisition.setBillType("SUPPLEMENT");
         requisition.setStatus("草稿");
-        requisition.setApprovalStatus("待审核");
+        // 生成即草稿（2026-11-28 下推统一口径）：审核动作由用户单独完成
+        requisition.setApprovalStatus("草稿");
         requisition.setRequisitionDate(LocalDate.now());
         requisition.setWorkOrderNo(workOrder.getOrderNo());
         requisition.setWarehouseId(workOrder.getWarehouseId());

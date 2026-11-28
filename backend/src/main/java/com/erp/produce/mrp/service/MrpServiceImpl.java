@@ -903,7 +903,8 @@ public class MrpServiceImpl extends ServiceImpl<MrpPlanMapper, MrpPlan> implemen
         // 故"未指定供应商"的草稿单可以落库，由用户后续补供应商。
         order.setCurrencyId(1L);
         order.setStatus("草稿");
-        order.setApprovalStatus("待审核");
+        // 生成即草稿（2026-11-28 下推统一口径）：审核动作由用户单独完成
+        order.setApprovalStatus("草稿");
         order.setExchangeRate(BigDecimal.ONE);
         order.setIsClosed(0);
         order.setSourceBillType("MRP计划");

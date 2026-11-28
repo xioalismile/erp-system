@@ -1106,6 +1106,8 @@ public class PurchaseInboundServiceImpl extends AbstractBillService<PurchaseInbo
         invoice.setSourceBillNo(inbound.getReceiptNo());
         invoice.setRemark("由采购入库单 " + inbound.getReceiptNo() + " 下推生成");
         invoice.setStatus("草稿");
+        // 下推统一口径（2026-11-28）：下推只生成草稿，审核动作由用户单独完成
+        invoice.setApprovalStatus("草稿");
         // 默认普通发票, 避免下推时强制校验供应商税号 (用户可在界面切换为专票并补全税号)
         invoice.setInvoiceType("普通发票");
 

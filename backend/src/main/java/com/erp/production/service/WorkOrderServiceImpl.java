@@ -1990,7 +1990,8 @@ public class WorkOrderServiceImpl extends AbstractBillService<WorkOrderMapper, W
         requisition.setSourceBillType("生产工单");
         requisition.setSourceBillNo(order.getOrderNo());
         requisition.setStatus("草稿");
-        requisition.setApprovalStatus("待审核");
+        // 下推统一口径（2026-11-28）：下推只生成草稿，审核动作由用户单独完成
+        requisition.setApprovalStatus("草稿");
         requisition.setRemark("由生产工单 " + order.getOrderNo() + " 下推生成");
         // 币种兜底（2026-11-09）：下推时补本位币，避免领料单币种为空导致保存后仍不持久化
         java.util.List<com.erp.basedata.entity.Currency> currencies = currencyService.list();
@@ -2039,10 +2040,7 @@ public class WorkOrderServiceImpl extends AbstractBillService<WorkOrderMapper, W
         }
 
         materialRequisitionService.saveRequisitionWithItems(requisition, items);
-        // 单据审批开关: MATERIAL_REQUISITION 免审批时, 下推领料单自动审核生效(扣库存)
-        if (!approvalGateHelper.needApproval("MATERIAL_REQUISITION")) {
-            materialRequisitionService.approve(requisition.getRequisitionId(), "系统(免审批)");
-        }
+        // 下推统一口径（2026-11-28）：只生成草稿，不再按免审批开关自动审核生效
 
         log.info("生产工单 {} 下推生成领料单 {}", order.getOrderNo(), requisition.getRequisitionNo());
         return requisition;
@@ -2093,7 +2091,8 @@ public class WorkOrderServiceImpl extends AbstractBillService<WorkOrderMapper, W
         // 第 11 期：来源工序行（能追溯到是哪道工序发起的入库）
         receipt.setSourceOperationId(sourceOperationId);
         receipt.setStatus("草稿");
-        receipt.setApprovalStatus("待审核");
+        // 下推统一口径（2026-11-28）：下推只生成草稿，审核动作由用户单独完成
+        receipt.setApprovalStatus("草稿");
         receipt.setRemark("由生产工单 " + order.getOrderNo() + " 下推生成"
                 + (sourceOperationId == null ? "" : "（来源工序行 " + sourceOperationId + "）"));
 

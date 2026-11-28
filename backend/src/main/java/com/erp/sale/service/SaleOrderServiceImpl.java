@@ -1354,7 +1354,8 @@ public class SaleOrderServiceImpl
         delivery.setPaymentControl(order.getPaymentControl());
         delivery.setRemark("由销售订单 " + order.getOrderNo() + " 下推生成");
         delivery.setStatus("草稿");
-        delivery.setApprovalStatus("待审核");
+        // 下推统一口径（2026-11-28）：下推只生成草稿，审核动作由用户单独完成
+        delivery.setApprovalStatus("草稿");
         String username = operator;
         if (username != null) delivery.setCreatedBy(username);
 
@@ -1381,7 +1382,8 @@ public class SaleOrderServiceImpl
             di.setAmount(oi.getAmount() != null ? oi.getAmount() : BigDecimal.ZERO);
             di.setTaxAmount(oi.getTaxAmount() != null ? oi.getTaxAmount() : BigDecimal.ZERO);
             di.setNetAmount(oi.getNetAmount() != null ? oi.getNetAmount() : BigDecimal.ZERO);
-            di.setStockId(warehouseId);
+            // 明细行仓库优先取订单明细行仓库，缺失时才回落到表头解析出的仓库
+            di.setStockId(oi.getWarehouseId() != null ? oi.getWarehouseId() : warehouseId);
             di.setSourceBillType("销售订单");
             di.setSourceBillNo(order.getOrderNo());
             di.setSourceLineNo(oi.getLineNo());
@@ -1397,10 +1399,7 @@ public class SaleOrderServiceImpl
         }
 
         saleDeliveryService.saveDeliveryWithItems(delivery, deliveryItems);
-        // 开关判断：出库单免审批时，下推生成后自动审核生效
-        if (!approvalGateHelper.needApproval("SALE_DELIVERY")) {
-            saleDeliveryService.approve(delivery.getDeliveryId(), username != null ? username : "系统(免审批)");
-        }
+        // 下推统一口径（2026-11-28）：只生成草稿，不再按免审批开关自动审核生效
         return delivery;
     }
 

@@ -944,6 +944,8 @@ public class PurchaseOrderServiceImpl
         inbound.setSourceBillNo(order.getOrderNo());
         inbound.setRemark("由采购订单 " + order.getOrderNo() + " 下推生成");
         inbound.setStatus("草稿");
+        // 下推统一口径（2026-11-28）：下推只生成草稿，审核动作由用户单独完成
+        inbound.setApprovalStatus("草稿");
 
         List<PurchaseInboundItem> inboundItems = new ArrayList<>();
         int lineNo = 1;

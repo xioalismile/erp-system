@@ -663,17 +663,8 @@ public class PurchaseRequestServiceImpl extends AbstractBillService<PurchaseRequ
         order.setNetAmount(totalNet);
 
         purchaseOrderService.saveOrderWithItems(order, orderItems);
-        // 免审批（设置中心-单据审批开关关闭）：转单生成的采购订单"提交即生效"。
-        // 必须走 submit：它内部会按免审批规则自动通过；
-        // 若改用 approve，免审批下 submitForApproval 已把单据置为"已生效"，随后的 super.approve
-        // 会报"只有待审核状态可审核，当前状态: 已生效"（该接口在免审批场景下不可用）。
-        PurchaseOrder saved = purchaseOrderService.getDetail(order.getOrderId());
-        if (!approvalGateHelper.needApproval("PURCHASE_ORDER") && saved != null
-                && !"已生效".equals(saved.getApprovalStatus())) {
-            purchaseOrderService.submit(order.getOrderId(), "系统(免审批)");
-            saved = purchaseOrderService.getDetail(order.getOrderId());
-        }
-        return saved != null ? saved : order;
+        // 下推统一口径（2026-11-28）：只生成草稿，不再按免审批开关自动提交/生效
+        return order;
     }
 
     /**

@@ -663,7 +663,8 @@ public class SaleQuoteServiceImpl extends AbstractBillService<SaleQuoteMapper, S
         order.setQuoteNo(quote.getQuoteNo());
         order.setRemark("由报价单 " + quote.getQuoteNo() + " 下推生成");
         order.setStatus("草稿");
-        order.setApprovalStatus("待审核");
+        // 下推统一口径（2026-11-28）：下推只生成草稿，审核动作由用户单独完成
+        order.setApprovalStatus("草稿");
         String username = operator;
         if (username != null) order.setCreatedBy(username);
 
@@ -704,10 +705,7 @@ public class SaleQuoteServiceImpl extends AbstractBillService<SaleQuoteMapper, S
         }
 
         saleOrderService.saveOrderWithItems(order, orderItems);
-        // 开关判断：订单免审批时，下推生成后自动审核生效
-        if (!approvalGateHelper.needApproval("SALE_ORDER")) {
-            saleOrderService.approve(order.getOrderId(), username != null ? username : "系统(免审批)");
-        }
+        // 下推统一口径（2026-11-28）：只生成草稿，不再按免审批开关自动审核生效
         return order;
     }
 
