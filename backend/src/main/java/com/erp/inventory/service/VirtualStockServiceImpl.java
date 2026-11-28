@@ -18,12 +18,19 @@ import java.util.Map;
  * 虚拟库存服务实现
  *
  * 占用统计口径：status='已生效'（生效）且 close_status 未结案的销售订单明细，
- * 按 (quantity - COALESCE(delivered_quantity, 0)) 汇总。
- * 出库审核后回写 delivered_quantity 自动释放占用，无需额外钩子。
+ * 按 (quantity - (turned_output_quantity - turned_return_quantity)) 汇总。
+ * 即「订购数量 − 净出库数量」：出库审核回写 turned_output_quantity、退货审核回写 turned_return_quantity，
+ * 已发货部分释放占用、退货部分重新占用，无需额外的 delivered_quantity 回写点。
+ * （delivered_quantity 是历史死列，全系统没有回写点，2026-11-28 链路验收发现占用虚高后修正。）
  */
 @Service
 @RequiredArgsConstructor
 public class VirtualStockServiceImpl implements VirtualStockService {
+
+    /** 订单行未发货占用量：订购 − 净出库（出库 − 退货），最小为 0 */
+    private static final String RESERVED_EXPR =
+            "COALESCE(GREATEST(COALESCE(quantity,0)"
+                    + " - (COALESCE(turned_output_quantity,0) - COALESCE(turned_return_quantity,0)), 0), 0)";
 
     private final SaleOrderMapper saleOrderMapper;
     private final SaleOrderItemMapper saleOrderItemMapper;
@@ -39,7 +46,7 @@ public class VirtualStockServiceImpl implements VirtualStockService {
             return BigDecimal.ZERO;
         }
         QueryWrapper<SaleOrderItem> wrapper = new QueryWrapper<>();
-        wrapper.select("COALESCE(SUM(COALESCE(quantity,0) - COALESCE(delivered_quantity,0)),0) AS reserved")
+        wrapper.select("COALESCE(SUM(" + RESERVED_EXPR + "),0) AS reserved")
                 .eq("material_id", materialId)
                 .in("order_id", orderIds);
         List<Map<String, Object>> rows = saleOrderItemMapper.selectMaps(wrapper);
@@ -58,7 +65,7 @@ public class VirtualStockServiceImpl implements VirtualStockService {
         }
         QueryWrapper<SaleOrderItem> wrapper = new QueryWrapper<>();
         wrapper.select("material_id",
-                        "COALESCE(SUM(COALESCE(quantity,0) - COALESCE(delivered_quantity,0)),0) AS reserved")
+                        "COALESCE(SUM(" + RESERVED_EXPR + "),0) AS reserved")
                 .in("material_id", materialIds)
                 .in("order_id", orderIds)
                 .groupBy("material_id");

@@ -75,6 +75,39 @@ public final class RowWritebackSql {
     }
 
     /**
+     * 销售订单行的已开票数量（2026-11-28 修复）：
+     * 发票既可能直接引用订单明细（source_bill_type=销售订单），也可能引用出库明细（source_bill_type=销售出库单）。
+     * 正常「订单→出库→发票」链路是两跳，必须经 sale_delivery_item 回溯到订单明细，否则已开票恒为 0。
+     */
+    public static String saleOrderInvoiceQty(String iv, String snv, String mcv) {
+        String matchExpr = " (("
+                + "sii.source_item_id = " + iv + " AND sii.source_bill_type = '销售订单'"
+                + ") OR (sii.source_bill_type IN ('销售出库单','销售出库') AND EXISTS ("
+                + "SELECT 1 FROM sale_delivery_item sdi WHERE sdi.delivery_item_id = sii.source_item_id"
+                + " AND sdi.source_item_id = " + iv + " AND sdi.source_bill_type = '销售订单'))"
+                + " OR (sii.source_item_id IS NULL AND sii.source_bill_no = " + snv
+                + " AND sii.material_code = " + mcv + ")) ";
+        return num(sum("sale_invoice_item", "sii", "sale_invoice", "sih", "invoice_id", "invoice_id",
+                "COALESCE(sii.quantity,0)", matchExpr));
+    }
+
+    /**
+     * 销售订单行的已退货数量（2026-11-28 修复）：
+     * 同发票口径，退货单可能直接引用订单明细，也可能引用出库明细，需经出库明细两跳回溯。
+     */
+    public static String saleOrderReturnQty(String iv, String snv, String mcv) {
+        String matchExpr = " (("
+                + "sri.source_item_id = " + iv + " AND sri.source_bill_type = '销售订单'"
+                + ") OR (sri.source_bill_type IN ('销售出库单','销售出库') AND EXISTS ("
+                + "SELECT 1 FROM sale_delivery_item sdi WHERE sdi.delivery_item_id = sri.source_item_id"
+                + " AND sdi.source_item_id = " + iv + " AND sdi.source_bill_type = '销售订单'))"
+                + " OR (sri.source_item_id IS NULL AND sri.source_bill_no = " + snv
+                + " AND sri.material_code = " + mcv + ")) ";
+        return num(sum("sale_return_item", "sri", "sale_return", "srh", "return_id", "return_id",
+                "COALESCE(sri.quantity,0)", matchExpr));
+    }
+
+    /**
      * 已产数量：生产工单（表头按 来源单号+来源类型=销售订单 匹配，数量取「成品明细」行）。
      * 【2026-10-19 修复"已产恒0"】原实现查的是 production_order_item（工单原料/用料明细，BOM 子件），
      * 而订单行物料对应的是工单成品明细 work_order_product —— 查错表导致下推生效后"已产"永远是 0。

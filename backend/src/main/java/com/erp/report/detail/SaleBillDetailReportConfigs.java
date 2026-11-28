@@ -188,14 +188,14 @@ public final class SaleBillDetailReportConfigs {
         c.add(new Col("rowReceiptStatus", "收款情况", G_ITEM, "text",
                 "'已收 ' || TO_CHAR(COALESCE(i.received_amount,0), 'FM999999999990.00')", false, null, false));
         c.add(new Col("rowInvoiceStatus", "开票情况", G_ITEM, "text",
-                "'已开 ' || " + RowWritebackSql.saleInvoiceQty("i.order_item_id", "o.order_no", "i.material_code")
+                "'已开 ' || " + RowWritebackSql.saleOrderInvoiceQty("i.order_item_id", "o.order_no", "i.material_code")
                         + " || ' / ' || COALESCE(i.quantity,0)", false, null, false));
         c.add(new Col("rowProduceStatus", "生产情况", G_ITEM, "text",
                 "'已产 ' || " + RowWritebackSql.saleProduceQty("i.order_item_id", "o.order_no", "i.material_code")
                         + " || ' / ' || COALESCE(i.quantity,0)", false, null, false));
         // 退货情况（2026-10-14 补）：退货量在订单明细上累加（退货单回到订单冲减），出库单无该列
         c.add(new Col("rowReturnStatus", "退货情况", G_ITEM, "text",
-                "'已退 ' || " + RowWritebackSql.saleReturnQty("i.order_item_id", "o.order_no", "i.material_code")
+                "'已退 ' || " + RowWritebackSql.saleOrderReturnQty("i.order_item_id", "o.order_no", "i.material_code")
                         + " || ' / ' || COALESCE(i.quantity,0)", false, null, false));
         c.reportHiddenKeys.addAll(java.util.List.of(
                 "rowDeliveryStatus", "rowReceiptStatus", "rowInvoiceStatus", "rowProduceStatus", "rowReturnStatus",

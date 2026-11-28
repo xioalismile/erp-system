@@ -984,7 +984,8 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
         return removed;
     }
 
-    private static Long toLong(Object v) {        if (v == null) return null;
+    private static Long toLong(Object v) {
+        if (v == null) return null;
         if (v instanceof Number) return ((Number) v).longValue();
         try {
             return Long.valueOf(String.valueOf(v).trim());
@@ -1532,9 +1533,16 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
                             break;
                         case "销售出库单":
                         case "销售发票":
+                            // 2026-11-28：出库单/发票本身没有「已收金额」列，但订单列表的“收款情况”需要看到。
+                            // 沿「发票→出库明细→订单明细」两跳回写订单已收，订单列表/完结口径即可同步。
+                            for (Map.Entry<Long, BigDecimal> e : splitReceiptToOrderItems(d, apply).entrySet()) {
+                                applySaleOrderItemWriteoff(e.getKey(), e.getValue());
+                            }
+                            log.info("收款核销{}: 来源单#{} 明细行={} 本次={}",
+                                    d.getSourceType(), d.getSourceId(), d.getSourceItemId(), apply);
+                            break;
                         case "售后维修单":
-                            // 出库单 / 发票 / 维修单都没有「已收金额」列：核销事实以 bill_writeoff_detail 为准，
-                            // 已收/未收由核销明细汇总（getWriteoffReceivedBySource）反算，确认时无需再改来源单字段。
+                            // 维修单无已收列：核销事实以 bill_writeoff_detail 为准，不回写来源单
                             log.info("收款核销{}: 来源单#{} 明细行={} 本次={}",
                                     d.getSourceType(), d.getSourceId(), d.getSourceItemId(), apply);
                             break;
@@ -1617,8 +1625,133 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
     }
 
     /**
-     * 明细收款回写（2026-10-12）：累加订单明细行已收金额 + 表头已收同步累加（沿用防超收校验）。
-     * 行级封顶已由 {@link #sourceRemainingCapacity(BillWriteoffDetail)} 完成。
+     * 收款核销来源为出库单/发票时，把核销金额拆分到销售订单明细（2026-11-28 补）。
+     * 正常链路是「订单→出库→发票」，发票/出库明细的 source_item_id 指向出库明细，必须两跳回溯到订单明细。
+     * 无订单来源（手工出库/发票）返回空，保持原有只记核销明细的行为。
+     */
+    private Map<Long, BigDecimal> splitReceiptToOrderItems(BillWriteoffDetail d, BigDecimal amount) {
+        Map<Long, BigDecimal> shares = new LinkedHashMap<>();
+        if (d == null || amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) return shares;
+        if ("销售出库单".equals(d.getSourceType())) {
+            if (d.getSourceItemId() != null) {
+                Long orderItemId = orderItemIdOfDeliveryItem(saleDeliveryItemMapper.selectById(d.getSourceItemId()));
+                if (orderItemId != null) shares.put(orderItemId, amount);
+                return shares;
+            }
+            List<SaleDeliveryItem> items = saleDeliveryItemMapper.selectList(
+                    new QueryWrapper<SaleDeliveryItem>().eq("delivery_id", d.getSourceId()));
+            List<Long> ids = new ArrayList<>();
+            List<BigDecimal> nets = new ArrayList<>();
+            if (items != null) {
+                for (SaleDeliveryItem it : items) {
+                    Long orderItemId = orderItemIdOfDeliveryItem(it);
+                    if (orderItemId != null) {
+                        ids.add(orderItemId);
+                        nets.add(it.getNetAmount() == null ? BigDecimal.ZERO : it.getNetAmount());
+                    }
+                }
+            }
+            return allocateReceiptByNet(ids, nets, amount);
+        }
+        if ("销售发票".equals(d.getSourceType())) {
+            if (d.getSourceItemId() != null) {
+                Long orderItemId = orderItemIdOfInvoiceItem(saleInvoiceItemMapper.selectById(d.getSourceItemId()));
+                if (orderItemId != null) shares.put(orderItemId, amount);
+                return shares;
+            }
+            List<SaleInvoiceItem> items = saleInvoiceItemMapper.selectList(
+                    new QueryWrapper<SaleInvoiceItem>().eq("invoice_id", d.getSourceId()));
+            List<Long> ids = new ArrayList<>();
+            List<BigDecimal> nets = new ArrayList<>();
+            if (items != null) {
+                for (SaleInvoiceItem it : items) {
+                    Long orderItemId = orderItemIdOfInvoiceItem(it);
+                    if (orderItemId != null) {
+                        ids.add(orderItemId);
+                        nets.add(it.getNetAmount() == null ? BigDecimal.ZERO : it.getNetAmount());
+                    }
+                }
+            }
+            return allocateReceiptByNet(ids, nets, amount);
+        }
+        return shares;
+    }
+
+    /** 出库明细 → 订单明细（仅当来源确为销售订单） */
+    private Long orderItemIdOfDeliveryItem(SaleDeliveryItem di) {
+        if (di == null || di.getSourceItemId() == null) return null;
+        String type = di.getSourceBillType();
+        if (type != null && type.contains("销售订单")) return di.getSourceItemId();
+        return null;
+    }
+
+    /** 发票明细 → 订单明细：直接订单来源，或经出库明细两跳回溯 */
+    private Long orderItemIdOfInvoiceItem(SaleInvoiceItem ii) {
+        if (ii == null || ii.getSourceItemId() == null) return null;
+        String type = ii.getSourceBillType();
+        if (type == null) return null;
+        if (type.contains("销售订单")) return ii.getSourceItemId();
+        if (type.contains("销售出库")) {
+            return orderItemIdOfDeliveryItem(saleDeliveryItemMapper.selectById(ii.getSourceItemId()));
+        }
+        return null;
+    }
+
+    /** 按明细行价税合计占比拆分收款金额（末行吃尾差） */
+    private Map<Long, BigDecimal> allocateReceiptByNet(List<Long> orderItemIds, List<BigDecimal> nets, BigDecimal amount) {
+        Map<Long, BigDecimal> shares = new LinkedHashMap<>();
+        if (orderItemIds == null || orderItemIds.isEmpty()) return shares;
+        BigDecimal total = BigDecimal.ZERO;
+        for (BigDecimal net : nets) {
+            if (net != null && net.compareTo(BigDecimal.ZERO) > 0) total = total.add(net);
+        }
+        if (total.compareTo(BigDecimal.ZERO) <= 0) return shares;
+        BigDecimal allocated = BigDecimal.ZERO;
+        for (int i = 0; i < orderItemIds.size(); i++) {
+            BigDecimal net = nets.get(i) == null ? BigDecimal.ZERO : nets.get(i);
+            BigDecimal share = (i == orderItemIds.size() - 1)
+                    ? amount.subtract(allocated)
+                    : amount.multiply(net).divide(total, 2, java.math.RoundingMode.HALF_UP);
+            if (share.compareTo(BigDecimal.ZERO) > 0) {
+                shares.merge(orderItemIds.get(i), share, BigDecimal::add);
+                allocated = allocated.add(share);
+            }
+        }
+        return shares;
+    }
+
+    /** 收款回退：按订单明细回减已收（行封底 0，表头同步回减并重算完结） */
+    private void reverseReceiptWritebackToOrder(BillWriteoffDetail d, BigDecimal amount, String action) {
+        Map<Long, BigDecimal> shares = splitReceiptToOrderItems(d, amount);
+        if (shares.isEmpty()) return;
+        BigDecimal total = BigDecimal.ZERO;
+        Long orderId = null;
+        for (Map.Entry<Long, BigDecimal> e : shares.entrySet()) {
+            SaleOrderItem item = saleOrderItemMapper.selectById(e.getKey());
+            if (item == null) continue;
+            if (orderId == null) orderId = item.getOrderId();
+            BigDecimal lineRec = item.getReceivedAmount() == null ? BigDecimal.ZERO : item.getReceivedAmount();
+            item.setReceivedAmount(lineRec.subtract(e.getValue()).max(BigDecimal.ZERO));
+            saleOrderItemMapper.updateById(item);
+            total = total.add(e.getValue());
+            log.info("收款{}回减订单行: 行ID={}, 货品={}, 回减后行已收={}",
+                    action, item.getOrderItemId(), item.getMaterialName(), item.getReceivedAmount());
+        }
+        if (orderId == null || total.compareTo(BigDecimal.ZERO) <= 0) return;
+        SaleOrder order = saleOrderService.getById(orderId);
+        if (order == null) return;
+        BigDecimal currentReceived = order.getReceivedAmount() == null ? BigDecimal.ZERO : order.getReceivedAmount();
+        order.setReceivedAmount(currentReceived.subtract(total).max(BigDecimal.ZERO));
+        saleOrderService.updateById(order);
+        try {
+            saleOrderService.recalcOrderCloseStatus(orderId);
+        } catch (Exception ex) {
+            log.warn("收款回减后完结重算失败: 订单={} err={}", order.getOrderNo(), ex.getMessage());
+        }
+    }
+
+    /**
+     * 明细收款回写（2026-10-12）：累加订单明细行已收金额 + 表头已收同步累加（沿用防超收校验）。     * 行级封顶已由 {@link #sourceRemainingCapacity(BillWriteoffDetail)} 完成。
      */
     private void applySaleOrderItemWriteoff(Long orderItemId, BigDecimal amount) {
         SaleOrderItem item = saleOrderItemMapper.selectById(orderItemId);
@@ -2209,8 +2342,11 @@ public class FinanceServiceImpl extends ServiceImpl<AccountsReceivableMapper, Ac
                         break;
                     case "销售出库单":
                     case "销售发票":
+                        // 与确认时两跳回写对称：按订单明细回减已收（行封底 0，表头同步回减）
+                        reverseReceiptWritebackToOrder(d, amount, action);
+                        log.info("收款{}回退核销{}: 来源单#{} 本次={}", action, d.getSourceType(), d.getSourceId(), amount);
+                        break;
                     case "售后维修单":
-                        // 出库单 / 发票 / 维修单无已收列：核销事实只在 bill_writeoff_detail，回滚即把该行置回「未冲销」（下方统一处理）
                         // 售后维修单：不改维修单金额与状态，仅记录日志
                         log.info("收款{}回退核销{}: 来源单#{} 本次={}", action, d.getSourceType(), d.getSourceId(), amount);
                         break;
